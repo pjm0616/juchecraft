@@ -411,7 +411,7 @@ void UserInterface_SDL::processFrame()
 				int x = this->gamescr_left_pos + ev.button.x;
 				int y = this->gamescr_top_pos + ev.button.y;
 				
-				if(1)
+				if(0)
 				{
 					x -= 8;
 					y -= 12;
