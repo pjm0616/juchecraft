@@ -344,7 +344,7 @@ UserInterface_SDL::UserInterface_SDL(Game *game)
 	this->buttons_wnd = SDL_CreateRGBSurface(SDL_SWSURFACE, 128, 128, 32, 0, 0, 0, 0);
 	
 	// game resources;
-	this->sf_console = IMG_Load("./res/ui/sdl/fonts/tconsole.png");
+	this->sf_console = IMG_Load("./res/ui/sdl/imgs/tconsole.png");
 	
 	// FIXME
 	g_palette_units = load_palette("../mini_sc_data/libmpqgrp/sc_palettes/units.pal");
