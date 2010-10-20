@@ -475,6 +475,7 @@ bool Object::doAttack(float time)
 	Coordinate where_to_move;
 	if(this->checkMinDistance(target, this->getNetAttackRange(), &where_to_move))
 	{
+		this->setAngle(this->getPosition().calculateAngle(target->getPosition()));
 		float attack_speed = this->getNetAttackSpeed(); // num_of_attacks per second
 		float attacking_secs = this->getAttackingSeconds();
 		float last_attack = this->getLastAttackTime();
@@ -484,7 +485,6 @@ bool Object::doAttack(float time)
 		for(; nattacks > 0; nattacks--)
 		{
 			//fprintf(stderr, "Attack!\n");
-			this->setAngle(this->getPosition().calculateAngle(target->getPosition()));
 			float t_damage = this->getNetDamage();
 			float d_armor = target->getNetArmor();
 			float net_damage = t_damage - d_armor;
@@ -559,6 +559,7 @@ bool Object::attack(Object *target)
 		this->setState(ObjectState::Attacking, true);
 		this->setAttackingSeconds(0.0);
 		this->setLastAttackTime(0.0);
+		//this->setAngle(this->getPosition().calculateAngle(target->getPosition()));
 	}
 	
 	return true;
