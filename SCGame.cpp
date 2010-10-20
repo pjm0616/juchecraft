@@ -130,7 +130,15 @@ void Game::test_tmp1()
 	o->setObjectMovingSpeedBonusM(1.0);
 	o->move(Coordinate(210, 300));
 	
-	#if 0
+	o = this->addObject(new Objects::Buildings::Juche_RodongCorrectionalFacility(this));
+	o->changeOwner(&Player::Players[1]);
+	o->setPosition(80, 80);
+	
+	o = this->addObject(new Objects::Buildings::Terran_CommandCenter(this));
+	o->changeOwner(&Player::Players[2]);
+	o->setPosition(440, 180);
+	
+	#if 1
 	for(int i = 0; i < 10; i++)
 	{
 		o = this->addObject(new Objects::Resources::MineralField(this));
@@ -142,14 +150,6 @@ void Game::test_tmp1()
 		o->setPosition(10 + i*32, 270 + 32*3);
 	}
 	#endif
-	
-	o = this->addObject(new Objects::Buildings::Juche_RodongCorrectionalFacility(this));
-	o->changeOwner(&Player::Players[1]);
-	o->setPosition(80, 80);
-	
-	o = this->addObject(new Objects::Buildings::Terran_CommandCenter(this));
-	o->changeOwner(&Player::Players[2]);
-	o->setPosition(440, 180);
 }
 
 

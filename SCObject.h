@@ -179,6 +179,9 @@ private:
 	
 	/* Movement related */
 	// only called my setMovementTarget
+	void setMovingSeconds(float time) { this->moving_secs = time; }
+	void increaseMovingSeconds(float time) { this->moving_secs += time; }
+	float getMovingSeconds() const { return this->moving_secs; }
 	void setMovement_MinimumDistanceToTarget(float distance) { this->movement_min_distance_to_target = distance; }
 	float getMovement_MinimumDistanceToTarget() const { return this->movement_min_distance_to_target; }
 	void setMovementTarget(Object *target, float minimum_distance = 0.0)
@@ -195,6 +198,11 @@ private:
 	/* Attack related */
 	void setAttackTarget(Object *target) { this->attack_target = target; }
 	Object *getAttackTarget() const { return this->attack_target; }
+	void setAttackingSeconds(float time) { this->attacking_secs = time; }
+	void increaseAttackingSeconds(float time) { this->attacking_secs += time; }
+	float getAttackingSeconds() const { return this->attacking_secs; }
+	void setLastAttackTime(float time) { this->last_attack_time = time; }
+	float getLastAttackTime() const { return this->last_attack_time; }
 	// this와 dest간의 거리가 min_distance 이하일 경우 return true
 	// 그렇지 않을 경우 where_to_move에 이동해야할 위치를 저장한 후 return false
 	bool checkMinDistanceOld(Object *target, float min_distance, Coordinate *where_to_move);
@@ -220,6 +228,7 @@ private:
 	float mul_armor_bonus, mul_damage_bonus, mul_moving_speed_bonus, mul_attack_speed_bonus;
 	
 	/* Movement related */
+	float moving_secs; // 이동 시작 후 지금까지 총 시간
 	Coordinate movement_start_point, destination, final_destination;
 	bool automatically_attack;
 	// if target is set, object moves to target. is target is not set, object moves to coordinate.
@@ -229,6 +238,8 @@ private:
 	float movement_min_distance_to_target; // TODO: implement this
 	
 	/* Attack related */
+	float attacking_secs; // 공격 시작 후 지금까지 총 시간
+	float last_attack_time; // `공격 시작 후 지금까지 총 시간'을 기준으로 마지막 공격 시각
 	// if(this->isMoving() && this->getAttackTarget()) then this object is moving to attack target
 	Object *attack_target; // not null if attack target is set.
 	

@@ -23,6 +23,9 @@ public:
 		this->width = 117;
 		this->height = 83;
 		
+		this->max_hp = 1500;
+		this->armor = 1;
+		
 		this->supplied_food = 9;
 	}
 	virtual ~Terran_CommandCenter() {}

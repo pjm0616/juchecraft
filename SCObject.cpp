@@ -263,20 +263,48 @@ bool Object::move_notAligned(const Coordinate &dest, bool do_attack)
 	if(!this->canMove())
 		return false;
 	
-	this->automatically_attack = do_attack;
-	this->setMovementTarget(NULL);
-	this->setFinalDestination(dest);
 	#if 0
 	Coordinate next_pos = this->calculateNextDestination();
 	#else
 	Coordinate next_pos = dest;
 	#endif
+	
+	this->automatically_attack = do_attack;
+	this->setMovementTarget(NULL);
+	this->setFinalDestination(dest);
 	this->setDestination(next_pos);
 	this->setState(ObjectState::Moving, true);
-	
+	this->setMovingSeconds(0.0);
 	this->setAngle(this->movement_start_point.calculateAngle(this->destination));
 	
 	return true;
+}
+
+bool Object::move(Object *target, float minimum_distance, bool do_attack)
+{
+	if(!this->canMove())
+		return false;
+	
+	this->automatically_attack = do_attack;
+	this->setMovementTarget(target, minimum_distance);
+	this->setFinalDestination(Coordinate(-1.0, -1.0)); // not necessary; our final destination is `target'
+	this->setDestination(this->calculateDestination_TargetedMoving());
+	this->setState(ObjectState::Moving, true);
+	this->setMovingSeconds(0.0);
+	this->setAngle(this->movement_start_point.calculateAngle(this->destination));
+	
+	return true;
+}
+
+void Object::stopMoving()
+{
+	this->setState(ObjectState::Moving, false);
+	this->setMovementTarget(NULL);
+	
+	this->setFinalDestination(Coordinate(0.0, 0.0)); // not necessary
+	this->setDestination(Coordinate(0.0, 0.0)); // not necessary
+	this->setMovementStartPoint(Coordinate(0.0, 0.0)); // not necessary
+	this->setMovingSeconds(0.0); // not necessary
 }
 
 bool Object::move(const Coordinate &dest, bool do_attack)
@@ -299,70 +327,6 @@ Coordinate Object::calculateDestination_TargetedMoving()
 	return target->getPosition();
 }
 
-bool Object::move(Object *target, float minimum_distance, bool do_attack)
-{
-	if(!this->canMove())
-		return false;
-	
-	this->automatically_attack = do_attack;
-	this->setMovementTarget(target, minimum_distance);
-	this->setFinalDestination(Coordinate(-1.0, -1.0)); // not necessary; our final destination is `target'
-	this->setDestination(this->calculateDestination_TargetedMoving());
-	this->setState(ObjectState::Moving, true);
-	
-	float angle = this->movement_start_point.calculateAngle(this->destination);
-	this->setAngle(angle);
-	
-	return true;
-}
-
-void Object::stopMoving()
-{
-	this->setState(ObjectState::Moving, false);
-	this->setMovementTarget(NULL);
-	
-	this->setFinalDestination(Coordinate(0.0, 0.0)); // not necessary
-	this->setDestination(Coordinate(0.0, 0.0)); // not necessary
-	this->setMovementStartPoint(Coordinate(0.0, 0.0)); // not necessary
-}
-
-void Object::processFrame()
-{
-	float deltat = this->game->getFrameDelta();
-	if(this->isMoving())
-	{
-		bool ret = doMovement(deltat);
-		if(ret == true) // if finished then
-		{
-		#if 0
-			if(this->getPosition() == this->getFinalDestination())
-			{
-				this->stopMoving();
-			}
-			else
-			{
-				//Coordinate next_pos = this->calculateNextDestination();
-				//this->setDestination(next_pos);
-			}
-		#else
-			
-			this->stopMoving();
-		#endif
-			
-			if(this->getAttackTarget() != NULL)
-			{
-				//this->attack(this->getAttackTarget());
-				this->setState(ObjectState::Attacking, true);
-			}
-		}
-	}
-	if(this->isAttacking())
-	{
-		this->doAttack(deltat);
-	}
-	
-	// TODO
-}
 
 static float calculateDistance(float x1, float y1, float x2, float y2)
 {
@@ -511,26 +475,36 @@ bool Object::doAttack(float time)
 	Coordinate where_to_move;
 	if(this->checkMinDistance(target, this->getNetAttackRange(), &where_to_move))
 	{
-		float t_damage = this->getNetDamage();
-		float d_armor = target->getNetArmor();
-		float net_damage = t_damage - d_armor;
-		
-		{ // debug
-			float prev_hp = target->getHP();
-			//fprintf(stderr, "Attack: damage: %f, armor: %f, netdamage: %f, hp: %f -> %f\n", 
-			//	t_damage, d_armor, net_damage, prev_hp, prev_hp - net_damage);
-		}
-		
-		target->decreaseHP(net_damage);
-		float hp = target->getHP();
-		if(hp <= 0)
+		float attack_speed = this->getNetAttackSpeed(); // num_of_attacks per second
+		float attacking_secs = this->getAttackingSeconds();
+		float last_attack = this->getLastAttackTime();
+		int nattacks = (attacking_secs - last_attack_time) / (1.0 / attack_speed);
+		if(nattacks > 0)
+			this->setLastAttackTime(attacking_secs);
+		for(; nattacks > 0; nattacks--)
 		{
-			this->stopAttacking();
-			// FIXME
-			//target->kill();
-			this->game->removeObject(target);
-		}
+			//fprintf(stderr, "Attack!\n");
+			this->setAngle(this->getPosition().calculateAngle(target->getPosition()));
+			float t_damage = this->getNetDamage();
+			float d_armor = target->getNetArmor();
+			float net_damage = t_damage - d_armor;
 		
+			{ // debug
+				float prev_hp = target->getHP();
+				//fprintf(stderr, "Attack: damage: %f, armor: %f, netdamage: %f, hp: %f -> %f\n", 
+				//	t_damage, d_armor, net_damage, prev_hp, prev_hp - net_damage);
+			}
+		
+			target->decreaseHP(net_damage);
+			float hp = target->getHP();
+			if(hp <= 0)
+			{
+				this->stopAttacking();
+				// FIXME
+				//target->kill();
+				this->game->removeObject(target);
+			}
+		}
 		return true;
 	}
 	else
@@ -552,6 +526,9 @@ void Object::stopAttacking()
 {
 	this->setAttackTarget(NULL);
 	this->setState(ObjectState::Attacking, false);
+	
+	this->setAttackingSeconds(0.0); // not necessary
+	this->setLastAttackTime(0.0); // not necessary
 }
 
 bool Object::attack(Object *target)
@@ -580,6 +557,8 @@ bool Object::attack(Object *target)
 	else
 	{
 		this->setState(ObjectState::Attacking, true);
+		this->setAttackingSeconds(0.0);
+		this->setLastAttackTime(0.0);
 	}
 	
 	return true;
@@ -611,6 +590,48 @@ bool Object::cmd_move(Object *target, float minimum_distance, bool do_attack)
 
 
 
+
+void Object::processFrame()
+{
+	float deltat = this->game->getFrameDelta();
+	if(this->isMoving())
+	{
+		bool ret = doMovement(deltat);
+		if(ret == true) // if finished then
+		{
+		#if 0
+			if(this->getPosition() == this->getFinalDestination())
+			{
+				this->stopMoving();
+			}
+			else
+			{
+				//Coordinate next_pos = this->calculateNextDestination();
+				//this->setDestination(next_pos);
+			}
+		#else
+			
+			this->stopMoving();
+		#endif
+			
+			if(this->getAttackTarget() != NULL)
+			{
+				//this->attack(this->getAttackTarget());
+				this->setState(ObjectState::Attacking, true);
+				this->setAttackingSeconds(0.0);
+				this->setLastAttackTime(0.0);
+			}
+		}
+		this->increaseMovingSeconds(deltat);
+	}
+	if(this->isAttacking())
+	{
+		this->doAttack(deltat);
+		this->increaseAttackingSeconds(deltat);
+	}
+	
+	// TODO
+}
 
 
 
