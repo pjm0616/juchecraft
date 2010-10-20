@@ -87,10 +87,13 @@ void Object::init()
 	this->setHP(this->getMaxHP());
 	this->setEnergy(this->getMaxEnergy());
 	this->setResource(this->getInitialResource());
+	
+	this->cleanup_called = false; // for debugging
 }
 
 void Object::cleanup()
 {
+	assert(this->cleanup_called == false); this->cleanup_called = true; // for debugging
 	this->detachFromOwner();
 }
 
@@ -503,6 +506,7 @@ bool Object::doAttack(float time)
 				// FIXME
 				//target->kill();
 				this->game->removeObject(target);
+				break;
 			}
 		}
 		return true;

@@ -287,6 +287,9 @@ protected: /* Constant object attributes */
 	float armor, damage;
 	float moving_speed, attack_speed;
 	float attack_range;
+	
+private:
+	bool cleanup_called; // for debugging
 };
 
 
