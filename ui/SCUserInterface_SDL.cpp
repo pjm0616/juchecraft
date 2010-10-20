@@ -576,8 +576,16 @@ void UserInterface_SDL::drawUI()
 				}
 			}
 			
+			// select color
+			Uint32 color;
+			if(crnt <= max)
+				color = 0x00ff00; // green
+			else
+				color = 0x0000ff; // red
+			
+			// draw to screen
 			snprintf(buf, sizeof(buf), "%d/%d", me->getFoodCrnt(i), me->getFoodMax(i));
-			SDL_print(this->font, this->screen, x + 15, y - 2, 68-15, 16, 0x00ff00, buf);
+			SDL_print(this->font, this->screen, x + 15, y - 2, 68-15, 16, color, buf);
 			x -= 68;
 		}
 	}
