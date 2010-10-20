@@ -9,6 +9,8 @@
 #include "objects/units/Terran_SCV.h"
 #include "objects/units/Terran_Marine.h"
 
+#include "objects/units/Zerg_Zergling.h"
+
 #include "objects/units/Juche_AojiWorker.h"
 
 #endif

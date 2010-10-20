@@ -235,30 +235,30 @@ static grp_palette_t *g_palette_units;
 static grp_data_t *g_grp_icons;
 static grp_data_t *g_grp_minfield0;
 static grp_data_t *g_grp_wirefram;
-static grp_data_t *g_grp_t_ccenter, *g_grp_t_marine;
-
+static grp_data_t *g_grp_t_ccenter, *g_grp_t_marine, *g_grp_t_firebat;
+static grp_data_t *g_grp_z_zergling, *g_grp_z_zergling_shad;
 
 ///
 
 
-SDL_Surface *render_grp_frame(grp_data_t *grpdata, int framenum)
+SDL_Surface *render_grp_frame(grp_data_t *grpdata, int framenum, unsigned int grpflags = 0)
 {
 	grp_header_t *grpinfo = get_grp_info(grpdata);
 	//grp_frameheader_t *frame = grp_get_frame_info(grpdata, framenum);
 	SDL_Surface *sf = SDL_CreateRGBSurface(SDL_SWSURFACE, grpinfo->max_width, grpinfo->max_height, 32, 0xff, 0xff00, 0xff0000, 0xff000000);
 	
 	SDL_LockSurfaceIfNeeded(sf);
-	draw_grp(sf, 0, 0, &g_grp_pixelfuncs, grpdata, g_palette_units, framenum, 0, 0);
+	draw_grp(sf, 0, 0, &g_grp_pixelfuncs, grpdata, g_palette_units, framenum, grpflags, 0);
 	SDL_UnlockSurfaceIfNeeded(sf);
 	
 	return sf;
 }
 
-SDL_Surface *render_grp_frame_flipped(grp_data_t *grpdata, int framenum, bool do_hflip = false, bool do_vflip = false)
+SDL_Surface *render_grp_frame_flipped(grp_data_t *grpdata, int framenum, bool do_hflip = false, bool do_vflip = false, unsigned int grpflags = 0)
 {
 	grp_header_t *grpinfo = get_grp_info(grpdata);
 	grp_frameheader_t *frame = grp_get_frame_info(grpdata, framenum);
-	SDL_Surface *sf = render_grp_frame(grpdata, framenum);
+	SDL_Surface *sf = render_grp_frame(grpdata, framenum, grpflags);
 	int w = grpinfo->max_width;
 	int h = grpinfo->max_height;
 	int right = grpinfo->max_width-1 - frame->left;
@@ -322,13 +322,30 @@ void replace_unit_colors(SDL_Surface *sf, Uint32 newcolor)
 	}
 }
 
+#define SHADOW_MAGIC_COLOR 0x00ef00ef
+void render_shadow_image(SDL_Surface *sf)
+{
+	for(int y = 0; y < sf->h; y++)
+	{
+		Uint32 *line = SDL_GetPixelPtr32(sf, 0, y);
+		for(int x = 0; x < sf->w; x++)
+		{
+			Uint8 r, g, b, a;
+			SDL_GetRGBA(line[x], sf->format, &r, &g, &b, &a);
+			if((b<<16 | g<<8 | r) == SHADOW_MAGIC_COLOR)
+				line[x] = SDL_MapRGBA(sf->format, 0x00, 0x00, 0x00, 0xc0);
+		}
+	}
+}
+
+
 void render_grp_frame_to_surface(grp_data_t *grpdata, int framenum, SDL_Surface *dest_sf, int x, int y, 
 	int opt_align_w = -1, int opt_align_h = -1, bool do_hflip = false, bool do_yflip = false, 
-	Uint32 new_unit_color = 0xffffffff)
+	Uint32 new_unit_color = 0xffffffff, unsigned int grpflags = 0)
 {
 	grp_frameheader_t *frame = grp_get_frame_info(grpdata, framenum);
 	
-	SDL_Surface *rmodel = render_grp_frame_flipped(grpdata, framenum, do_hflip, do_yflip);
+	SDL_Surface *rmodel = render_grp_frame_flipped(grpdata, framenum, do_hflip, do_yflip, grpflags);
 	SDL_Rect rmodel_rect = {frame->left, frame->top, frame->width, frame->height};
 	SDL_Rect dest_rect = {x, y, frame->width, frame->height};
 	//if(opt_align_w > 0)
@@ -338,6 +355,8 @@ void render_grp_frame_to_surface(grp_data_t *grpdata, int framenum, SDL_Surface 
 	
 	if(new_unit_color != 0xffffffff)
 		replace_unit_colors(rmodel, new_unit_color);
+	else if(grpflags & SHADOW_COLOR)
+		render_shadow_image(rmodel);
 	
 	SDL_LockSurfaceIfNeeded(dest_sf);
 	SDL_BlitSurface(rmodel, &rmodel_rect, dest_sf, &dest_rect);
@@ -367,13 +386,17 @@ UserInterface_SDL::UserInterface_SDL(Game *game)
 	this->font = TTF_OpenFont("./res/ui/sdl/fonts/NanumGothic.ttf", this->getFontSize());
 	TTF_SetFontStyle(this->font, TTF_STYLE_NORMAL);
 	
+	// color format: 0x00RRGGBB
 	this->game_scr = SDL_CreateRGBSurface(SDL_SWSURFACE, this->game->getMapWidth(), this->game->getMapHeight(), 32, 0, 0, 0, 0);
+	// color format: 0xAABBGGRR; 0xffBBGGRR
+	//this->game_scr = SDL_CreateRGBSurface(SDL_SWSURFACE, this->game->getMapWidth(), this->game->getMapHeight(), 32, 0xff, 0xff00, 0xff0000, 0xff000000);
+	
 	this->gamescr_left_pos = 0;
 	this->gamescr_top_pos = 0;
 	
-	this->minimap_wnd = SDL_CreateRGBSurface(SDL_SWSURFACE, 128, 128, 32, 0, 0, 0, 0);
-	this->unitstat_wnd = SDL_CreateRGBSurface(SDL_SWSURFACE, 128, 128, 32, 0, 0, 0, 0);
-	this->buttons_wnd = SDL_CreateRGBSurface(SDL_SWSURFACE, 128, 128, 32, 0, 0, 0, 0);
+	this->minimap_wnd = SDL_CreateRGBSurface(SDL_SWSURFACE, 128, 128, 32, 0xff, 0xff00, 0xff0000, 0xff000000);
+	this->unitstat_wnd = SDL_CreateRGBSurface(SDL_SWSURFACE, 128, 128, 32, 0xff, 0xff00, 0xff0000, 0xff000000);
+	this->buttons_wnd = SDL_CreateRGBSurface(SDL_SWSURFACE, 128, 128, 32, 0xff, 0xff00, 0xff0000, 0xff000000);
 	
 	// game resources;
 	this->sf_console = IMG_Load("./res/ui/sdl/imgs/tconsole.png");
@@ -385,6 +408,9 @@ UserInterface_SDL::UserInterface_SDL(Game *game)
 	g_grp_wirefram = load_grp("../mini_sc_data/StarDat/unit/wirefram/wirefram.grp");
 	g_grp_t_ccenter = load_grp("../mini_sc_data/StarDat/unit/terran/control.grp");
 	g_grp_t_marine = load_grp("../mini_sc_data/StarDat/unit/terran/marine.grp");
+	g_grp_t_firebat = load_grp("../mini_sc_data/StarDat/unit/terran/firebat.grp");
+	g_grp_z_zergling = load_grp("../mini_sc_data/StarDat/unit/zerg/zergling.grp");
+	g_grp_z_zergling_shad = load_grp("../mini_sc_data/StarDat/unit/zerg/zzeshad.grp");
 }
 
 UserInterface_SDL::~UserInterface_SDL()
@@ -483,13 +509,14 @@ void UserInterface_SDL::processFrame()
 	}
 }
 
+#define MAP_COLOR 0x808080
 void UserInterface_SDL::draw()
 {
-	SDL_FillSurfaceP(this->screen, 0, 0, 640, 480, 0x000000);
+	SDL_FillSurfaceP(this->screen, 0, 0, 640, 480, 0x000000); // 0xffffff
 	
 	// draw game screen
 	{
-		SDL_FillSurfaceP(this->game_scr, 0, 0, this->game->getMapWidth(), this->game->getMapHeight(), 0x111111);
+		SDL_FillSurfaceP(this->game_scr, 0, 0, this->game->getMapWidth(), this->game->getMapHeight(), MAP_COLOR);
 		this->drawMap();
 		this->drawObjects();
 		{
@@ -606,7 +633,7 @@ void UserInterface_SDL::drawUI_MinimapWnd()
 	// minimap_w : map_w = minimap_unit_w : unit_w
 	float xratio = minimap_w / map_w, yratio = minimap_h / map_h;
 	
-	SDL_FillSurfaceP(this->minimap_wnd, 0, 0, minimap_w, minimap_h, 0x111111);
+	SDL_FillSurfaceP(this->minimap_wnd, 0, 0, minimap_w, minimap_h, MAP_COLOR);
 	
 	ObjectList &objs = this->game->getObjectList();
 	for(ObjectList::const_iterator it = objs.begin(); it != objs.end(); it++)
@@ -666,6 +693,47 @@ static int convertAngleToDirection(float angle)
 	return direction;
 }
 
+static int calculate_unit_framenum(Object *obj, int attack_start, int attack_end, int move_start, int move_end, 
+		bool *do_hflip, bool *do_vflip
+	)
+{
+	int col, row;
+	*do_hflip = false;
+	*do_vflip = false;
+	
+	row = convertAngleToDirection(obj->getAngle());
+	if(obj->isMoving())
+	{
+		col = (lrand48() % (move_end - move_start)) + move_start;
+	}
+	else if(obj->isAttacking())
+	{
+		float attacktime = obj->getAttackingSeconds();
+		int t = (int)(attacktime*10) % (attack_end - attack_start + 1);
+		col = t + attack_start;
+	}
+	else
+		col = move_start;
+	
+	if(row == 34) // angle == 90deg
+		row = 0;
+	else if(row >= 0 && row <= 16){} // 오른쪽
+	else if(row >= 17 && row <= 33) // 왼쪽
+	{
+		row = row - 17;
+		row = 16 - row;
+		*do_hflip = true;
+	}
+	else
+	{
+		fprintf(stderr, "Cannot happen: row: %d; angle: %f\n", row, obj->getAngle());
+		row = 0;
+	}
+	
+	int framenum = col*17 + row;
+	return framenum;
+}
+
 void UserInterface_SDL::drawObject(Object &obj)
 {
 	int x, y, w, h;
@@ -699,9 +767,9 @@ void UserInterface_SDL::drawObject(Object &obj)
 	
 		#if 1
 		bool do_draw = false;
-		grp_data_t *grpdata;
+		grp_data_t *grpdata, *grpdata2 = NULL;
 		short framenum;
-		bool do_hflip = false;
+		bool do_hflip = false, do_vflip = false;
 		Uint32 unit_color = owner->getPlayerColor();
 		
 		if(objid == SC::ObjectId::Terran_CommandCenter)
@@ -713,38 +781,22 @@ void UserInterface_SDL::drawObject(Object &obj)
 		else if(objid == SC::ObjectId::Terran_Marine)
 		{
 			grpdata = g_grp_t_marine;
-			int col = 0, row = 0;
-			
-			row = convertAngleToDirection(obj.getAngle());
-			if(obj.isMoving())
-			{
-				col = (lrand48() % (10-6)) + 6; // 6 ~ 10
-			}
-			else if(obj.isAttacking())
-			{
-				//col = (lrand48() % 2) + 2;
-				float attacktime = obj.getAttackingSeconds();
-				if((int)(attacktime*10) % 2 == 0)
-					col = 3;
-				else
-					col = 2;
-			}
-			
-			if(row == 34) // angle == 90deg
-				row = 0;
-			else if(row >= 0 && row <= 16){} // 오른쪽
-			else if(row >= 17 && row <= 33) // 왼쪽
-			{
-				row = row - 17;
-				row = 16 - row;
-				do_hflip = true;
-			}
-			else
-			{
-				fprintf(stderr, "Cannot happen: row: %d; angle: %f\n", row, obj.getAngle());
-			}
-			
-			framenum = col*17 + row;
+			// 0~1: attack preparation images
+			// 13: dying image
+			framenum = calculate_unit_framenum(&obj, 2, 3, 4, 12, &do_hflip, &do_vflip);
+			do_draw = true;
+		}
+		else if(objid == SC::ObjectId::Terran_Firebat)
+		{
+			grpdata = g_grp_t_firebat;
+			framenum = calculate_unit_framenum(&obj, 0, 1, 2, 9, &do_hflip, &do_vflip);
+			do_draw = true;
+		}
+		else if(objid == SC::ObjectId::Zerg_Zergling)
+		{
+			grpdata = g_grp_z_zergling;
+			grpdata2 = g_grp_z_zergling_shad;
+			framenum = calculate_unit_framenum(&obj, 0, 3, 4, 11, &do_hflip, &do_vflip);
 			do_draw = true;
 		}
 		else if(objid == SC::ObjectId::Resource_MineralField)
@@ -763,6 +815,8 @@ void UserInterface_SDL::drawObject(Object &obj)
 				int center_y = (grphdr->max_height/2 - 1) - frame->top;
 			}
 			
+			if(grpdata2)
+				render_grp_frame_to_surface(grpdata2, framenum, this->game_scr, x, y, 0, h, do_hflip, false, 0xffffffff, SHADOW_COLOR|(SHADOW_MAGIC_COLOR<<8));
 			render_grp_frame_to_surface(grpdata, framenum, this->game_scr, x, y, 0, h, do_hflip, false, unit_color);
 			#if 0
 			grp_frameheader_t *frame = grp_get_frame_info(grpdata, framenum);

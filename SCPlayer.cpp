@@ -11,6 +11,7 @@ Player Player::Players[Player::MAX_PLAYER + 1];
 
 void Player::initialize()
 {
+	// 0xRRGGBB
 	static unsigned int player_colors[] = {
 		0x000000, // Black, Neutral
 		0xff0000, // Red

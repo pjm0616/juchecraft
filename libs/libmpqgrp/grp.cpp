@@ -93,6 +93,7 @@ static void grp_set_pixel(grp_pixel_funcs_t *pixelfuncs, void *dest, int x, int 
 		
 		if(flags & ALPHA_BLEND)
 		{
+			assert(!"Alpha blending in libgrp is disabled");
 			backcolor.u32 = pixelfuncs->get_pixel(dest, x, y);
 			
 			for(int i = 0; i < 3; i++)

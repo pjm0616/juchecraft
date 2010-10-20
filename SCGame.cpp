@@ -123,8 +123,14 @@ void Game::test_tmp1()
 	o->setObjectMovingSpeedBonusM(4.0);
 	o->setObjectAttackSpeedBonusM(8.0);
 	o->setObjectDamageBonusM(2.0);
-	//o->move(Coordinate(480, 200));
-	//o->move(Coordinate(440, 80));
+	
+	o = this->addObject(new Objects::Units::Zerg_Zergling(this));
+	o->changeOwner(&Player::Players[2]);
+	o->setPosition(80, 50);
+	o->setObjectMovingSpeedBonusM(2.0);
+	o->setObjectAttackSpeedBonusM(8.0);
+	o->setObjectDamageBonusM(2.0);
+	o->move(Coordinate(410, 250));
 	
 	o = this->addObject(new Objects::Units::Juche_AojiWorker(this));
 	o->changeOwner(&Player::Players[1]);
@@ -132,13 +138,13 @@ void Game::test_tmp1()
 	o->setObjectMovingSpeedBonusM(1.0);
 	o->move(Coordinate(210, 300));
 	
-	o = this->addObject(new Objects::Buildings::Juche_RodongCorrectionalFacility(this));
-	o->changeOwner(&Player::Players[1]);
-	o->setPosition(80, 80);
-	
 	o = this->addObject(new Objects::Buildings::Terran_CommandCenter(this));
 	o->changeOwner(&Player::Players[2]);
 	o->setPosition(440, 180);
+	
+	o = this->addObject(new Objects::Buildings::Juche_RodongCorrectionalFacility(this));
+	o->changeOwner(&Player::Players[1]);
+	o->setPosition(80, 80);
 	
 	#if 1
 	for(int i = 0; i < 10; i++)
