@@ -250,7 +250,14 @@ void UserInterface_ncurses::processFrame()
 		case KEY_RIGHT: this->cur_x++; break;
 		case '\n': {
 				SC::ObjectList::iterator it = this->game->getObjectList().begin();
-				it->get()->move(Coordinate(cur_x * 10, (cur_y-1) * 20));
+				it->get()->cmd_move(Coordinate(cur_x * 10, (cur_y-1) * 20));
+			}
+			break;
+		case 'a': {
+				SC::ObjectList::iterator it = this->game->getObjectList().begin();
+				SC::ObjectList::iterator it2 = this->game->getObjectList().begin(); ++it2;
+				
+				it->get()->cmd_attack(it2->get());
 			}
 			break;
 		}
