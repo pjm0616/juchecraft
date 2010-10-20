@@ -70,6 +70,7 @@ Object::Object(Game *game)
 	
 	this->setAngle(lrand48() % 360);
 	
+	this->setMovementTarget(NULL);
 	this->setAttackTarget(NULL);
 }
 
@@ -153,7 +154,7 @@ void Object::setDestination(const Coordinate &pos)
 	this->destination = pos;
 }
 
-Coordinate Object::getMovementDelta(float time)
+Coordinate Object::calculateMovementSpeed(float time)
 {
 	float v = this->getNetMovingSpeed();
 	float startx = this->movement_start_point.getX();
@@ -204,11 +205,19 @@ Coordinate Object::getMovementDelta(float time)
 bool Object::doMovement(float time)
 {
 	assert(this->isMoving() == true);
+	
+	Object *mvtarget = this->getMovementTarget();
+	if(mvtarget)
+	{
+		this->destination.set(this->calculateDestination_TargetedMoving());
+		this->setAngle(this->movement_start_point.calculateAngle(this->destination));
+	}
+	
 	float startx = this->movement_start_point.getX();
 	float starty = this->movement_start_point.getY();
 	float destx = this->destination.getX();
 	float desty = this->destination.getY();
-	Coordinate d_move = this->getMovementDelta(time);
+	Coordinate d_move = this->calculateMovementSpeed(time);
 	Coordinate newpos = d_move + this->getPosition();
 	float newx = newpos.getX();
 	float newy = newpos.getY();
@@ -249,12 +258,13 @@ bool Object::doMovement(float time)
 
 
 
-bool Object::move(const Coordinate &dest, bool do_attack)
+bool Object::move_notAligned(const Coordinate &dest, bool do_attack)
 {
 	if(!this->canMove())
 		return false;
 	
 	this->automatically_attack = do_attack;
+	this->setMovementTarget(NULL);
 	this->setFinalDestination(dest);
 	#if 0
 	Coordinate next_pos = this->calculateNextDestination();
@@ -264,24 +274,53 @@ bool Object::move(const Coordinate &dest, bool do_attack)
 	this->setDestination(next_pos);
 	this->setState(ObjectState::Moving, true);
 	
+	this->setAngle(this->movement_start_point.calculateAngle(this->destination));
+	
+	return true;
+}
+
+bool Object::move(const Coordinate &dest, bool do_attack)
+{
+	Coordinate dest2(dest);
+	dest2.addX(-(this->getWidth() / 2));
+	dest2.addY(-(this->getHeight() / 2));
+	
+	return this->move_notAligned(dest2, do_attack);
+}
+
+
+Coordinate Object::calculateDestination_TargetedMoving()
+{
+	Object *target = this->getMovementTarget();
+	float min_dist = this->getMovement_MinimumDistanceToTarget();
+	
+	// TODO: implement this
+	
+	return target->getPosition();
+}
+
+bool Object::move(Object *target, float minimum_distance, bool do_attack)
+{
+	if(!this->canMove())
+		return false;
+	
+	this->automatically_attack = do_attack;
+	this->setMovementTarget(target, minimum_distance);
+	this->setFinalDestination(Coordinate(-1.0, -1.0)); // not necessary; our final destination is `target'
+	this->setDestination(this->calculateDestination_TargetedMoving());
+	this->setState(ObjectState::Moving, true);
+	
 	float angle = this->movement_start_point.calculateAngle(this->destination);
 	this->setAngle(angle);
 	
 	return true;
 }
 
-bool Object::move_centerAligned(const Coordinate &dest, bool do_attack)
-{
-	Coordinate dest2(dest);
-	dest2.addX(-(this->getWidth() / 2));
-	dest2.addY(-(this->getHeight() / 2));
-	
-	return this->move(dest2, do_attack);
-}
-
 void Object::stopMoving()
 {
 	this->setState(ObjectState::Moving, false);
+	this->setMovementTarget(NULL);
+	
 	this->setFinalDestination(Coordinate(0.0, 0.0)); // not necessary
 	this->setDestination(Coordinate(0.0, 0.0)); // not necessary
 	this->setMovementStartPoint(Coordinate(0.0, 0.0)); // not necessary
@@ -498,7 +537,8 @@ bool Object::doAttack(float time)
 	{
 		#if 1
 		this->setState(ObjectState::Attacking, false);
-		this->move(where_to_move);
+		//this->move(where_to_move);
+		this->move(target);
 		#else
 		this->stopAttacking();
 		fprintf(stderr, "Attack stopped\n");
@@ -520,13 +560,17 @@ bool Object::attack(Object *target)
 		return false;
 	if(target->isInvincible())
 		return false;
+	float range = this->getNetAttackRange();
 	
 	this->setAttackTarget(target);
-	Coordinate where_to_move;
-	if(this->checkMinDistance(target, this->getNetAttackRange(), &where_to_move) == false)
+	if(this->checkMinDistance(target, range, NULL) == false)
 	{
 		if(this->canMove())
-			this->move(where_to_move);
+		{
+			//this->move(where_to_move);
+			this->move(target);
+			this->setMovement_MinimumDistanceToTarget(range);
+		}
 		else
 		{
 			this->setAttackTarget(NULL);
@@ -547,17 +591,21 @@ bool Object::cmd_attack(Object *target)
 	return this->attack(target);
 }
 
+bool Object::cmd_move_notAligned(const Coordinate &dest, bool do_attack)
+{
+	this->stopAttacking();
+	return this->move_notAligned(dest, do_attack);
+}
 bool Object::cmd_move(const Coordinate &dest, bool do_attack)
 {
 	this->stopAttacking();
 	return this->move(dest, do_attack);
 }
-bool Object::cmd_move_centerAligned(const Coordinate &dest, bool do_attack)
+bool Object::cmd_move(Object *target, float minimum_distance, bool do_attack)
 {
 	this->stopAttacking();
-	return this->move_centerAligned(dest, do_attack);
+	return this->move(target, minimum_distance, do_attack);
 }
-
 
 
 

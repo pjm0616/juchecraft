@@ -21,6 +21,8 @@ public:
 	void run();
 	void test_tmp1(); void test_tmp2(); // 디버깅&테스트용
 	
+	// adds/removes an object.
+	// DO NOT call this function while iterating ObjectList.
 	Object *addObject(Object *obj) { return this->objects.addObject(obj); }
 	int removeObject(Object *obj) { return this->objects.removeObject(obj); }
 	

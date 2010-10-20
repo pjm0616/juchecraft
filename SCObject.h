@@ -83,10 +83,13 @@ public:
 	
 	/* Movement */
 	// 공격, 정찰 등의 명령이 실행되었다면 stopAttack(), stopPatrol() 등을 호출 한 후 이동 함수 호출
+	bool move_notAligned(const Coordinate &dest, bool do_attack = false);
 	bool move(const Coordinate &dest, bool do_attack = false);
-	bool move_centerAligned(const Coordinate &dest, bool do_attack = false);
+	bool move(Object *target, float minumum_distance = 0.0, bool do_attack = false);
+	
+	bool cmd_move_notAligned(const Coordinate &dest, bool do_attack = false);
 	bool cmd_move(const Coordinate &dest, bool do_attack = false);
-	bool cmd_move_centerAligned(const Coordinate &dest, bool do_attack = false);
+	bool cmd_move(Object *target, float minumum_distance = 0.0, bool do_attack = false);
 	
 	/* Attack */
 	bool attack(Object *target);
@@ -175,14 +178,19 @@ private:
 	void detachFromOwner();
 	
 	/* Movement related */
-	Coordinate getMovementDelta(float time);
+	// only called my setMovementTarget
+	void setMovement_MinimumDistanceToTarget(float distance) { this->movement_min_distance_to_target = distance; }
+	float getMovement_MinimumDistanceToTarget() const { return this->movement_min_distance_to_target; }
+	void setMovementTarget(Object *target, float minimum_distance = 0.0)
+		{ this->movement_target = target; this->setMovement_MinimumDistanceToTarget(minimum_distance); }
+	Object *getMovementTarget() const { return this->movement_target; }
 	void setMovementStartPoint(const Coordinate &pos) { this->movement_start_point = pos; }
 	const Coordinate &getMovementStartPoint() const { return this->movement_start_point; }
+	
+	Coordinate calculateDestination_TargetedMoving();
+	Coordinate calculateMovementSpeed(float time);
 	bool doMovement(float time);
 	void stopMoving();
-	
-	/* Object owner/state/position etc. */
-	void setAngle(float angle) { this->angle = angle; }
 	
 	/* Attack related */
 	void setAttackTarget(Object *target) { this->attack_target = target; }
@@ -193,6 +201,9 @@ private:
 	bool checkMinDistance(Object *target, float min_distance, Coordinate *where_to_move);
 	bool doAttack(float time);
 	void stopAttacking();
+	
+	/* Object owner/state/position etc. */
+	void setAngle(float angle) { this->angle = angle; }
 	
 	/* Object owner/state/position etc. */
 	Game *game;
@@ -211,8 +222,14 @@ private:
 	/* Movement related */
 	Coordinate movement_start_point, destination, final_destination;
 	bool automatically_attack;
+	// if target is set, object moves to target. is target is not set, object moves to coordinate.
+	Object *movement_target;
+	// if movement_target is set and movement_min_distance_to_target is set, 
+	//		object moves to movement_target.getPosition(), but keeps distance `min. movement_min_distance_to_target' to target.
+	float movement_min_distance_to_target; // TODO: implement this
 	
 	/* Attack related */
+	// if(this->isMoving() && this->getAttackTarget()) then this object is moving to attack target
 	Object *attack_target; // not null if attack target is set.
 	
 	/////////////////////////////////////////////////////////////////////////

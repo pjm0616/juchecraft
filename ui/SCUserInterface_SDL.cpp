@@ -418,11 +418,11 @@ void UserInterface_SDL::processFrame()
 					{
 						x -= 8;
 						y -= 12;
-						it->get()->move(Coordinate(x, y));
+						it->get()->move_notAligned(Coordinate(x, y));
 					}
 					else
 					#endif
-					it->get()->cmd_move_centerAligned(Coordinate(x, y));
+					it->get()->cmd_move(Coordinate(x, y));
 				
 					//fprintf(stderr, "name:%s\n", it->get()->getObjectName());
 				}
@@ -433,7 +433,9 @@ void UserInterface_SDL::processFrame()
 					//int x = this->gamescr_left_pos + ev.button.x;
 					//int y = this->gamescr_top_pos + ev.button.y;
 					SC::ObjectList::iterator it2 = this->game->getObjectList().begin(); ++it2;
+					
 					it->get()->cmd_attack(it2->get());
+					//it->get()->cmd_move(it2->get());
 				}
 			}
 			break;

@@ -46,10 +46,29 @@ double Game::getTime() const
 
 void Game::processObjects()
 {
+#if 0
 	for(ObjectList::iterator it = this->objects.begin(); it != this->objects.end(); ++it)
 	{
 		it->get()->processFrame();
 	}
+#else
+	this->objects.resetIteratorChecker();
+	for(ObjectList::const_iterator it = this->objects.begin(); 
+		it != this->objects.end(); )
+	{
+		Object *obj = it->get();
+		obj->processFrame();
+		if(this->objects.isIteratorInvalidated())
+		{
+			// FIXME: this is very inefficient
+			// start over
+			it = this->objects.begin();
+			this->objects.resetIteratorChecker();
+		}
+		else
+			++it;
+	}
+#endif
 }
 
 void Game::run()
@@ -111,6 +130,7 @@ void Game::test_tmp1()
 	o->setObjectMovingSpeedBonusM(1.0);
 	o->move(Coordinate(210, 300));
 	
+	#if 0
 	for(int i = 0; i < 10; i++)
 	{
 		o = this->addObject(new Objects::Resources::MineralField(this));
@@ -121,6 +141,7 @@ void Game::test_tmp1()
 		o = this->addObject(new Objects::Resources::MineralField(this));
 		o->setPosition(10 + i*32, 270 + 32*3);
 	}
+	#endif
 	
 	o = this->addObject(new Objects::Buildings::Juche_RodongCorrectionalFacility(this));
 	o->changeOwner(&Player::Players[1]);

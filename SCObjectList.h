@@ -15,7 +15,11 @@ public:
 	typedef std::list<std::tr1::shared_ptr<Object> >::reverse_iterator reverse_iterator;
 	typedef std::list<std::tr1::shared_ptr<Object> >::const_reverse_iterator const_reverse_iterator;
 	
-	ObjectList(Game &game) :game(game) {}
+	ObjectList(Game &game)
+		:game(game), 
+		iterator_invalidated(false)
+	{
+	}
 	~ObjectList()
 	{
 		this->removeAllObjects();
@@ -24,6 +28,9 @@ public:
 	Object *addObject(Object *obj);
 	int removeObject(Object *obj);
 	void removeAllObjects();
+	
+	iterator find(Object *obj);
+	const_iterator find(Object *obj) const;
 	
 	iterator begin() { return this->objects.begin(); }
 	const_iterator begin() const { return this->objects.begin(); }
@@ -35,9 +42,17 @@ public:
 	reverse_iterator rend() { return this->objects.rend(); }
 	const_reverse_iterator rend() const { return this->objects.rend(); }
 	
+	// returns true if iterator has been invalidated by adding/removing objects.
+	bool isIteratorInvalidated() const { return this->iterator_invalidated; }
+	void resetIteratorChecker() { this->iterator_invalidated = false; }
+	
 private:
+	void setIteratorAsInvalidated() { this->iterator_invalidated = true; }
+			
 	Game &game;
 	std::list<std::tr1::shared_ptr<Object> > objects;
+	
+	bool iterator_invalidated;
 };
 
 

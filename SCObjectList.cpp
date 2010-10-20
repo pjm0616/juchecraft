@@ -5,6 +5,7 @@
 
 #include <tr1/memory>
 #include <list>
+#include <algorithm>
 
 #include "SCCoordinate.h"
 #include "SCPlayer.h"
@@ -18,6 +19,7 @@ Object *ObjectList::addObject(Object *obj)
 {
 	obj->init();
 	this->objects.push_back(std::tr1::shared_ptr<Object>(obj));
+	this->setIteratorAsInvalidated();
 	return obj;
 }
 
@@ -37,6 +39,8 @@ int ObjectList::removeObject(Object *obj)
 		else
 			++it;
 	}
+	
+	this->setIteratorAsInvalidated();
 	return nremoved;
 }
 
@@ -49,6 +53,19 @@ void ObjectList::removeAllObjects()
 		this->objects.erase(it++);
 	}
 }
+
+
+ObjectList::iterator ObjectList::find(Object *obj)
+{
+	return std::find(this->begin(), this->end(), std::tr1::shared_ptr<Object>(obj));
+}
+
+ObjectList::const_iterator ObjectList::find(Object *obj) const
+{
+	return std::find(this->begin(), this->end(), std::tr1::shared_ptr<Object>(obj));
+}
+
+
 
 
 
