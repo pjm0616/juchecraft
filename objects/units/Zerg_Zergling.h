@@ -21,7 +21,7 @@ public:
 		this->race_id = RaceId::Zerg;
 		
 		this->width = 16;
-		this->height = 6;
+		this->height = 16;
 		this->max_hp = 50;
 		
 		this->supplies_in_use = 1;
