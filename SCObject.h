@@ -18,6 +18,7 @@ namespace ObjectType
 }
 typedef unsigned int ObjectType_t;
 
+// *Current* object state
 namespace ObjectState
 {
 	enum
@@ -31,7 +32,7 @@ namespace ObjectState
 		Hallucinated = 16, 
 		
 		Moving = 64, 
-		Attacking = 128, 
+		Attacking = 128, // does not include pending attack
 	};
 }
 typedef unsigned int ObjectState_t;
@@ -81,11 +82,15 @@ public:
 	float calculateAngle(const Object *dest) const { return this->calculateAngle(dest->getPosition()); }
 	
 	/* Movement */
-	void move(const Coordinate &dest, bool do_attack = false);
-	void move_centerAligned(const Coordinate &dest, bool do_attack = false);
+	// 공격, 정찰 등의 명령이 실행되었다면 stopAttack(), stopPatrol() 등을 호출 한 후 이동 함수 호출
+	bool move(const Coordinate &dest, bool do_attack = false);
+	bool move_centerAligned(const Coordinate &dest, bool do_attack = false);
+	bool cmd_move(const Coordinate &dest, bool do_attack = false);
+	bool cmd_move_centerAligned(const Coordinate &dest, bool do_attack = false);
 	
 	/* Attack */
-	void attack(Object *dest);
+	bool attack(Object *target);
+	bool cmd_attack(Object *target);
 	
 	/* Unit state */
 	bool isBurrowed() const { return (this->state & ObjectState::Burrowed); }
@@ -96,6 +101,10 @@ public:
 	bool isMoving() const { return (this->state & ObjectState::Moving); }
 	bool isStopped() const { return !this->isMoving(); }
 	bool isAttacking() const { return (this->state & ObjectState::Attacking); }
+	
+	/* unit abilities */
+	bool canMove() const { return (this->getNetMovingSpeed() != 0.0); }
+	bool canAttack() const { return (this->getNetDamage() != 0.0); }
 	
 	/* Variable object attributes */
 	void setHP(float hp) { this->hit_point = hp; }
@@ -150,7 +159,8 @@ public:
 	float getAttackSpeedBonusM() const { return this->getObjectAttackSpeedBonusM();}
 	
 protected:
-	void setState(ObjectState_t state, bool onoff = true);
+	void setState(ObjectState_t state) { this->state = state; } // FIXME: change name
+	void setState(ObjectState_t state, bool onoff);
 	
 	/* Movement */
 	void setFinalDestination(const Coordinate &pos) { this->final_destination = pos; }
@@ -165,11 +175,11 @@ private:
 	void detachFromOwner();
 	
 	/* Movement related */
-	Coordinate getMovementDeltaOld(float time) const;
 	Coordinate getMovementDelta(float time);
 	void setMovementStartPoint(const Coordinate &pos) { this->movement_start_point = pos; }
 	const Coordinate &getMovementStartPoint() const { return this->movement_start_point; }
 	bool doMovement(float time);
+	void stopMoving();
 	
 	/* Object owner/state/position etc. */
 	void setAngle(float angle) { this->angle = angle; }
@@ -179,9 +189,10 @@ private:
 	Object *getAttackTarget() const { return this->attack_target; }
 	// this와 dest간의 거리가 min_distance 이하일 경우 return true
 	// 그렇지 않을 경우 where_to_move에 이동해야할 위치를 저장한 후 return false
-	bool checkMinDistance(Object *dest, float min_distance, Coordinate *where_to_move);
+	bool checkMinDistanceOld(Object *target, float min_distance, Coordinate *where_to_move);
+	bool checkMinDistance(Object *target, float min_distance, Coordinate *where_to_move);
 	bool doAttack(float time);
-	void stopAttack();
+	void stopAttacking();
 	
 	/* Object owner/state/position etc. */
 	Game *game;
@@ -199,11 +210,10 @@ private:
 	
 	/* Movement related */
 	Coordinate movement_start_point, destination, final_destination;
-	float mov_y_err, mov_x_err;
 	bool automatically_attack;
 	
 	/* Attack related */
-	Object *attack_target;
+	Object *attack_target; // not null if attack target is set.
 	
 	/////////////////////////////////////////////////////////////////////////
 public: /* Constant object attributes */
@@ -217,6 +227,7 @@ public: /* Constant object attributes */
 	int getHeight() const { return this->height; }
 	void getSize(int *w, int *h) const { *w = this->getWidth(); *h = this->getHeight(); }
 	
+	ObjectState_t getInitialState() const { return this->initial_state; }
 	int getMaxHP() const { return this->max_hp; }
 	int getMaxEnergy() const { return this->max_energy; }
 	int getInitialResource() const { return this->initial_resource; }
@@ -237,6 +248,7 @@ protected: /* Constant object attributes */
 	const char *object_id_name, *object_name;
 	RaceId_t race_id;
 	
+	ObjectState_t initial_state;
 	int width, height;
 	int max_hp, max_energy;
 	int initial_resource;

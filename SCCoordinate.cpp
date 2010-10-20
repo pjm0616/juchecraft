@@ -67,6 +67,18 @@ float Coordinate::calculateAngle(const Coordinate &dest) const
 	return angle;
 }
 
+float Coordinate::calculateDistance(const Coordinate &dest) const
+{
+	float dx = dest.getX() - this->getX();
+	float dy = dest.getY() - this->getY();
+	
+	return sqrt( dx*dx + dy*dy );
+}
+
+
+
+
+
 
 
 

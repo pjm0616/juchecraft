@@ -32,6 +32,7 @@ Object::Object(Game *game)
 	object_id_name("Object"), 
 	object_name("Object"), 
 	race_id(RaceId::None), 
+	initial_state(ObjectState::None), 
 	width(0), 
 	height(0), 
 	max_hp(-1), 
@@ -81,6 +82,7 @@ void Object::init()
 	this->setOwner(&Player::Players[Player::NeutralPlayer]);
 	this->attachToOwner();
 	
+	this->setState(this->getInitialState());
 	this->setHP(this->getMaxHP());
 	this->setEnergy(this->getMaxEnergy());
 	this->setResource(this->getInitialResource());
@@ -149,50 +151,8 @@ void Object::setDestination(const Coordinate &pos)
 {
 	this->setMovementStartPoint(this->getPosition());
 	this->destination = pos;
-	
-	this->mov_y_err = 0.0;
-	this->mov_x_err = 0.0;
 }
 
-Coordinate Object::getMovementDeltaOld(float time) const
-{
-	float v = this->getNetMovingSpeed();
-	float dx = this->destination.getX() - this->getX();
-	float dy = this->destination.getY() - this->getY();
-	float abs_dx = fabs(dx), abs_dy = fabs(dy);
-	int int_dx = dx, int_dy = dy;
-	
-	if(dx == 0.0 && dy == 0.0) // already at the destination
-	{
-		return Coordinate(0.0, 0.0);
-	}
-	else if(dx == 0.0) // move vertically
-	{
-		return Coordinate(0.0, v * time * (int_dy<0.0 ? -1 : 1));
-	}
-	else if(dy == 0.0) // move horizontally
-	{
-		return Coordinate(v * time * (int_dx<0.0 ? -1 : 1), 0.0);
-	}
-	else // move diagonally
-	{
-		// Vx^2 + Vy^2 = V^2 ; Vy = (dy*Vx) / dx
-		// => Vx^2 + (dy*Vx/dx)^2 = V^2
-		// => (Vx^2)dx + (Vx^2)(dy^2) = (V^2)dx
-		// => (Vx^2)(dx + dy^2) = (V^2)dx
-		// => Vx^2 = (V^2)dx / (dx + dy^2)
-		// => Vx = sqrt((V^2)dx / (dx + dy^2))
-		
-		float v_x = std::sqrt( (v*v)*abs_dx / (abs_dx + (abs_dy*abs_dy)) );
-		float v_y = abs_dy*v_x / abs_dx;
-		if(dx < 0.0)
-			v_x = -v_x;
-		if(dy < 0.0)
-			v_y = -v_y;
-		
-		return Coordinate(v_x * time, v_y * time);
-	}
-}
 Coordinate Object::getMovementDelta(float time)
 {
 	float v = this->getNetMovingSpeed();
@@ -203,19 +163,15 @@ Coordinate Object::getMovementDelta(float time)
 	float x = this->getX();
 	float y = this->getY();
 	// 시작점 ~ 목적지
-	float tdx = destx - startx, abs_tdx = fabs(tdx);
-	float tdy = desty - starty, abs_tdy = fabs(tdy);
-	// 시작점 ~ 현재위치
-	float sdx = x - startx, abs_sdx = fabs(sdx);
-	float sdy = y - starty, abs_sdy = fabs(sdy);
+	float tdx = destx - startx;
+	float tdy = desty - starty;
 	// 현재위치 ~ 목적지
-	float dx = destx - x, abs_dx = fabs(dx);
-	float dy = desty - y, abs_dy = fabs(dy);
+	float dx = destx - x;
+	float dy = desty - y;
 	
 	// compare signedness of total_dx and dx.
 	bool is_xdir_finished = (tdx*dx <= 0);
 	bool is_ydir_finished = (tdy*dy <= 0);
-	
 	if(is_xdir_finished && is_ydir_finished) // already at the destination
 	{
 		return Coordinate(0.0, 0.0);
@@ -236,70 +192,14 @@ Coordinate Object::getMovementDelta(float time)
 	}
 	else // move diagonally
 	{
-		#if 0
-			// Vx^2 + Vy^2 = V^2 ; Vy = (dy*Vx) / dx
-			// => Vx^2 + (dy*Vx/dx)^2 = V^2
-			// => (Vx^2)dx + (Vx^2)(dy^2) = (V^2)dx
-			// => (Vx^2)(dx + dy^2) = (V^2)dx
-			// => Vx^2 = (V^2)dx / (dx + dy^2)
-			// => Vx = sqrt((V^2)dx / (dx + dy^2))
-		
-			#if 0
-			float vx = std::sqrt( (v*v)*abs_dx / (abs_dx + (abs_dy*abs_dy)) );
-			float vy = abs_dy*vx / abs_dx;
-			#else
-			float vx = std::sqrt( (v*v)*abs_tdx / (abs_tdx + (abs_tdy*abs_tdy)) );
-			float vy = abs_tdy*vx / abs_tdx;
-			#endif
-			if(dx < 0.0)
-				vx = -vx;
-			if(dy < 0.0)
-				vy = -vy;
-		#else
-			float distance = sqrt( abs_dx*abs_dx + abs_dy * abs_dy );
-			float t = distance / v;
-			float vx = dx / t, vy = dy / t;
-		#endif
+		float distance = this->getPosition().calculateDistance(this->getDestination());
+		float t = distance / v;
+		float vx = dx / t, vy = dy / t;
 		
 		//fprintf(stderr, "D2: v: %f, dist: %f, t: %f, dx: %f, vx: %f, dy: %f, vy: %f\n", v, distance, t, dx, vx, dy, vy);
-		//fprintf(stderr, "D: x: %f\tdx: %f\tvx: %f\tvx*t: %f\ty: %f\tdy: %f\tvy: %f\tvy*t: %f\n", x, dx, vx, vx*time, y, dy, vy, vy*time);
-		//fprintf(stderr, "D: v: %.02f  dx: %f vx: %f vx*t: %f\tdy: %f vy: %f vy*t: %f\tspeed: %.02f tspeed: %.02f\n", 
-		//					   v, 		  dx, 	 vx, 	  vx*time,dy, 	 vy,	  vy*time,		 sqrt(vx*vx + vy*vy), v);
 		return Coordinate(vx * time, vy * time);
-		
-		float integral_vx, fraction_vx;
-		float integral_vy, fraction_vy;
-		fraction_vx = modff(vx, &integral_vx);
-		fraction_vy = modff(vy, &integral_vy);
-		
-		#if 1
-			this->mov_y_err += vx;
-			this->mov_x_err += vy;
-			
-			
-		#else
-		float xerr1 = this->mov_x_err, yerr1=this->mov_y_err;
-		this->mov_x_err += fraction_vx;
-		this->mov_y_err += fraction_vy;
-		float xerr2 = this->mov_x_err, yerr2=this->mov_y_err;
-		if(this->mov_x_err >= 0.5)
-		{
-			integral_vx++;
-			this->mov_x_err -= 1.0;
-		}
-		if(this->mov_y_err >= 0.5)
-		{
-			integral_vy++;
-			this->mov_y_err -= 1.0;
-		}
-		fprintf(stderr, "vx: %f  \t  xerr: %f -> %f -> %f  \t  vy: %f  \t  yerr: %f -> %f -> %f  \t  \n", vx, xerr1, xerr2, this->mov_x_err, vy, yerr1, yerr2, this->mov_y_err);
-		
-		return Coordinate(integral_vx * time, integral_vy * time);
-		#endif
 	}
 }
-
-
 
 bool Object::doMovement(float time)
 {
@@ -317,7 +217,7 @@ bool Object::doMovement(float time)
 	if((startx >= destx && newx <= destx) // moving left
 		|| (startx <= destx && newx >= destx)) // moving right
 	{
-		//fprintf(stderr, "X finished\n");
+		//fprintf(stderr, "X dir finished\n");
 		this->setX(destx);
 		nfinished++;
 	}
@@ -329,7 +229,7 @@ bool Object::doMovement(float time)
 	if((starty >= desty && newy <= desty) // moving up
 		|| (starty <= desty && newy >= desty)) // moving down
 	{
-		//fprintf(stderr, "Y finished\n");
+		//fprintf(stderr, "Y dir finished\n");
 		this->setY(desty);
 		nfinished++;
 	}
@@ -349,8 +249,11 @@ bool Object::doMovement(float time)
 
 
 
-void Object::move(const Coordinate &dest, bool do_attack)
+bool Object::move(const Coordinate &dest, bool do_attack)
 {
+	if(!this->canMove())
+		return false;
+	
 	this->automatically_attack = do_attack;
 	this->setFinalDestination(dest);
 	#if 0
@@ -359,19 +262,29 @@ void Object::move(const Coordinate &dest, bool do_attack)
 	Coordinate next_pos = dest;
 	#endif
 	this->setDestination(next_pos);
-	this->setState(ObjectState::Moving);
+	this->setState(ObjectState::Moving, true);
 	
 	float angle = this->movement_start_point.calculateAngle(this->destination);
 	this->setAngle(angle);
+	
+	return true;
 }
 
-void Object::move_centerAligned(const Coordinate &dest, bool do_attack)
+bool Object::move_centerAligned(const Coordinate &dest, bool do_attack)
 {
 	Coordinate dest2(dest);
 	dest2.addX(-(this->getWidth() / 2));
 	dest2.addY(-(this->getHeight() / 2));
 	
-	this->move(dest2, do_attack);
+	return this->move(dest2, do_attack);
+}
+
+void Object::stopMoving()
+{
+	this->setState(ObjectState::Moving, false);
+	this->setFinalDestination(Coordinate(0.0, 0.0)); // not necessary
+	this->setDestination(Coordinate(0.0, 0.0)); // not necessary
+	this->setMovementStartPoint(Coordinate(0.0, 0.0)); // not necessary
 }
 
 void Object::processFrame()
@@ -385,11 +298,7 @@ void Object::processFrame()
 		#if 0
 			if(this->getPosition() == this->getFinalDestination())
 			{
-				this->setState(ObjectState::Moving, false);
-				
-				this->setFinalDestination(Coordinate(0.0, 0.0)); // not necessary
-				this->setDestination(Coordinate(0.0, 0.0)); // not necessary
-				this->setMovementStartPoint(Coordinate(0.0, 0.0)); // not necessary
+				this->stopMoving();
 			}
 			else
 			{
@@ -398,9 +307,7 @@ void Object::processFrame()
 			}
 		#else
 			
-			this->setFinalDestination(Coordinate(0.0, 0.0)); // not necessary
-			this->setDestination(Coordinate(0.0, 0.0)); // not necessary
-			this->setMovementStartPoint(Coordinate(0.0, 0.0)); // not necessary
+			this->stopMoving();
 		#endif
 			
 			if(this->getAttackTarget() != NULL)
@@ -431,14 +338,14 @@ static float calculateDistance(float x1, float y1, float x2, float y2)
 // 나와 대상간의 각도를 구한 후
 // 그걸로 최단거리가 되는 방향을 구한 후
 // 최단거리는 한번만 계산함
-bool Object::checkMinDistance(Object *dest, float min_distance, Coordinate *where_to_move)
+bool Object::checkMinDistanceOld(Object *target, float min_distance, Coordinate *where_to_move)
 {
 	float my_xarr[4], de_xarr[4]; // 0, 1 = left, right
 	float my_yarr[4], de_yarr[4]; // 0, 1 = top, bottom
 	my_xarr[0] = this->getX(); my_xarr[1] = this->getX() + this->getWidth();
 	my_yarr[0] = this->getY(), my_yarr[1] = this->getY() + this->getHeight();
-	de_xarr[0] = dest->getX(); de_xarr[1] = dest->getX() + dest->getWidth();
-	de_yarr[0] = dest->getY(), de_yarr[1] = dest->getY() + dest->getHeight();
+	de_xarr[0] = target->getX(); de_xarr[1] = target->getX() + target->getWidth();
+	de_yarr[0] = target->getY(), de_yarr[1] = target->getY() + target->getHeight();
 	
 	float distances[16];
 	int idx = 0;
@@ -493,11 +400,64 @@ bool Object::checkMinDistance(Object *dest, float min_distance, Coordinate *wher
 		
 		// 0, 1, 2, 3 = tl, tr, bl, br
 		int me_pnt = min / 4;
-		int dest_pnt = min % 4;
+		int target_pnt = min % 4;
 		
 		x = y = 0.0; // FIXME
 		
 		where_to_move->set(x, y);
+		return false;
+	}
+}
+
+bool Object::checkMinDistance(Object *target, float min_distance, Coordinate *where_to_move)
+{
+	float x = this->getX(), w = this->getWidth(), target_x = target->getX(), target_w = target->getWidth();
+	float y = this->getY(), h = this->getHeight(), target_y = target->getY(), target_h = target->getHeight();
+	float xc = x + w/2, target_xc = target_x + target_w/2;
+	float yc = y + h/2, target_yc = target_y + target_h/2;
+	float dxc = target_xc - xc;
+	float dyc = target_yc - yc;
+	
+	Coordinate me_pnt;
+	Coordinate target_pnt;
+	if(dxc < 0) // left
+	{
+		if(dyc < 0) // top
+		{
+			me_pnt.set(x, y); // top left
+			target_pnt.set(target_x + target_w, target_y + target_h); // bottom right
+		}
+		else // bottom
+		{
+			me_pnt.set(x, y + h); // bottom left
+			target_pnt.set(target_x + target_h, target_y); // top right
+		}
+	}
+	else // right
+	{
+		if(dyc < 0) // top
+		{
+			me_pnt.set(x + w, y); // top right
+			target_pnt.set(target_x, target_y + target_h); // bottom left
+		}
+		else // bottom
+		{
+			me_pnt.set(x + w, y + h); // bottom right
+			target_pnt.set(target_x, target_y); // top left
+		}
+	}
+	
+	float distance = me_pnt.calculateDistance(target_pnt);
+	if(distance <= min_distance)
+	{
+		return true;
+	}
+	else
+	{
+		if(where_to_move)
+		{
+			where_to_move->set(target->getPosition()); // FIXME!!
+		}
 		return false;
 	}
 }
@@ -509,51 +469,94 @@ bool Object::doAttack(float time)
 	assert(this->getAttackTarget() != NULL);
 	
 	Object *target = this->getAttackTarget();
-	if(this->checkMinDistance(target, this->getNetAttackRange(), NULL))
+	Coordinate where_to_move;
+	if(this->checkMinDistance(target, this->getNetAttackRange(), &where_to_move))
 	{
 		float t_damage = this->getNetDamage();
 		float d_armor = target->getNetArmor();
-		
 		float net_damage = t_damage - d_armor;
+		
+		{ // debug
+			float prev_hp = target->getHP();
+			//fprintf(stderr, "Attack: damage: %f, armor: %f, netdamage: %f, hp: %f -> %f\n", 
+			//	t_damage, d_armor, net_damage, prev_hp, prev_hp - net_damage);
+		}
+		
 		target->decreaseHP(net_damage);
+		float hp = target->getHP();
+		if(hp <= 0)
+		{
+			this->stopAttacking();
+			// FIXME
+			//target->kill();
+			this->game->removeObject(target);
+		}
 		
 		return true;
 	}
 	else
 	{
-		#if 0
+		#if 1
 		this->setState(ObjectState::Attacking, false);
 		this->move(where_to_move);
 		#else
-		this->stopAttack();
+		this->stopAttacking();
+		fprintf(stderr, "Attack stopped\n");
 		#endif
 		
 		return false;
 	}
 }
 
-void Object::stopAttack()
+void Object::stopAttacking()
 {
 	this->setAttackTarget(NULL);
 	this->setState(ObjectState::Attacking, false);
 }
 
-void Object::attack(Object *dest)
+bool Object::attack(Object *target)
 {
-	Coordinate where_to_move;
+	if(!this->canAttack())
+		return false;
+	if(target->isInvincible())
+		return false;
 	
-	this->setAttackTarget(dest);
-	if(this->checkMinDistance(dest, this->getNetAttackRange(), &where_to_move) == false)
+	this->setAttackTarget(target);
+	Coordinate where_to_move;
+	if(this->checkMinDistance(target, this->getNetAttackRange(), &where_to_move) == false)
 	{
-		this->move(where_to_move);
+		if(this->canMove())
+			this->move(where_to_move);
+		else
+		{
+			this->setAttackTarget(NULL);
+			return false;
+		}
 	}
 	else
 	{
 		this->setState(ObjectState::Attacking, true);
 	}
+	
+	return true;
 }
 
+bool Object::cmd_attack(Object *target)
+{
+	this->stopMoving();
+	return this->attack(target);
+}
 
+bool Object::cmd_move(const Coordinate &dest, bool do_attack)
+{
+	this->stopAttacking();
+	return this->move(dest, do_attack);
+}
+bool Object::cmd_move_centerAligned(const Coordinate &dest, bool do_attack)
+{
+	this->stopAttacking();
+	return this->move_centerAligned(dest, do_attack);
+}
 
 
 

@@ -19,6 +19,7 @@ public:
 		this->object_id_name = "Resource_MineralField";
 		this->object_name = "Mineral Field";
 		
+		this->initial_state = ObjectState::Invincible;
 		this->width = 32;
 		this->height = 32;
 		

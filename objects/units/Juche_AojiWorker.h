@@ -22,6 +22,7 @@ public:
 		
 		this->width = 23;
 		this->height = 22;
+		this->max_hp = 50;
 		
 		this->supplies_in_use = 1;
 		this->damage = 6.0;

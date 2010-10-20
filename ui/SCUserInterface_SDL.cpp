@@ -404,23 +404,37 @@ void UserInterface_SDL::processFrame()
 			break;
 		case SDL_MOUSEBUTTONDOWN:
 			// ev.button.
-			if(ev.button.button == 3 && ev.button.state == SDL_PRESSED)
+			if(ev.button.state == SDL_PRESSED)
 			{
-				//fprintf(stderr, "move: %d, %d\n", ev.button.x, ev.button.y);
-				SC::ObjectList::iterator it = this->game->getObjectList().begin();
-				int x = this->gamescr_left_pos + ev.button.x;
-				int y = this->gamescr_top_pos + ev.button.y;
-				
-				if(0)
+				if(ev.button.button == 3)
 				{
-					x -= 8;
-					y -= 12;
-					it->get()->move(Coordinate(x, y));
-				}
-				else
-				it->get()->move_centerAligned(Coordinate(x, y));
+					//fprintf(stderr, "move: %d, %d\n", ev.button.x, ev.button.y);
+					SC::ObjectList::iterator it = this->game->getObjectList().begin();
+					int x = this->gamescr_left_pos + ev.button.x;
+					int y = this->gamescr_top_pos + ev.button.y;
 				
-				//fprintf(stderr, "name:%s\n", it->get()->getObjectName());
+					#if 0
+					if(0)
+					{
+						x -= 8;
+						y -= 12;
+						it->get()->move(Coordinate(x, y));
+					}
+					else
+					#endif
+					it->get()->cmd_move_centerAligned(Coordinate(x, y));
+				
+					//fprintf(stderr, "name:%s\n", it->get()->getObjectName());
+				}
+				else if(ev.button.button == 1)
+				{
+					//fprintf(stderr, "attack: %d, %d\n", ev.button.x, ev.button.y);
+					SC::ObjectList::iterator it = this->game->getObjectList().begin();
+					//int x = this->gamescr_left_pos + ev.button.x;
+					//int y = this->gamescr_top_pos + ev.button.y;
+					SC::ObjectList::iterator it2 = this->game->getObjectList().begin(); ++it2;
+					it->get()->cmd_attack(it2->get());
+				}
 			}
 			break;
 		case SDL_MOUSEBUTTONUP:

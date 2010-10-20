@@ -108,7 +108,7 @@ void Game::test_tmp1()
 	o = this->addObject(new Objects::Units::Juche_AojiWorker(this));
 	o->changeOwner(&Player::Players[1]);
 	o->setPosition(200, 100);
-	o->setObjectMovingSpeedBonusM(6.0);
+	o->setObjectMovingSpeedBonusM(1.0);
 	o->move(Coordinate(210, 300));
 	
 	for(int i = 0; i < 10; i++)

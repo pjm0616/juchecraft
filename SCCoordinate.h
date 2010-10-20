@@ -46,6 +46,7 @@ public:
 	}
 	
 	float calculateAngle(const Coordinate &dest) const;
+	float calculateDistance(const Coordinate &dest) const;
 	
 private:
 	float x, y;
