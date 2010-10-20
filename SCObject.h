@@ -91,9 +91,15 @@ public:
 	bool cmd_move(const Coordinate &dest, bool do_attack = false);
 	bool cmd_move(Object *target, float minumum_distance = 0.0, bool do_attack = false);
 	
+	float getMovingSeconds() const { return this->moving_secs; } // 이동중인 시간
+	
 	/* Attack */
 	bool attack(Object *target);
 	bool cmd_attack(Object *target);
+	
+	Object *getAttackTarget() const { return this->attack_target; }
+	float getAttackingSeconds() const { return this->attacking_secs; } // 공격중인 시간
+	float getLastAttackTime() const { return this->last_attack_time; } // 공격중인 시간을 기준으로 마지막 공격 시각
 	
 	/* Unit state */
 	bool isBurrowed() const { return (this->state & ObjectState::Burrowed); }
@@ -181,7 +187,6 @@ private:
 	// only called my setMovementTarget
 	void setMovingSeconds(float time) { this->moving_secs = time; }
 	void increaseMovingSeconds(float time) { this->moving_secs += time; }
-	float getMovingSeconds() const { return this->moving_secs; }
 	void setMovement_MinimumDistanceToTarget(float distance) { this->movement_min_distance_to_target = distance; }
 	float getMovement_MinimumDistanceToTarget() const { return this->movement_min_distance_to_target; }
 	void setMovementTarget(Object *target, float minimum_distance = 0.0)
@@ -197,12 +202,9 @@ private:
 	
 	/* Attack related */
 	void setAttackTarget(Object *target) { this->attack_target = target; }
-	Object *getAttackTarget() const { return this->attack_target; }
 	void setAttackingSeconds(float time) { this->attacking_secs = time; }
 	void increaseAttackingSeconds(float time) { this->attacking_secs += time; }
-	float getAttackingSeconds() const { return this->attacking_secs; }
 	void setLastAttackTime(float time) { this->last_attack_time = time; }
-	float getLastAttackTime() const { return this->last_attack_time; }
 	// this와 dest간의 거리가 min_distance 이하일 경우 return true
 	// 그렇지 않을 경우 where_to_move에 이동해야할 위치를 저장한 후 return false
 	bool checkMinDistanceOld(Object *target, float min_distance, Coordinate *where_to_move);

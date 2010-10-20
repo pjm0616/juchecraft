@@ -684,7 +684,18 @@ void UserInterface_SDL::drawObject(Object &obj)
 			
 			row = convertAngleToDirection(obj.getAngle());
 			if(obj.isMoving())
-				col = (lrand48()%(10-6))+6; // 6 ~ 10
+			{
+				col = (lrand48() % (10-6)) + 6; // 6 ~ 10
+			}
+			else if(obj.isAttacking())
+			{
+				//col = (lrand48() % 2) + 2;
+				float attacktime = obj.getAttackingSeconds();
+				if((int)(attacktime*10) % 2 == 0)
+					col = 3;
+				else
+					col = 2;
+			}
 			
 			if(row == 34) // angle == 90deg
 				row = 0;
