@@ -295,8 +295,36 @@ SDL_Surface *render_grp_frame_flipped(grp_data_t *grpdata, int framenum, bool do
 	return sf;
 }
 
+// 유닛 색상을 비율에 따라 바꿔줌
+void replace_unit_colors(SDL_Surface *sf, Uint32 newcolor)
+{
+	//static const Uint32 orig_unit_colors[] = {0xde00de, 0x5b005b, 0xbd00bd, 0x9c009c, 0x7c007c, 0x190019, 0xff00ff, 0x3a003a};
+	Uint8 nc_r = (newcolor & 0xff0000) >> 16;
+	Uint8 nc_g = (newcolor & 0x00ff00) >> 8;
+	Uint8 nc_b = (newcolor & 0x0000ff) >> 0;
+	
+	for(int y = 0; y < sf->h; y++)
+	{
+		Uint32 *line = SDL_GetPixelPtr32(sf, 0, y);
+		for(int x = 0; x < sf->w; x++)
+		{
+			Uint8 r, g, b, a;
+			SDL_GetRGBA(line[x], sf->format, &r, &g, &b, &a);
+			if(r != 0 && g == 0 && r == b)
+			{
+				// 0xff:orig_r = player_[rgb]:rendered_[rgb]
+				Uint8 r2 = r * nc_r / 0xff;
+				Uint8 g2 = r * nc_g / 0xff;
+				Uint8 b2 = r * nc_b / 0xff;
+				line[x] = SDL_MapRGBA(sf->format, r2, g2, b2, a);
+			}
+		}
+	}
+}
+
 void render_grp_frame_to_surface(grp_data_t *grpdata, int framenum, SDL_Surface *dest_sf, int x, int y, 
-	int opt_align_w = -1, int opt_align_h = -1, bool do_hflip = false, bool do_yflip = false)
+	int opt_align_w = -1, int opt_align_h = -1, bool do_hflip = false, bool do_yflip = false, 
+	Uint32 new_unit_color = 0xffffffff)
 {
 	grp_frameheader_t *frame = grp_get_frame_info(grpdata, framenum);
 	
@@ -308,11 +336,15 @@ void render_grp_frame_to_surface(grp_data_t *grpdata, int framenum, SDL_Surface 
 	if(opt_align_h > 0)
 		dest_rect.y -= (frame->height - opt_align_h);
 	
+	if(new_unit_color != 0xffffffff)
+		replace_unit_colors(rmodel, new_unit_color);
+	
 	SDL_LockSurfaceIfNeeded(dest_sf);
 	SDL_BlitSurface(rmodel, &rmodel_rect, dest_sf, &dest_rect);
 	SDL_UnlockSurfaceIfNeeded(dest_sf);
 	SDL_FreeSurface(rmodel);
 }
+
 
 ///////
 
@@ -670,6 +702,7 @@ void UserInterface_SDL::drawObject(Object &obj)
 		grp_data_t *grpdata;
 		short framenum;
 		bool do_hflip = false;
+		Uint32 unit_color = owner->getPlayerColor();
 		
 		if(objid == SC::ObjectId::Terran_CommandCenter)
 		{
@@ -730,7 +763,7 @@ void UserInterface_SDL::drawObject(Object &obj)
 				int center_y = (grphdr->max_height/2 - 1) - frame->top;
 			}
 			
-			render_grp_frame_to_surface(grpdata, framenum, this->game_scr, x, y, 0, h, do_hflip, false);
+			render_grp_frame_to_surface(grpdata, framenum, this->game_scr, x, y, 0, h, do_hflip, false, unit_color);
 			#if 0
 			grp_frameheader_t *frame = grp_get_frame_info(grpdata, framenum);
 			
