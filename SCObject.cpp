@@ -212,7 +212,19 @@ bool Object::doMovement(float time)
 	Object *mvtarget = this->getMovementTarget();
 	if(mvtarget)
 	{
+	#if 0
 		this->destination.set(this->calculateDestination_TargetedMoving());
+	#else
+		float min_dist = this->getMovement_MinimumDistanceToTarget();
+		if(this->checkMinDistance(mvtarget, min_dist, NULL))
+		{
+			// FIXME
+			this->setState(ObjectState::Moving, false);
+			return true;
+		}
+		else
+			this->destination.set(this->calculateDestination_TargetedMoving());
+	#endif
 		this->setAngle(this->movement_start_point.calculateAngle(this->destination));
 	}
 	

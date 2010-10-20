@@ -121,8 +121,8 @@ void Game::test_tmp1()
 	o->changeOwner(&Player::Players[2]);
 	o->setPosition(40, 40);
 	o->setObjectMovingSpeedBonusM(4.0);
-	o->setObjectAttackSpeedBonusM(10.0);
-	o->setObjectDamageBonusM(5.0);
+	o->setObjectAttackSpeedBonusM(8.0);
+	o->setObjectDamageBonusM(2.0);
 	//o->move(Coordinate(480, 200));
 	//o->move(Coordinate(440, 80));
 	
