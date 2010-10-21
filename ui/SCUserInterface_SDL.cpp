@@ -379,27 +379,27 @@ UserInterface_SDL::UserInterface_SDL(Game *game)
 		throw new Exception("TTF_Init() failed");
 	
 	SDL_Surface *screen;
-	this->screen = SDL_SetVideoMode(640, 480, 32, SDL_SWSURFACE);
+	this->m_screen = SDL_SetVideoMode(640, 480, 32, SDL_SWSURFACE);
 	SDL_WM_SetCaption("주체크래프트", NULL);
 	SDL_ShowCursor(SDL_ENABLE);
 	
-	this->font = TTF_OpenFont("./res/ui/sdl/fonts/NanumGothic.ttf", this->getFontSize());
-	TTF_SetFontStyle(this->font, TTF_STYLE_NORMAL);
+	this->m_font = TTF_OpenFont("./res/ui/sdl/fonts/NanumGothic.ttf", this->getFontSize());
+	TTF_SetFontStyle(this->m_font, TTF_STYLE_NORMAL);
 	
 	// color format: 0x00RRGGBB
-	this->game_scr = SDL_CreateRGBSurface(SDL_SWSURFACE, this->game->getMapWidth(), this->game->getMapHeight(), 32, 0, 0, 0, 0);
+	this->m_game_scr = SDL_CreateRGBSurface(SDL_SWSURFACE, this->m_game->getMapWidth(), this->m_game->getMapHeight(), 32, 0, 0, 0, 0);
 	// color format: 0xAABBGGRR; 0xffBBGGRR
-	//this->game_scr = SDL_CreateRGBSurface(SDL_SWSURFACE, this->game->getMapWidth(), this->game->getMapHeight(), 32, 0xff, 0xff00, 0xff0000, 0xff000000);
+	//this->m_game_scr = SDL_CreateRGBSurface(SDL_SWSURFACE, this->m_game->getMapWidth(), this->m_game->getMapHeight(), 32, 0xff, 0xff00, 0xff0000, 0xff000000);
 	
-	this->gamescr_left_pos = 0;
-	this->gamescr_top_pos = 0;
+	this->m_gamescr_left_pos = 0;
+	this->m_gamescr_top_pos = 0;
 	
-	this->minimap_wnd = SDL_CreateRGBSurface(SDL_SWSURFACE, 128, 128, 32, 0xff, 0xff00, 0xff0000, 0xff000000);
-	this->unitstat_wnd = SDL_CreateRGBSurface(SDL_SWSURFACE, 128, 128, 32, 0xff, 0xff00, 0xff0000, 0xff000000);
-	this->buttons_wnd = SDL_CreateRGBSurface(SDL_SWSURFACE, 128, 128, 32, 0xff, 0xff00, 0xff0000, 0xff000000);
+	this->m_minimap_wnd = SDL_CreateRGBSurface(SDL_SWSURFACE, 128, 128, 32, 0xff, 0xff00, 0xff0000, 0xff000000);
+	this->m_unitstat_wnd = SDL_CreateRGBSurface(SDL_SWSURFACE, 128, 128, 32, 0xff, 0xff00, 0xff0000, 0xff000000);
+	this->m_buttons_wnd = SDL_CreateRGBSurface(SDL_SWSURFACE, 128, 128, 32, 0xff, 0xff00, 0xff0000, 0xff000000);
 	
 	// game resources;
-	this->sf_console = IMG_Load("./res/ui/sdl/imgs/tconsole.png");
+	this->m_sf_console = IMG_Load("./res/ui/sdl/imgs/tconsole.png");
 	
 	// FIXME
 	g_palette_units = load_palette("../mini_sc_data/libmpqgrp/sc_palettes/units.pal");
@@ -415,12 +415,12 @@ UserInterface_SDL::UserInterface_SDL(Game *game)
 
 UserInterface_SDL::~UserInterface_SDL()
 {
-	SDL_FreeSurface(this->buttons_wnd);
-	SDL_FreeSurface(this->unitstat_wnd);
-	SDL_FreeSurface(this->buttons_wnd);
+	SDL_FreeSurface(this->m_buttons_wnd);
+	SDL_FreeSurface(this->m_unitstat_wnd);
+	SDL_FreeSurface(this->m_buttons_wnd);
 	
-	SDL_FreeSurface(this->game_scr);
-	SDL_FreeSurface(this->screen);
+	SDL_FreeSurface(this->m_game_scr);
+	SDL_FreeSurface(this->m_screen);
 	
 	TTF_Quit();
 	SDL_Quit();
@@ -439,16 +439,16 @@ void UserInterface_SDL::processFrame()
 			switch(ev.key.keysym.sym)
 			{
 			case SDLK_UP:
-				this->gamescr_top_pos -= 10;
+				this->m_gamescr_top_pos -= 10;
 				break;
 			case SDLK_DOWN:
-				this->gamescr_top_pos += 10;
+				this->m_gamescr_top_pos += 10;
 				break;
 			case SDLK_LEFT:
-				this->gamescr_left_pos -= 10;
+				this->m_gamescr_left_pos -= 10;
 				break;
 			case SDLK_RIGHT:
-				this->gamescr_left_pos += 10;
+				this->m_gamescr_left_pos += 10;
 				break;
 			default:
 				break;
@@ -467,9 +467,9 @@ void UserInterface_SDL::processFrame()
 				if(ev.button.button == 3)
 				{
 					//fprintf(stderr, "move: %d, %d\n", ev.button.x, ev.button.y);
-					SC::ObjectList::iterator it = this->game->getObjectList().begin();
-					int x = this->gamescr_left_pos + ev.button.x;
-					int y = this->gamescr_top_pos + ev.button.y;
+					SC::ObjectList::iterator it = this->m_game->getObjectList().begin();
+					int x = this->m_gamescr_left_pos + ev.button.x;
+					int y = this->m_gamescr_top_pos + ev.button.y;
 				
 					#if 0
 					if(0)
@@ -487,10 +487,10 @@ void UserInterface_SDL::processFrame()
 				else if(ev.button.button == 1)
 				{
 					//fprintf(stderr, "attack: %d, %d\n", ev.button.x, ev.button.y);
-					SC::ObjectList::iterator it = this->game->getObjectList().begin();
-					//int x = this->gamescr_left_pos + ev.button.x;
-					//int y = this->gamescr_top_pos + ev.button.y;
-					SC::ObjectList::iterator it2 = this->game->getObjectList().begin(); ++it2;
+					SC::ObjectList::iterator it = this->m_game->getObjectList().begin();
+					//int x = this->m_gamescr_left_pos + ev.button.x;
+					//int y = this->m_gamescr_top_pos + ev.button.y;
+					SC::ObjectList::iterator it2 = this->m_game->getObjectList().begin(); ++it2;
 					
 					it->get()->cmd_attack(it2->get());
 					//it->get()->cmd_move(it2->get());
@@ -512,29 +512,30 @@ void UserInterface_SDL::processFrame()
 #define MAP_COLOR 0x808080
 void UserInterface_SDL::draw()
 {
-	SDL_FillSurfaceP(this->screen, 0, 0, 640, 480, 0x000000); // 0xffffff
+	SDL_FillSurfaceP(this->m_screen, 0, 0, 640, 480, 0x000000); // 0xffffff
 	
 	// draw game screen
 	{
-		SDL_FillSurfaceP(this->game_scr, 0, 0, this->game->getMapWidth(), this->game->getMapHeight(), MAP_COLOR);
+		SDL_FillSurfaceP(this->m_game_scr, 0, 0, this->m_game->getMapWidth(), this->m_game->getMapHeight(), MAP_COLOR);
 		this->drawMap();
 		this->drawObjects();
 		{
-			SDL_Rect sr = {this->gamescr_left_pos, this->gamescr_top_pos, 640, 480};
+			SDL_Rect sr = {this->m_gamescr_left_pos, this->m_gamescr_top_pos, 640, 480};
 			SDL_Rect dr = {0, 0, 640, 480};
-			SDL_BlitSurface(this->game_scr, &sr, this->screen, &dr);
+			SDL_BlitSurface(this->m_game_scr, &sr, this->m_screen, &dr);
 		}
 	}
 	// draw ui
 	this->drawUI();
 	
-	SDL_Flip(this->screen);
+	SDL_Flip(this->m_screen);
 }
 
 
 void UserInterface_SDL::drawUI()
 {
 	char buf[512];
+	Game *game = this->getGame();
 	Player *me = &Player::Players[2];
 	RaceId_t my_raceid = me->getRaceId();
 	
@@ -568,11 +569,11 @@ void UserInterface_SDL::drawUI()
 				else if(i == RaceId::Protoss) frn = 6;
 				if(frn >= 0)
 				{
-					render_grp_frame_to_surface(g_grp_icons, frn, this->screen, x, y, -1, -1, false, false);
+					render_grp_frame_to_surface(g_grp_icons, frn, this->m_screen, x, y, -1, -1, false, false);
 				}
 				else
 				{
-					SDL_FillSurfaceP(this->screen, x, y, 14, 14, me->getPlayerColor());
+					SDL_FillSurfaceP(this->m_screen, x, y, 14, 14, me->getPlayerColor());
 				}
 			}
 			
@@ -585,7 +586,7 @@ void UserInterface_SDL::drawUI()
 			
 			// draw to screen
 			snprintf(buf, sizeof(buf), "%d/%d", me->getFoodCrnt(i), me->getFoodMax(i));
-			SDL_print(this->font, this->screen, x + 15, y - 2, 68-15, 16, color, buf);
+			SDL_print(this->m_font, this->m_screen, x + 15, y - 2, 68-15, 16, color, buf);
 			x -= 68;
 		}
 	}
@@ -596,31 +597,31 @@ void UserInterface_SDL::drawUI()
 		if(my_raceid == RaceId::Zerg) frn = 1;
 		else if(my_raceid == RaceId::Terran) frn = 2;
 		else if(my_raceid == RaceId::Protoss) frn = 3;
-		render_grp_frame_to_surface(g_grp_icons, frn, this->screen, x, y, -1, -1, false, false);
+		render_grp_frame_to_surface(g_grp_icons, frn, this->m_screen, x, y, -1, -1, false, false);
 		
 		snprintf(buf, sizeof(buf), "%d", me->getVespeneGas());
-		SDL_print(this->font, this->screen, x + 15, y - 2, 68-15, 16, 0x00ff00, buf);
+		SDL_print(this->m_font, this->m_screen, x + 15, y - 2, 68-15, 16, 0x00ff00, buf);
 		x -= 68;
 	}
 	// draw minerals
 	{
 		//fprintf(stderr, "min: x:%d, y:%d, race:%d\n", x, y);
 		int frn = 0;
-		render_grp_frame_to_surface(g_grp_icons, frn, this->screen, x, y, -1, -1, false, false);
+		render_grp_frame_to_surface(g_grp_icons, frn, this->m_screen, x, y, -1, -1, false, false);
 		
 		snprintf(buf, sizeof(buf), "%d", me->getMinerals());
-		SDL_print(this->font, this->screen, x + 15, y - 2, 68-15, 16, 0x00ff00, buf);
+		SDL_print(this->m_font, this->m_screen, x + 15, y - 2, 68-15, 16, 0x00ff00, buf);
 		x -= 68;
 	}
 	
 	
 	snprintf(buf, sizeof(buf), "FPS: %f  |  Frame#: %u", 
 		game->getCurrentFPS(), game->getFrameNumber());
-	SDL_print(this->font, this->screen, 0, 0, 640, 16, 0x00ff00, buf);
+	SDL_print(this->m_font, this->m_screen, 0, 0, 640, 16, 0x00ff00, buf);
 	
 	
 	// draw console area
-	SDL_BlitSurface(this->sf_console, NULL, this->screen, NULL);
+	SDL_BlitSurface(this->m_sf_console, NULL, this->m_screen, NULL);
 	this->drawUI_MinimapWnd();
 	this->drawUI_UnitStatWnd();
 	this->drawUI_ButtonsWnd();
@@ -637,13 +638,13 @@ void UserInterface_SDL::drawUI_MinimapWnd()
 	// size: 128x128
 	
 	static const int minimap_w = 128, minimap_h = 128;
-	const int map_w = this->game->getMapWidth(), map_h = this->game->getMapHeight();
+	const int map_w = this->m_game->getMapWidth(), map_h = this->m_game->getMapHeight();
 	// minimap_w : map_w = minimap_unit_w : unit_w
 	float xratio = minimap_w / map_w, yratio = minimap_h / map_h;
 	
-	SDL_FillSurfaceP(this->minimap_wnd, 0, 0, minimap_w, minimap_h, MAP_COLOR);
+	SDL_FillSurfaceP(this->m_minimap_wnd, 0, 0, minimap_w, minimap_h, MAP_COLOR);
 	
-	ObjectList &objs = this->game->getObjectList();
+	ObjectList &objs = this->m_game->getObjectList();
 	for(ObjectList::const_iterator it = objs.begin(); it != objs.end(); it++)
 	{
 		Object *obj = it->get();
@@ -659,15 +660,15 @@ void UserInterface_SDL::drawUI_MinimapWnd()
 
 void UserInterface_SDL::drawUI_UnitStatWnd()
 {
-	SC::ObjectList::iterator it = this->game->getObjectList().begin();
+	SC::ObjectList::iterator it = this->m_game->getObjectList().begin();
 	const char *name = it->get()->getObjectName();
 	
 	// left-top: 155, 390
 	// right-bottom: 390, 470
 	
 	// unit name coord: 255,390
-	//SDL_print(this->font, this->screen, 260, 390, (470-390)-255, this->getFontSize(), 0xffffff, name);
-	SDL_print(this->font, this->screen, 260, 390, (470-390)-255, this->getFontSize(), 0xffffff, "주체 대포동발사병");
+	//SDL_print(this->m_font, this->m_screen, 260, 390, (470-390)-255, this->getFontSize(), 0xffffff, name);
+	SDL_print(this->m_font, this->m_screen, 260, 390, (470-390)-255, this->getFontSize(), 0xffffff, "주체 대포동발사병");
 }
 
 void UserInterface_SDL::drawUI_ButtonsWnd()
@@ -757,19 +758,19 @@ void UserInterface_SDL::drawObject(Object &obj)
 	#if 1
 	if(owner->getPlayerId() == 1)
 	{
-		SDL_FillSurfaceP(this->game_scr, x, y, w, h, owner->getPlayerColor());
-		//SDL_FillSurfaceP(this->game_scr, x, y, w, h, owner->getPlayerColor());
-		SDL_print(this->font, this->game_scr, x, y, w, h, 0xffffff, obj.getObjectName());
+		SDL_FillSurfaceP(this->m_game_scr, x, y, w, h, owner->getPlayerColor());
+		//SDL_FillSurfaceP(this->m_game_scr, x, y, w, h, owner->getPlayerColor());
+		SDL_print(this->m_font, this->m_game_scr, x, y, w, h, 0xffffff, obj.getObjectName());
 	}
 	#endif
 	
 	#if 1
 	if(objid == SC::ObjectId::Terran_Marine)
 	{
-		//ellipseColor(this->game_scr, x+w/2, y+h/2, w/2, h/2, (owner->getPlayerColor()<<8)|0xff);
-		//ellipseRGBA(this->game_scr, x+w/2, y+h/2, w/2, h/2, 0, 255, 0, 255);
+		//ellipseColor(this->m_game_scr, x+w/2, y+h/2, w/2, h/2, (owner->getPlayerColor()<<8)|0xff);
+		//ellipseRGBA(this->m_game_scr, x+w/2, y+h/2, w/2, h/2, 0, 255, 0, 255);
 		
-		ellipseRGBA(this->game_scr, x+w/2, y+h/2 +1, w/2 +1, h/2 +1, 0, 255, 0, 255);
+		ellipseRGBA(this->m_game_scr, x+w/2, y+h/2 +1, w/2 +1, h/2 +1, 0, 255, 0, 255);
 	}
 	#endif
 	
@@ -824,8 +825,8 @@ void UserInterface_SDL::drawObject(Object &obj)
 			}
 			
 			if(grpdata2)
-				render_grp_frame_to_surface(grpdata2, framenum, this->game_scr, x, y, 0, h, do_hflip, false, 0xffffffff, SHADOW_COLOR|(SHADOW_MAGIC_COLOR<<8));
-			render_grp_frame_to_surface(grpdata, framenum, this->game_scr, x, y, 0, h, do_hflip, false, unit_color);
+				render_grp_frame_to_surface(grpdata2, framenum, this->m_game_scr, x, y, 0, h, do_hflip, false, 0xffffffff, SHADOW_COLOR|(SHADOW_MAGIC_COLOR<<8));
+			render_grp_frame_to_surface(grpdata, framenum, this->m_game_scr, x, y, 0, h, do_hflip, false, unit_color);
 			#if 0
 			grp_frameheader_t *frame = grp_get_frame_info(grpdata, framenum);
 			
@@ -833,10 +834,10 @@ void UserInterface_SDL::drawObject(Object &obj)
 			SDL_Rect rmodel_rect = {frame->left, frame->top, frame->width, frame->height};
 			SDL_Rect destrect = {x, y - (frame->height - h), frame->width, frame->height};
 			
-			SDL_LockSurfaceIfNeeded(this->game_scr);
-			SDL_BlitSurface(rmodel, &rmodel_rect, this->game_scr, &destrect);
-			//draw_grp(this->game_scr, x - frame->left, y - frame->top - (frame->height - h), &g_grp_pixelfuncs, grpdata, g_palette_units, framenum, 0, 0);
-			SDL_UnlockSurfaceIfNeeded(this->game_scr);
+			SDL_LockSurfaceIfNeeded(this->m_game_scr);
+			SDL_BlitSurface(rmodel, &rmodel_rect, this->m_game_scr, &destrect);
+			//draw_grp(this->m_game_scr, x - frame->left, y - frame->top - (frame->height - h), &g_grp_pixelfuncs, grpdata, g_palette_units, framenum, 0, 0);
+			SDL_UnlockSurfaceIfNeeded(this->m_game_scr);
 			#endif
 		}
 		#endif

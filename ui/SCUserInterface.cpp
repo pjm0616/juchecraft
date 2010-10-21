@@ -22,7 +22,7 @@ using namespace SC;
 
 void UserInterface::drawObjects()
 {
-	ObjectList &objs = this->game->getObjectList();
+	ObjectList &objs = this->getGame()->getObjectList();
 	
 	#if 0
 	for(ObjectList::const_iterator it = objs.begin(); it != objs.end(); it++)

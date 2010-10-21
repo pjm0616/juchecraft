@@ -22,8 +22,6 @@ public:
 	UserInterface_ncurses(Game *game);
 	virtual ~UserInterface_ncurses();
 	
-	virtual unsigned int getUIFPS() const { return 10; }
-	
 	virtual void processFrame();
 	virtual void draw();
 	
@@ -41,11 +39,11 @@ private:
 	void drawUI_UnitStatWnd();
 	void drawUI_ButtonsWnd();
 	
-	int win_x, win_y;
-	bool has_mouse;
-	ncurses::WINDOW *wnd_stat, *wnd_map, *wnd_minimap, *wnd_unitstat, *wnd_btns;
+	int m_win_x, m_win_y;
+	bool m_has_mouse;
+	ncurses::WINDOW *m_wnd_stat, *m_wnd_map, *m_wnd_minimap, *m_wnd_unitstat, *m_wnd_btns;
 	
-	int cur_x, cur_y;
+	int m_cur_x, m_cur_y;
 };
 
 

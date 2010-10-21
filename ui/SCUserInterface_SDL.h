@@ -23,8 +23,6 @@ public:
 	UserInterface_SDL(Game *game);
 	virtual ~UserInterface_SDL();
 	
-	virtual unsigned int getUIFPS() const { return 10; }
-	
 	virtual void processFrame();
 	virtual void draw();
 	
@@ -44,16 +42,16 @@ private:
 	
 	int getFontSize() const { return 14; } // 16
 	
-	SDL::SDL_Surface *screen;
-	SDL::TTF_Font *font;
+	SDL::SDL_Surface *m_screen;
+	SDL::TTF_Font *m_font;
 	
-	SDL::SDL_Surface *game_scr;
-	SDL::SDL_Surface *minimap_wnd, *unitstat_wnd, *buttons_wnd;
+	SDL::SDL_Surface *m_game_scr;
+	SDL::SDL_Surface *m_minimap_wnd, *m_unitstat_wnd, *m_buttons_wnd;
 	
-	int gamescr_left_pos, gamescr_top_pos;
+	int m_gamescr_left_pos, m_gamescr_top_pos;
 	
 private:
-	SDL::SDL_Surface *sf_console;
+	SDL::SDL_Surface *m_sf_console;
 };
 
 

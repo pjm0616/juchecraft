@@ -18,13 +18,14 @@ using namespace SC;
 Object *ObjectList::addObject(Object *obj)
 {
 	obj->init();
-	this->objects.push_back(std::tr1::shared_ptr<Object>(obj));
+	this->getObjects().push_back(std::tr1::shared_ptr<Object>(obj));
 	this->setIteratorAsInvalidated();
 	return obj;
 }
 
 int ObjectList::removeObject(Object *obj)
 {
+	ObjectList::objlist_t &objs = this->getObjects();
 	obj->cleanup();
 	int nremoved = 0;
 	for(ObjectList::iterator it = this->begin(); 
@@ -32,7 +33,7 @@ int ObjectList::removeObject(Object *obj)
 	{
 		if(it->get() == obj)
 		{
-			this->objects.erase(it++);
+			objs.erase(it++);
 			nremoved++;
 			break;
 		}
@@ -46,11 +47,12 @@ int ObjectList::removeObject(Object *obj)
 
 void ObjectList::removeAllObjects()
 {
+	ObjectList::objlist_t &objs = this->getObjects();
 	for(ObjectList::iterator it = this->begin(); 
 		it != this->end(); )
 	{
 		it->get()->cleanup();
-		this->objects.erase(it++);
+		objs.erase(it++);
 	}
 }
 

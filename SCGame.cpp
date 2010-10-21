@@ -27,8 +27,10 @@ using namespace SC;
 
 
 Game::Game()
-	:objects(*this), 
-	start_time(0), frame_delta(0.0), elapsed_time(0.0), last_draw(0.0)
+	:m_start_time(0), 
+	m_frame_delta(0.0), 
+	m_elapsed_time(0.0), 
+	m_last_draw(0.0)
 {
 }
 
@@ -40,30 +42,31 @@ double Game::getTime() const
 {
 	timeval tv;
 	gettimeofday(&tv, NULL);
-	double time = (tv.tv_sec - this->start_time) + ((double)tv.tv_usec / 1000000);
+	double time = (tv.tv_sec - this->getStartTime()) + ((double)tv.tv_usec / 1000000);
 	return time;
 }
 
 void Game::processObjects()
 {
+	ObjectList &objs = this->getObjectList();
 #if 0
-	for(ObjectList::iterator it = this->objects.begin(); it != this->objects.end(); ++it)
+	for(ObjectList::iterator it = objs.begin(); it != objs.end(); ++it)
 	{
 		it->get()->processFrame();
 	}
 #else
-	this->objects.resetIteratorChecker();
-	for(ObjectList::const_iterator it = this->objects.begin(); 
-		it != this->objects.end(); )
+	objs.resetIteratorChecker();
+	for(ObjectList::const_iterator it = objs.begin(); 
+		it != objs.end(); )
 	{
 		Object *obj = it->get();
 		obj->processFrame();
-		if(this->objects.isIteratorInvalidated())
+		if(objs.isIteratorInvalidated())
 		{
 			// FIXME: this is very inefficient
 			// start over
-			it = this->objects.begin();
-			this->objects.resetIteratorChecker();
+			it = objs.begin();
+			objs.resetIteratorChecker();
 		}
 		else
 			++it;
@@ -73,39 +76,33 @@ void Game::processObjects()
 
 void Game::run()
 {
-	this->start_time = this->getTime();
+	this->setStartTime(this->getTime());
 	
-	//system("reset");
 	this->test_tmp1(); // debug
 	
-	this->frame_number = 0;
-	this->frame_delta = 1.0 / this->getFPS();
+	this->setFrameNumber(0);
+	this->setFrameDelta(1.0 / this->getFPS());
 	while(1)
 	{
 		double frame_start_time = getTime();
 		
 		this->processObjects();
-		this->ui->processFrame();
-		if(this->elapsed_time - this->last_draw > (1.0/this->ui->getUIFPS()))
+		this->getUI()->processFrame();
+		if(this->getElapsedTime() - this->getLastDrawTime() > (1.0 / this->getUI()->getUIFPS()))
 		{
-			this->ui->draw();
-			this->last_draw = this->elapsed_time;
+			this->getUI()->draw();
+			this->setLastDrawTime(this->getElapsedTime());
 		}
 		
 		// limit fps
-		usleep((double)1000000 / this->getFPS()); // avg. 30fps
+		usleep(1000000.0 / this->getFPS()); // avg. 30fps
 		// calculate time
-		this->frame_number++;
-		this->frame_delta = getTime() - frame_start_time;
-		this->elapsed_time += this->frame_delta;
+		this->increaseFrameNumber();
+		this->setFrameDelta(getTime() - frame_start_time);
+		this->increaseElapsedTime(this->getFrameDelta());
 	}
 }
 
-
-void Game::test_tmp2()
-{
-	
-}
 
 void Game::test_tmp1()
 {

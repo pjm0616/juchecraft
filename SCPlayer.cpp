@@ -6,7 +6,7 @@
 using namespace SC;
 
 
-bool Player::is_initialized = false;
+bool Player::ms_is_initialized = false;
 Player Player::Players[Player::MAX_PLAYER + 1];
 
 void Player::initialize()
@@ -36,7 +36,7 @@ void Player::initialize()
 		else
 			player.setRace(RaceId::Terran);
 	}
-	Player::is_initialized = true;
+	Player::ms_is_initialized = true;
 }
 
 

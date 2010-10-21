@@ -9,7 +9,7 @@
 // a: SCRace
 // b: SCObjectType
 // ccc: id
-enum
+enum ObjectId
 {
 	None = 0, 
 	Resource = 1001, 

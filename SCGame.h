@@ -16,47 +16,60 @@ public:
 	Game();
 	~Game();
 	
-	void setUI(UserInterface *ui) { this->ui = ui; }
+	void setUI(UserInterface *ui) { this->m_ui = ui; }
 	
 	void run();
-	void test_tmp1(); void test_tmp2(); // 디버깅&테스트용
+	void test_tmp1(); // 디버깅&테스트용
 	
 	// adds/removes an object.
 	// DO NOT call this function while iterating ObjectList.
-	Object *addObject(Object *obj) { return this->objects.addObject(obj); }
-	int removeObject(Object *obj) { return this->objects.removeObject(obj); }
+	Object *addObject(Object *obj) { return this->getObjectList().addObject(obj); }
+	int removeObject(Object *obj) { return this->getObjectList().removeObject(obj); }
 	
-	double getElapsedTime() const { return this->elapsed_time; }
-	double getFrameDelta() const { return this->frame_delta; }
-	unsigned int getFrameNumber() const { return this->frame_number; }
+	double getElapsedTime() const { return this->m_elapsed_time; }
+	double getFrameDelta() const { return this->m_frame_delta; }
+	unsigned int getFrameNumber() const { return this->m_frame_number; }
 	unsigned int getFPS() const { return 30; }
 	float getCurrentFPS() const { return 1.0 / this->getFrameDelta(); }
 	
-	int getMapWidth() const { return this->map_width; }
-	int getMapHeight() const { return this->map_height; }
+	int getMapWidth() const { return this->m_map_width; }
+	int getMapHeight() const { return this->m_map_height; }
 	void getMapSize(int *width, int *height) { *width = this->getMapWidth(); *height = this->getMapHeight(); }
 	// this function should be protected; map size will be set by calling loadMap()
-	void setMapSize(int width, int height) { this->map_width = width; this->map_height = height; }
+	void setMapSize(int width, int height) { this->m_map_width = width; this->m_map_height = height; }
 	
 	// should be protected
-	ObjectList &getObjectList() { return this->objects; }
+	ObjectList &getObjectList() { return this->m_objects; }
+	const ObjectList &getObjectList() const { return this->m_objects; }
+	
+	UserInterface *getUI() { return this->m_ui; }
 	
 protected:
 	double getTime() const;
 	
 private:
+	void setStartTime(time_t t) { this->m_start_time = t; }
+	time_t getStartTime() const { return this->m_start_time; }
+	void setFrameNumber(unsigned int n) { this->m_frame_number = n; }
+	void increaseFrameNumber(unsigned int n = 1) { this->m_frame_number += n; }
+	void setFrameDelta(double val) { this->m_frame_delta = val; }
+	void setElapsedTime(double val) { this->m_elapsed_time = val; }
+	void increaseElapsedTime(double val) { this->m_elapsed_time += val; }
+	void setLastDrawTime(double val) { this->m_last_draw = val; }
+	double getLastDrawTime() const { return this->m_last_draw; }
+	
 	void processObjects();
 	
-	UserInterface *ui;
-	ObjectList objects;
+	UserInterface *m_ui;
+	ObjectList m_objects;
 	
-	time_t start_time;
-	unsigned int frame_number;
-	double frame_delta, elapsed_time;
-	double last_draw;
+	time_t m_start_time;
+	unsigned int m_frame_number;
+	double m_frame_delta, m_elapsed_time;
+	double m_last_draw;
 	
 	// almost constant; cannot be changed if game has started
-	int map_width, map_height;
+	int m_map_width, m_map_height;
 };
 
 

@@ -13,10 +13,10 @@ public:
 	UnitObject(Game *game)
 		: Object(game)
 	{
-		this->object_type = ObjectType::Unit;
-		this->object_id = ObjectId::Unit;
-		this->object_id_name = "Unit";
-		this->object_name = "Unit";
+		this->m_object_type = ObjectType::Unit;
+		this->m_object_id = ObjectId::Unit;
+		this->m_object_id_name = "Unit";
+		this->m_object_name = "Unit";
 	}
 	virtual ~UnitObject() {}
 	

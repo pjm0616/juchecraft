@@ -10,13 +10,13 @@ class Exception
 {
 public:
 	Exception() {}
-	Exception(const std::string &msg) {this->errmsg = msg;}
+	Exception(const std::string &msg) {this->m_errmsg = msg;}
 	~Exception() {}
 	
-	const std::string &getErrorMsg() const { return this->errmsg; }
+	const std::string &getErrorMsg() const { return this->m_errmsg; }
 	
 private:
-	std::string errmsg;
+	std::string m_errmsg;
 };
 
 

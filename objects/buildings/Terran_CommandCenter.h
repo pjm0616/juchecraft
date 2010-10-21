@@ -14,19 +14,19 @@ public:
 	Terran_CommandCenter(Game *game)
 		: BuildingObject(game)
 	{
-		this->object_type = ObjectType::Unit;
-		this->object_id = ObjectId::Terran_CommandCenter;
-		this->object_id_name = "Terran_CommandCenter";
-		this->object_name = "Terran Command Center";
-		this->race_id = RaceId::Terran;
+		this->m_object_type = ObjectType::Unit;
+		this->m_object_id = ObjectId::Terran_CommandCenter;
+		this->m_object_id_name = "Terran_CommandCenter";
+		this->m_object_name = "Terran Command Center";
+		this->m_race_id = RaceId::Terran;
 		
-		this->width = 117;
-		this->height = 83;
+		this->m_width = 117;
+		this->m_height = 83;
 		
-		this->max_hp = 1500;
-		this->armor = 1;
+		this->m_max_hp = 1500;
+		this->m_armor = 1;
 		
-		this->supplied_food = 9;
+		this->m_supplied_food = 9;
 	}
 	virtual ~Terran_CommandCenter() {}
 	

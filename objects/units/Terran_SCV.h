@@ -14,19 +14,19 @@ public:
 	Terran_SCV(Game *game)
 		: UnitObject(game)
 	{
-		this->object_type = ObjectType::Unit;
-		this->object_id = ObjectId::Terran_SCV;
-		this->object_id_name = "Terran_SCV";
-		this->object_name = "Terran SCV";
-		this->race_id = RaceId::Terran;
+		this->m_object_type = ObjectType::Unit;
+		this->m_object_id = ObjectId::Terran_SCV;
+		this->m_object_id_name = "Terran_SCV";
+		this->m_object_name = "Terran SCV";
+		this->m_race_id = RaceId::Terran;
 		
-		this->width = 23;
-		this->height = 23;
+		this->m_width = 23;
+		this->m_height = 23;
 		
-		this->supplies_in_use = 1;
-		this->damage = 5.0;
-		this->moving_speed = 20.0;
-		this->attack_speed = 2.0;
+		this->m_supplies_in_use = 1;
+		this->m_damage = 5.0;
+		this->m_moving_speed = 20.0;
+		this->m_attack_speed = 2.0;
 	}
 	virtual ~Terran_SCV() {}
 	

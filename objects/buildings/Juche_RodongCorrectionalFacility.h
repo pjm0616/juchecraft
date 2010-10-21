@@ -14,16 +14,16 @@ public:
 	Juche_RodongCorrectionalFacility(Game *game)
 		: BuildingObject(game)
 	{
-		this->object_type = ObjectType::Unit;
-		this->object_id = ObjectId::Juche_RodongCorrectionalFacility;
-		this->object_id_name = "Juche_RodongCorrectionalFacility";
-		this->object_name = "주체 로동교화소";
-		this->race_id = RaceId::Juche;
+		this->m_object_type = ObjectType::Unit;
+		this->m_object_id = ObjectId::Juche_RodongCorrectionalFacility;
+		this->m_object_id_name = "Juche_RodongCorrectionalFacility";
+		this->m_object_name = "주체 로동교화소";
+		this->m_race_id = RaceId::Juche;
 		
-		this->width = 117;
-		this->height = 83;
+		this->m_width = 117;
+		this->m_height = 83;
 		
-		this->supplied_food = 9;
+		this->m_supplied_food = 9;
 	}
 	virtual ~Juche_RodongCorrectionalFacility() {}
 	

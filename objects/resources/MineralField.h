@@ -14,16 +14,16 @@ public:
 	MineralField(Game *game)
 		: ResourceObject(game)
 	{
-		this->object_type = ObjectType::Resource;
-		this->object_id = ObjectId::Resource_MineralField;
-		this->object_id_name = "Resource_MineralField";
-		this->object_name = "Mineral Field";
+		this->m_object_type = ObjectType::Resource;
+		this->m_object_id = ObjectId::Resource_MineralField;
+		this->m_object_id_name = "Resource_MineralField";
+		this->m_object_name = "Mineral Field";
 		
-		this->initial_state = ObjectState::Invincible;
-		this->width = 32;
-		this->height = 32;
+		this->m_initial_state = ObjectState::Invincible;
+		this->m_width = 32;
+		this->m_height = 32;
 		
-		this->initial_resource = 1500;
+		this->m_initial_resource = 1500;
 	}
 	virtual ~MineralField() {}
 	

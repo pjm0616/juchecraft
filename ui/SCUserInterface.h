@@ -10,21 +10,27 @@ class UserInterface
 {
 public:
 	UserInterface(Game *game)
-		:game(game)
+		:m_game(game)
 	{
+		this->setUIFPS(this->getGame()->getFPS());
 	}
 	virtual ~UserInterface() {}
 	
-	virtual unsigned int getUIFPS() const { return game->getFPS(); }
+	unsigned int getUIFPS() const { return this->m_ui_fps; }
 	
 	virtual void processFrame() = 0;
 	virtual void draw() = 0;
 	
 protected:
-	Game *game;
+	Game *getGame() { return this->m_game; }
+	const Game *getGame() const { return this->m_game; }
+	void setUIFPS(unsigned int fps) { this->m_ui_fps = fps; }
 	
 	virtual void drawObject(Object &obj) = 0;
 	void drawObjects();
+	
+	Game *m_game;
+	unsigned m_ui_fps;
 };
 
 

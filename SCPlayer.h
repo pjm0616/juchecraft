@@ -9,7 +9,7 @@ namespace SC {
 
 namespace RaceId
 {
-	enum
+	enum RaceId
 	{
 		None = 0, 
 		Neutral = 1, 
@@ -43,61 +43,171 @@ public:
 	Player(int player_id) { this->setPlayerId(player_id); }
 	~Player() {}
 	
-	int getPlayerId() const { return this->player_id; }
-	unsigned int getPlayerColor() const { return this->player_color; }
+	int getPlayerId() const { return this->m_player_id; }
+	unsigned int getPlayerColor() const { return this->m_player_color; }
 	
-	RaceId_t getRaceId() const { return this->race_id; }
+	RaceId_t getRaceId() const { return this->m_race_id; }
 	
-	int getMinerals() const { return this->minerals; }
-	void setMinerals(int minerals) { this->minerals = minerals; }
-	void increaseMinerals(int val) { this->minerals += val; }
-	void decreaseMinerals(int val) { this->minerals -= val; }
+	//@{
+	/**
+	 * @brief Get the amount of player's minerals
+	 * @return The amount of player's minerals
+	 */
+	int getMinerals() const { return this->m_minerals; }
+	/**
+	 * @brief Set the amount of player's minerals
+	 * @param[in] val new amount of minerals
+	 */
+	void setMinerals(int val) { this->m_minerals = val; }
+	/**
+	 * @brief Increase the amount of player's minerals
+	 * @param[in] val amount of minerals to increase
+	 */
+	void increaseMinerals(int val) { this->m_minerals += val; }
+	/**
+	 * @brief Decrease the amount of player's minerals
+	 * @param[in] val amount of minerals to decrease
+	 */
+	void decreaseMinerals(int val) { this->m_minerals -= val; }
+	//@}
 	
-	int getVespeneGas() const { return this->vespene_gas; }
-	void setVespeneGas(int vespene_gas) { this->vespene_gas = vespene_gas; }
-	void increseVespeneGas(int val) { this->vespene_gas += val; }
-	void decreseVespeneGas(int val) { this->vespene_gas -= val; }
+	//@{
+	/**
+	 * @brief Get the amount of player's vespene gas
+	 * @return The amount of player's vespene gas
+	 */
+	int getVespeneGas() const { return this->m_vespene_gas; }
+	/**
+	 * @brief Set the amount of player's vespene gas
+	 * @param[in] val new amount of vespene gas
+	 */
+	void setVespeneGas(int val) { this->m_vespene_gas = val; }
+	/**
+	 * @brief Increase the amount of player's vespene gas
+	 * @param[in] val amount of vespene gas to increase
+	 */
+	void increseVespeneGas(int val) { this->m_vespene_gas += val; }
+	/**
+	 * @brief Decrease the amount of player's vespene gas
+	 * @param[in] val amount of vespene gas to decrease
+	 */
+	void decreseVespeneGas(int val) { this->m_vespene_gas -= val; }
+	//@}
 	
-	//const int *getFoodMax() const { return this->food_max; }
-	int getFoodMax(RaceId_t race) const { return this->food_max[race]; }
-	void setFoodMax(RaceId_t race, int food_max) { this->food_max[race] = food_max; }
-	int increaseFoodMax(RaceId_t race, int val) { return (this->food_max[race] += val); }
-	int decreaseFoodMax(RaceId_t race, int val) { return (this->food_max[race] -= val); }
+	//@{
+	/**
+	 * @brief Get the amount of currently supplied foods of all races
+	 * @return An array of integers that contains values. Use RaceId_t as array index.
+	 */
+	const int *getFoodMax() const { return this->m_food_max; }
+	/**
+	 * @brief Get the amount of currently supplied foods of a race
+	 * @param[in] race The race to get value from
+	 * @return The amount of supplied foods
+	 */
+	int getFoodMax(RaceId_t race) const { return this->m_food_max[race]; }
+	/**
+	 * @brief Set the amount of currently supplied foods of a race
+	 * @param[in] race The race to set value
+	 * @param[in] val New amount of supplied foods
+	 */
+	void setFoodMax(RaceId_t race, int val) { this->m_food_max[race] = val; }
+	/**
+	 * @brief Increase the amount of currently supplied foods of a race
+	 * @param[in] race The race to set value
+	 * @param[in] val The amount to increase supplied foods
+	 */
+	void increaseFoodMax(RaceId_t race, int val) { this->m_food_max[race] += val; }
+	/**
+	 * @brief Decrease the amount of currently supplied foods of a race
+	 * @param[in] race The race to set value
+	 * @param[in] val The amount to decrease supplied foods
+	 */
+	void decreaseFoodMax(RaceId_t race, int val) { this->m_food_max[race] -= val; }
+	//@}
 	
-	//const int *getFoodCrnt() const { return this->food_crnt; }
-	int getFoodCrnt(RaceId_t race) const { return this->food_crnt[race]; }
-	void setFoodCrnt(RaceId_t race, int food_crnt) { this->food_crnt[race] = food_crnt; }
-	int increaseFoodCrnt(RaceId_t race, int val) { return (this->food_crnt[race] += val); }
-	int decreaseFoodCrnt(RaceId_t race, int val) { return (this->food_crnt[race] -= val); }
+	//@{
+	/**
+	 * @brief Get the amount of currently used foods of all races
+	 * @return An array of integers that contains values. Use RaceId_t as array index.
+	 */
+	const int *getFoodCrnt() const { return this->m_food_crnt; }
+	/**
+	 * @brief Get the amount of currently used foods of a race
+	 * @param[in] race The race to get value from
+	 * @return The amount of currently used foods
+	 */
+	int getFoodCrnt(RaceId_t race) const { return this->m_food_crnt[race]; }
+	/**
+	 * @brief Set the amount of currently used foods of a race
+	 * @param[in] race The race to set value
+	 * @param[in] val New amount of currently used foods
+	 */
+	void setFoodCrnt(RaceId_t race, int val) { this->m_food_crnt[race] = val; }
+	/**
+	 * @brief Increase the amount of currently supplied foods of a race
+	 * @param[in] race The race to set value
+	 * @param[in] val The amount to increase supplied foods
+	 */
+	void increaseFoodCrnt(RaceId_t race, int val) { this->m_food_crnt[race] += val; }
+	/**
+	 * @brief Decrease the amount of currently supplied foods of a race
+	 * @param[in] race The race to set value
+	 * @param[in] val The amount to decrease supplied foods
+	 */
+	void decreaseFoodCrnt(RaceId_t race, int val) { this->m_food_crnt[race] -= val; }
+	//@}
 	
-	float getPlayerArmorBonusA() const { return this->added_armor_bonus; }
-	float getPlayerDamageBonusA() const { return this->added_damage_bonus; }
-	float getPlayerMovingSpeedBonusA() const { return this->added_moving_speed_bonus; }
-	float getPlayerAttackSpeedBonusA() const { return this->added_attack_speed_bonus; }
+	//@{
+	/**
+	 * @brief Get added armor bonuses per player
+	 * @return The bonus value
+	 */
+	float getPlayerArmorBonusA() const { return this->m_added_armor_bonus; }
+	/**
+	 * @brief Get added damage bonuses per player
+	 * @return The bonus value
+	 */
+	float getPlayerDamageBonusA() const { return this->m_added_damage_bonus; }
+	/**
+	 * @brief Get added moving speed bonuses per player
+	 * @return The bonus value
+	 */
+	float getPlayerMovingSpeedBonusA() const { return this->m_added_moving_speed_bonus; }
+	/**
+	 * @brief Get added attack speed bonuses per player
+	 * @return The bonus value
+	 */
+	float getPlayerAttackSpeedBonusA() const { return this->m_added_attack_speed_bonus; }
+	//@}
 	
 //protected:
-	void setRace(RaceId_t race) { this->race_id = race; }
+	/**
+	 * @brief Set player's race
+	 * @param[in] race Player's new race
+	 */
+	void setRace(RaceId_t race) { this->m_race_id = race; }
 	
 private:
-	static bool is_initialized;
+	void setPlayerId(int player_id) { this->m_player_id = player_id; }
+	void setPlayerColor(unsigned int player_color) { this->m_player_color = player_color; }
 	
-	int player_id;
-	unsigned int player_color;
+	void setPlayerArmorBonusA(float v) { this->m_added_armor_bonus = v; }
+	void setPlayerDamageBonusA(float v) { this->m_added_damage_bonus = v; }
+	void setPlayerMovingSpeedBonusA(float v) { this->m_added_moving_speed_bonus = v; }
+	void setPlayerAttackSpeedBonusA(float v) { this->m_added_attack_speed_bonus = v; }
 	
-	RaceId_t race_id;
+	static bool ms_is_initialized;
 	
-	int minerals, vespene_gas;
-	int food_max[RaceId::Size], food_crnt[RaceId::Size];
+	int m_player_id;
+	unsigned int m_player_color;
+	RaceId_t m_race_id;
 	
-	float added_armor_bonus, added_damage_bonus, added_moving_speed_bonus, added_attack_speed_bonus;
+	int m_minerals, m_vespene_gas;
+	int m_food_max[RaceId::Size], m_food_crnt[RaceId::Size];
 	
-	void setPlayerId(int player_id) { this->player_id = player_id; }
-	void setPlayerColor(unsigned int player_color) { this->player_color = player_color; }
+	float m_added_armor_bonus, m_added_damage_bonus, m_added_moving_speed_bonus, m_added_attack_speed_bonus;
 	
-	void setPlayerArmorBonusA(float v) { this->added_armor_bonus = v; }
-	void setPlayerDamageBonusA(float v) { this->added_damage_bonus = v; }
-	void setPlayerMovingSpeedBonusA(float v) { this->added_moving_speed_bonus = v; }
-	void setPlayerAttackSpeedBonusA(float v) { this->added_attack_speed_bonus = v; }
 };
 
 

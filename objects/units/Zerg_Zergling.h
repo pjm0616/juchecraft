@@ -14,21 +14,21 @@ public:
 	Zerg_Zergling(Game *game)
 		: UnitObject(game)
 	{
-		this->object_type = ObjectType::Unit;
-		this->object_id = ObjectId::Zerg_Zergling;
-		this->object_id_name = "Zerg_Zergling";
-		this->object_name = "Zerg Zergling";
-		this->race_id = RaceId::Zerg;
+		this->m_object_type = ObjectType::Unit;
+		this->m_object_id = ObjectId::Zerg_Zergling;
+		this->m_object_id_name = "Zerg_Zergling";
+		this->m_object_name = "Zerg Zergling";
+		this->m_race_id = RaceId::Zerg;
 		
-		this->width = 16;
-		this->height = 16;
-		this->max_hp = 50;
+		this->m_width = 16;
+		this->m_height = 16;
+		this->m_max_hp = 50;
 		
-		this->supplies_in_use = 1;
-		this->damage = 2.5;
-		this->moving_speed = 30.0;
-		this->attack_speed = 15.0;
-		this->attack_range = 10.0;
+		this->m_supplies_in_use = 1;
+		this->m_damage = 2.5;
+		this->m_moving_speed = 30.0;
+		this->m_attack_speed = 15.0;
+		this->m_attack_range = 10.0;
 	}
 	virtual ~Zerg_Zergling() {}
 	

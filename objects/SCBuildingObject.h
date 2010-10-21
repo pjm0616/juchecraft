@@ -13,10 +13,10 @@ public:
 	BuildingObject(Game *game)
 		: Object(game)
 	{
-		this->object_type = ObjectType::Building;
-		this->object_id = ObjectId::Building;
-		this->object_id_name = "Building";
-		this->object_name = "Building";
+		this->m_object_type = ObjectType::Building;
+		this->m_object_id = ObjectId::Building;
+		this->m_object_id_name = "Building";
+		this->m_object_name = "Building";
 	}
 	virtual ~BuildingObject() {}
 	

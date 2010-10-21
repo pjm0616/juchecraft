@@ -151,6 +151,8 @@ UserInterface_ncurses::UserInterface_ncurses(Game *game)
 {
 	int ret;
 	
+	this->setUIFPS(10);
+	
 	// initialize
 	ncurses::initscr();
 	ret = ncurses::start_color();
@@ -165,19 +167,19 @@ UserInterface_ncurses::UserInterface_ncurses(Game *game)
 	
 	if(ncurses::has_mouse())
 	{
-		this->has_mouse = true;
+		this->m_has_mouse = true;
 		//ncurses::mousemask(ALL_MOUSE_EVENTS|REPORT_MOUSE_POSITION|BUTTON_SHIFT|BUTTON_CTRL|BUTTON_ALT, NULL);
 		ncurses::mousemask(ALL_MOUSE_EVENTS, NULL);
 	}
 	else
 	{
 		//ncurses::endwin(); throw new Exception("Terminal does not support mouse.");
-		this->has_mouse = false;
+		this->m_has_mouse = false;
 	}
 	
 	// check screen size
-	getmaxyx(ncurses::stdscr, this->win_y, this->win_x);
-	if(this->win_x < 120 || this->win_y < 36)
+	getmaxyx(ncurses::stdscr, this->m_win_y, this->m_win_x);
+	if(this->m_win_x < 120 || this->m_win_y < 36)
 	{
 		ncurses::endwin();
 		throw new Exception("Window size is too small. (min: 120x36)");
@@ -203,30 +205,30 @@ UserInterface_ncurses::UserInterface_ncurses(Game *game)
 	
 	int x = 0, y = 0;
 	//								h	w	y	x
-	this->wnd_stat = ncurses::newwin(1, 120, y, x);
+	this->m_wnd_stat = ncurses::newwin(1, 120, y, x);
 	y += 1; x = 0;
 	
-	this->wnd_map = ncurses::newwin(25, 120, y, x);
+	this->m_wnd_map = ncurses::newwin(25, 120, y, x);
 	y += 25; x = 0;
 	
-	this->wnd_minimap = ncurses::newwin(10, 20, y, x); x += 20;
-	this->wnd_unitstat = ncurses::newwin(10, 80, y, x); x += 80;
-	this->wnd_btns = ncurses::newwin(10, 20, y, x); x += 20;
+	this->m_wnd_minimap = ncurses::newwin(10, 20, y, x); x += 20;
+	this->m_wnd_unitstat = ncurses::newwin(10, 80, y, x); x += 80;
+	this->m_wnd_btns = ncurses::newwin(10, 20, y, x); x += 20;
 	y += 10; x = 0;
 	
 	fcntl(STDIN_FILENO, F_SETFL, fcntl(STDIN_FILENO, F_GETFL, NULL) | O_NONBLOCK);
 	//ncurses::clear();
 	//ncurses::refresh();
-	this->cur_y=10;this->cur_x=10;
+	this->m_cur_y=10;this->m_cur_x=10;
 }
 
 UserInterface_ncurses::~UserInterface_ncurses()
 {
-	ncurses::delwin(this->wnd_stat);
-	ncurses::delwin(this->wnd_map);
-	ncurses::delwin(this->wnd_minimap);
-	ncurses::delwin(this->wnd_unitstat);
-	ncurses::delwin(this->wnd_btns);
+	ncurses::delwin(this->m_wnd_stat);
+	ncurses::delwin(this->m_wnd_map);
+	ncurses::delwin(this->m_wnd_minimap);
+	ncurses::delwin(this->m_wnd_unitstat);
+	ncurses::delwin(this->m_wnd_btns);
 	
 	ncurses::clear();
 	#if 0
@@ -244,18 +246,18 @@ void UserInterface_ncurses::processFrame()
 	{
 		switch(ch)
 		{
-		case KEY_UP: this->cur_y--; break;
-		case KEY_DOWN: this->cur_y++; break;
-		case KEY_LEFT: this->cur_x--; break;
-		case KEY_RIGHT: this->cur_x++; break;
+		case KEY_UP: this->m_cur_y--; break;
+		case KEY_DOWN: this->m_cur_y++; break;
+		case KEY_LEFT: this->m_cur_x--; break;
+		case KEY_RIGHT: this->m_cur_x++; break;
 		case '\n': {
-				SC::ObjectList::iterator it = this->game->getObjectList().begin();
-				it->get()->cmd_move(Coordinate(cur_x * 10, (cur_y-1) * 20));
+				SC::ObjectList::iterator it = this->m_game->getObjectList().begin();
+				it->get()->cmd_move(Coordinate(this->m_cur_x * 10, (this->m_cur_y-1) * 20));
 			}
 			break;
 		case 'a': {
-				SC::ObjectList::iterator it = this->game->getObjectList().begin();
-				SC::ObjectList::iterator it2 = this->game->getObjectList().begin(); ++it2;
+				SC::ObjectList::iterator it = this->m_game->getObjectList().begin();
+				SC::ObjectList::iterator it2 = this->m_game->getObjectList().begin(); ++it2;
 				
 				it->get()->cmd_attack(it2->get());
 			}
@@ -266,22 +268,22 @@ void UserInterface_ncurses::processFrame()
 
 void UserInterface_ncurses::draw()
 {
-	ncurses::wclear(this->wnd_stat);
-	ncurses::wclear(this->wnd_map);
-	ncurses::wclear(this->wnd_minimap);
-	ncurses::wclear(this->wnd_unitstat);
-	ncurses::wclear(this->wnd_btns);
+	ncurses::wclear(this->m_wnd_stat);
+	ncurses::wclear(this->m_wnd_map);
+	ncurses::wclear(this->m_wnd_minimap);
+	ncurses::wclear(this->m_wnd_unitstat);
+	ncurses::wclear(this->m_wnd_btns);
 	
 	this->drawUI();
 	this->drawMap();
 	this->drawObjects();
 	
-	ncurses::wnoutrefresh(this->wnd_stat);
-	ncurses::wnoutrefresh(this->wnd_map);
-	ncurses::wnoutrefresh(this->wnd_minimap);
-	ncurses::wnoutrefresh(this->wnd_unitstat);
-	ncurses::wnoutrefresh(this->wnd_btns);
-	ncurses::move(this->cur_y, this->cur_x);
+	ncurses::wnoutrefresh(this->m_wnd_stat);
+	ncurses::wnoutrefresh(this->m_wnd_map);
+	ncurses::wnoutrefresh(this->m_wnd_minimap);
+	ncurses::wnoutrefresh(this->m_wnd_unitstat);
+	ncurses::wnoutrefresh(this->m_wnd_btns);
+	ncurses::move(this->m_cur_y, this->m_cur_x);
 	ncurses::wnoutrefresh(ncurses::stdscr);
 	ncurses::doupdate();
 }
@@ -289,20 +291,21 @@ void UserInterface_ncurses::draw()
 
 void UserInterface_ncurses::drawUI()
 {
+	Game *game = this->getGame();
 	Player *me = &Player::Players[1];
 	
-	//ncurses::mvwprintw(this->wnd_stat, 0, 0, 
+	//ncurses::mvwprintw(this->m_wnd_stat, 0, 0, 
 	//	"Minerals: %d | Supplies: %d/%d", 
 	//	me->getMinerals(), me->getFoodCrnt(), me->getFoodMax());
-	ncurses::mvwprintw(this->wnd_stat, 0, 0, "FPS: %f | Frame: %u | Minerals: %d | Supplies: %d/%d", 
+	ncurses::mvwprintw(this->m_wnd_stat, 0, 0, "FPS: %f | Frame: %u | Minerals: %d | Supplies: %d/%d", 
 		game->getCurrentFPS(), game->getFrameNumber(), 
 		me->getMinerals(), me->getFoodCrnt(me->getRaceId()), me->getFoodMax(me->getRaceId()));
 	
 	
-	//box(this->wnd_ctl, 0 , 0);
-	box(this->wnd_minimap, 0 , 0);
-	box(this->wnd_unitstat, 0 , 0);
-	box(this->wnd_btns, 0 , 0);
+	//box(this->m_wnd_ctl, 0 , 0);
+	box(this->m_wnd_minimap, 0 , 0);
+	box(this->m_wnd_unitstat, 0 , 0);
+	box(this->m_wnd_btns, 0 , 0);
 	
 	this->drawUI_MinimapWnd();
 	this->drawUI_UnitStatWnd();
@@ -355,13 +358,13 @@ void UserInterface_ncurses::drawObject(Object &obj)
 		throw new Exception("Object image resource has not been loaded");
 	const char *img = img_ss->c_str();
 	
-	ncurses::wattron(this->wnd_map, COLOR_PAIR(SC_NCURSES_UNIT_COLOR_PAIR_BASE+owner_id));
+	ncurses::wattron(this->m_wnd_map, COLOR_PAIR(SC_NCURSES_UNIT_COLOR_PAIR_BASE+owner_id));
 	for(int i = 0; i < h; i++, y++)
 	{
-		ncurses::mvwprintw(this->wnd_map, y, x, "%s", img, owner_id);
+		ncurses::mvwprintw(this->m_wnd_map, y, x, "%s", img, owner_id);
 		img += strlen(img) + 1;
 	}
-	ncurses::wattroff(this->wnd_map, COLOR_PAIR(SC_NCURSES_UNIT_COLOR_PAIR_BASE+owner_id));
+	ncurses::wattroff(this->m_wnd_map, COLOR_PAIR(SC_NCURSES_UNIT_COLOR_PAIR_BASE+owner_id));
 }
 
 
