@@ -152,8 +152,8 @@ public:
 	/** @name Movement methods */
 	//@{
 	
-	/** @brief Defines movement options
-	 *  @detail This is a enum class. C++98 does not support this damn
+	/** @brief Defines movement options.
+	 *  @detail This is an enum class. C++98 does not support enum classes, damn.
 	 */
 	struct MovementFlags
 	{
