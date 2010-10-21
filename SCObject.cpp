@@ -499,12 +499,15 @@ bool Object::doAttack(float time)
 	if(this->checkMinDistance(target, this->getNetAttackRange(), &where_to_move))
 	{
 		this->setAngle(this->getPosition().calculateAngle(target->getPosition()));
+		
 		float attack_speed = this->getNetAttackSpeed(); // num_of_attacks per second
 		float attacking_secs = this->getAttackingSeconds();
 		float last_attack = this->getLastAttackTime();
+		
 		int nattacks = (attacking_secs - last_attack) / (1.0 / attack_speed);
 		if(nattacks > 0)
 			this->setLastAttackTime(attacking_secs);
+		
 		for(; nattacks > 0; nattacks--)
 		{
 			//fprintf(stderr, "Attack!\n");
@@ -533,13 +536,13 @@ bool Object::doAttack(float time)
 	}
 	else
 	{
-		#if 1
+		#if 0
+		this->stopAttacking();
+		fprintf(stderr, "Attack stopped\n");
+		#else
 		this->setState(ObjectState::Attacking, false);
 		//this->move(where_to_move);
 		this->move(target);
-		#else
-		this->stopAttacking();
-		fprintf(stderr, "Attack stopped\n");
 		#endif
 		
 		return false;

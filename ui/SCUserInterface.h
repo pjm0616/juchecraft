@@ -16,6 +16,9 @@ public:
 	}
 	virtual ~UserInterface() {}
 	
+	virtual bool initUI() = 0;
+	virtual bool cleanupUI() = 0;
+	
 	unsigned int getUIFPS() const { return this->m_ui_fps; }
 	
 	virtual void processFrame() = 0;

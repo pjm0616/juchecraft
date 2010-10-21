@@ -371,6 +371,15 @@ void render_grp_frame_to_surface(grp_data_t *grpdata, int framenum, SDL_Surface 
 UserInterface_SDL::UserInterface_SDL(Game *game)
 	:UserInterface(game)
 {
+}
+
+UserInterface_SDL::~UserInterface_SDL()
+{
+	//this->cleanupUI();
+}
+
+bool UserInterface_SDL::initUI()
+{
 	int ret;
 	
 	if(SDL_Init(SDL_INIT_VIDEO | SDL_INIT_NOPARACHUTE) < 0)
@@ -411,19 +420,31 @@ UserInterface_SDL::UserInterface_SDL(Game *game)
 	g_grp_t_firebat = load_grp("../mini_sc_data/StarDat/unit/terran/firebat.grp");
 	g_grp_z_zergling = load_grp("../mini_sc_data/StarDat/unit/zerg/zergling.grp");
 	g_grp_z_zergling_shad = load_grp("../mini_sc_data/StarDat/unit/zerg/zzeshad.grp");
+	
+	return true;
 }
 
-UserInterface_SDL::~UserInterface_SDL()
+bool UserInterface_SDL::cleanupUI()
 {
+	// free game resources
+	SDL_FreeSurface(this->m_sf_console);
+	
+	#if 0 // this causes segfault -_-
+	// free game surfaces
 	SDL_FreeSurface(this->m_buttons_wnd);
 	SDL_FreeSurface(this->m_unitstat_wnd);
-	SDL_FreeSurface(this->m_buttons_wnd);
+	SDL_FreeSurface(this->m_minimap_wnd);
 	
 	SDL_FreeSurface(this->m_game_scr);
 	SDL_FreeSurface(this->m_screen);
 	
+	TTF_CloseFont(this->m_font);
+	
 	TTF_Quit();
+	#endif
 	SDL_Quit();
+	
+	return true;
 }
 
 void UserInterface_SDL::processFrame()
@@ -501,7 +522,8 @@ void UserInterface_SDL::processFrame()
 			// ev.button.
 			break;
 		case SDL_QUIT:
-			std::exit(0);
+			//std::exit(0);
+			this->getGame()->endGame();
 			break;
 		default:
 			break;

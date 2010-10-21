@@ -44,6 +44,9 @@ public:
 	
 	UserInterface *getUI() { return this->m_ui; }
 	
+	void endGame() { this->m_is_game_ended = true; }
+	bool isGameEnded() const { return this->m_is_game_ended; }
+	
 protected:
 	double getTime() const;
 	
@@ -70,6 +73,8 @@ private:
 	
 	// almost constant; cannot be changed if game has started
 	int m_map_width, m_map_height;
+	
+	bool m_is_game_ended;
 };
 
 

@@ -23,6 +23,9 @@ public:
 	UserInterface_SDL(Game *game);
 	virtual ~UserInterface_SDL();
 	
+	virtual bool initUI();
+	virtual bool cleanupUI();
+	
 	virtual void processFrame();
 	virtual void draw();
 	

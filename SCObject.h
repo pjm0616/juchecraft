@@ -32,7 +32,7 @@ namespace ObjectState
 		Hallucinated = 16, 
 		
 		Moving = 64, 
-		Attacking = 128, // does not include pending attack
+		Attacking = 128, /**< @detail does not include pending attack */
 	};
 }
 typedef unsigned int ObjectState_t;

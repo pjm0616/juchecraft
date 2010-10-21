@@ -50,9 +50,12 @@ int main(int argc, char *argv[])
 			ui = new SC::UserInterface_ncurses(&game);
 		else
 			ui = new SC::UserInterface_SDL(&game);
+		ui->initUI();
 		
 		game.setUI(ui);
 		game.run();
+		
+		ui->cleanupUI();
 		
 		delete ui;
 	}

@@ -22,6 +22,9 @@ public:
 	UserInterface_ncurses(Game *game);
 	virtual ~UserInterface_ncurses();
 	
+	virtual bool initUI();
+	virtual bool cleanupUI();
+	
 	virtual void processFrame();
 	virtual void draw();
 	

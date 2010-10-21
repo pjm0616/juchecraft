@@ -149,6 +149,15 @@ void UserInterface_ncurses::load_resources(const char *dirpath)
 UserInterface_ncurses::UserInterface_ncurses(Game *game)
 	:UserInterface(game)
 {
+}
+
+UserInterface_ncurses::~UserInterface_ncurses()
+{
+	//this->cleanupUI();
+}
+
+bool UserInterface_ncurses::initUI()
+{
 	int ret;
 	
 	this->setUIFPS(10);
@@ -220,9 +229,11 @@ UserInterface_ncurses::UserInterface_ncurses(Game *game)
 	//ncurses::clear();
 	//ncurses::refresh();
 	this->m_cur_y=10;this->m_cur_x=10;
+	
+	return true;
 }
 
-UserInterface_ncurses::~UserInterface_ncurses()
+bool UserInterface_ncurses::cleanupUI()
 {
 	ncurses::delwin(this->m_wnd_stat);
 	ncurses::delwin(this->m_wnd_map);
@@ -237,6 +248,8 @@ UserInterface_ncurses::~UserInterface_ncurses()
 	sleep(1);
 	#endif
 	ncurses::endwin();
+	
+	return true;
 }
 
 void UserInterface_ncurses::processFrame()

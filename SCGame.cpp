@@ -30,7 +30,8 @@ Game::Game()
 	:m_start_time(0), 
 	m_frame_delta(0.0), 
 	m_elapsed_time(0.0), 
-	m_last_draw(0.0)
+	m_last_draw(0.0), 
+	m_is_game_ended(false)
 {
 }
 
@@ -82,7 +83,7 @@ void Game::run()
 	
 	this->setFrameNumber(0);
 	this->setFrameDelta(1.0 / this->getFPS());
-	while(1)
+	while(!this->isGameEnded())
 	{
 		double frame_start_time = getTime();
 		
