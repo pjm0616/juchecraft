@@ -333,7 +333,7 @@ void render_shadow_image(SDL_Surface *sf)
 			Uint8 r, g, b, a;
 			SDL_GetRGBA(line[x], sf->format, &r, &g, &b, &a);
 			if((b<<16 | g<<8 | r) == SHADOW_MAGIC_COLOR)
-				line[x] = SDL_MapRGBA(sf->format, 0x00, 0x00, 0x00, 0xc0);
+				line[x] = SDL_MapRGBA(sf->format, 0x00, 0x00, 0x00, 0xe0);
 		}
 	}
 }
