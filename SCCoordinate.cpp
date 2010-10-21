@@ -34,10 +34,12 @@ static float calculateAngle_Cartesian(float dx, float dy)
 {
 	float deg;
 	if(dx == 0.0)
+	{
 		if(dy != 0.0)
 			deg = (dy>0 ? 90.0 : 270.0);
 		else
 			deg = 0.0;
+	}
 	else
 	{
 		float m = dy / dx;

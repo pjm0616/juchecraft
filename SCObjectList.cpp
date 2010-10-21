@@ -38,7 +38,9 @@ int ObjectList::removeObject(Object *obj)
 			break;
 		}
 		else
+		{
 			++it;
+		}
 	}
 	
 	this->setIteratorAsInvalidated();
@@ -48,8 +50,7 @@ int ObjectList::removeObject(Object *obj)
 void ObjectList::removeAllObjects()
 {
 	ObjectList::objlist_t &objs = this->getObjects();
-	for(ObjectList::iterator it = this->begin(); 
-		it != this->end(); )
+	for(ObjectList::iterator it = this->begin(); it != this->end(); )
 	{
 		it->get()->cleanup();
 		objs.erase(it++);

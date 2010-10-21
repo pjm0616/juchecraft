@@ -1,6 +1,11 @@
 // Copyright (C) 2010 Park Jeongmin <pjm0616@gmail.com>
 // See LICENSE.txt for details
 
+/** @file ui/SCUserInterface.h
+ *  @brief Abstract user interface class
+**/
+
+
 #ifndef SCUserInterface_H_
 #define SCUserInterface_H_
 
@@ -12,7 +17,7 @@ public:
 	UserInterface(Game *game)
 		:m_game(game)
 	{
-		this->setUIFPS(this->getGame()->getFPS());
+		this->setUIFPS(this->m_game->getFPS());
 	}
 	virtual ~UserInterface() {}
 	
@@ -24,9 +29,10 @@ public:
 	virtual void processFrame() = 0;
 	virtual void draw() = 0;
 	
+	// There's no point having an accessor for m_game.
+	//Game *getGame() { return this->m_game; }
+	
 protected:
-	Game *getGame() { return this->m_game; }
-	const Game *getGame() const { return this->m_game; }
 	void setUIFPS(unsigned int fps) { this->m_ui_fps = fps; }
 	
 	virtual void drawObject(Object &obj) = 0;

@@ -523,7 +523,7 @@ void UserInterface_SDL::processFrame()
 			break;
 		case SDL_QUIT:
 			//std::exit(0);
-			this->getGame()->endGame();
+			this->m_game->endGame();
 			break;
 		default:
 			break;
@@ -557,7 +557,7 @@ void UserInterface_SDL::draw()
 void UserInterface_SDL::drawUI()
 {
 	char buf[512];
-	Game *game = this->getGame();
+	Game *game = this->m_game;
 	Player *me = &Player::Players[2];
 	RaceId_t my_raceid = me->getRaceId();
 	

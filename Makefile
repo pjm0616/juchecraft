@@ -66,12 +66,17 @@ $(TARGET1):     $(OBJS)
 	@echo LD $@
 	@$(LD) -o $@ $(LDFLAGS) $(OBJS) 
 
+doc:
+	doxygen ./Doxyfile
+
+docclean:
+	rm -rf ./docs/html ./docs/latex
 
 clean:
 	rm -f $(OBJS)
 	rm -f $(TARGET1)
 	
-distclean: clean
+distclean: clean docclean
 	rm -f .depend
 
 dep:    depend

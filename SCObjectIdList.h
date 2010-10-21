@@ -4,13 +4,11 @@
 #error Do not use this file directly.
 #endif
 
-
-// abccc
-// a: SCRace
-// b: SCObjectType
-// ccc: id
-enum ObjectId
-{
+	// abccc
+	// a: SCRace
+	// b: SCObjectType
+	// ccc: id
+	
 	None = 0, 
 	Resource = 1001, 
 	Unit = 2001, 
@@ -69,7 +67,6 @@ enum ObjectId
 	Juche_NuclearReactor = 53005, // 원자로
 	Juche_DeactivatedNuclearReactor = 53006, // 냉각탑 폭파된 원자로 - 하나 지을때마다 서플라이 8 증가
 	Juche_School = 53007, // 강제 소집 학교
-};
 
 
 

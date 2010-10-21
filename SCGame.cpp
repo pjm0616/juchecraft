@@ -57,8 +57,7 @@ void Game::processObjects()
 	}
 #else
 	objs.resetIteratorChecker();
-	for(ObjectList::const_iterator it = objs.begin(); 
-		it != objs.end(); )
+	for(ObjectList::const_iterator it = objs.begin(); it != objs.end(); )
 	{
 		Object *obj = it->get();
 		obj->processFrame();
@@ -70,7 +69,9 @@ void Game::processObjects()
 			objs.resetIteratorChecker();
 		}
 		else
+		{
 			++it;
+		}
 	}
 #endif
 }
@@ -88,10 +89,10 @@ void Game::run()
 		double frame_start_time = getTime();
 		
 		this->processObjects();
-		this->getUI()->processFrame();
-		if(this->getElapsedTime() - this->getLastDrawTime() > (1.0 / this->getUI()->getUIFPS()))
+		this->m_ui->processFrame();
+		if(this->getElapsedTime() - this->getLastDrawTime() > (1.0 / this->m_ui->getUIFPS()))
 		{
-			this->getUI()->draw();
+			this->m_ui->draw();
 			this->setLastDrawTime(this->getElapsedTime());
 		}
 		

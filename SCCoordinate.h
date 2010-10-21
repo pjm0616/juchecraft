@@ -1,6 +1,10 @@
 // Copyright (C) 2010 Park Jeongmin <pjm0616@gmail.com>
 // See LICENSE.txt for details
 
+/** @file SCCoordinate.h
+**/
+
+
 #ifndef SCCoordinate_H_
 #define SCCoordinate_H_
 
@@ -45,16 +49,14 @@ public:
 		return coord;
 	}
 	
-	/**
-	 * @brief Calculates angle from `this' to `dest'
-	 * @param dest The destination
-	 * @return Angle in degrees
+	/** @brief Calculates angle from `this' to `dest'
+	 *  @param dest The destination
+	 *  @return Angle in degrees
 	 */
 	float calculateAngle(const Coordinate &dest) const;
-	/**
-	 * @brief Calculates distance from `this' to `dest'
-	 * @param dest The destination
-	 * @return The distance
+	/** @brief Calculates distance from `this' to `dest'
+	 *  @param dest The destination
+	 *  @return The distance
 	 */
 	float calculateDistance(const Coordinate &dest) const;
 	

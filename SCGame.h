@@ -1,6 +1,10 @@
 // Copyright (C) 2010 Park Jeongmin <pjm0616@gmail.com>
 // See LICENSE.txt for details
 
+/** @file SCGame.h
+**/
+
+
 #ifndef SCGame_H_
 #define SCGame_H_
 
@@ -42,7 +46,8 @@ public:
 	ObjectList &getObjectList() { return this->m_objects; }
 	const ObjectList &getObjectList() const { return this->m_objects; }
 	
-	UserInterface *getUI() { return this->m_ui; }
+	// There's no point having an accessor for m_ui.
+	//UserInterface *getUI() { return this->m_ui; }
 	
 	void endGame() { this->m_is_game_ended = true; }
 	bool isGameEnded() const { return this->m_is_game_ended; }

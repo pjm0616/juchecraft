@@ -1,6 +1,10 @@
 // Copyright (C) 2010 Park Jeongmin <pjm0616@gmail.com>
 // See LICENSE.txt for details
 
+/** @file SCException.h
+**/
+
+
 #ifndef SCException_H_
 #define SCException_H_
 

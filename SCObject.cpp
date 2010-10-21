@@ -27,6 +27,7 @@ using namespace SC;
 
 Object::Object(Game *game)
 	:m_game(game), 
+	// default object properties. these will be modified in derived class.
 	m_object_type(ObjectType::None), 
 	m_object_id(ObjectId::None), 
 	m_object_id_name("Object"), 
@@ -37,7 +38,8 @@ Object::Object(Game *game)
 	m_height(0), 
 	m_max_hp(-1), 
 	m_max_energy(-1), 
-	m_initial_resource(0), 
+	m_initial_minerals(0), 
+	m_initial_vespene_gas(0), 
 	m_supplied_food(0), 
 	m_supplies_in_use(0), 
 	m_armor(0.0), 
@@ -46,14 +48,8 @@ Object::Object(Game *game)
 	m_attack_speed(0.0), 
 	m_attack_range(0.0)
 {
-	// meaningless
-	this->setOwner(0);
+	this->setOwner(0); // meaningless
 	
-	this->setHP(0);
-	this->setEnergy(0);
-	this->setResource(0);
-	
-	// meaningful
 	this->setState(ObjectState::None);
 	
 	this->setPosition(0.0, 0.0);
@@ -87,7 +83,8 @@ void Object::init()
 	this->setState(this->getInitialState());
 	this->setHP(this->getMaxHP());
 	this->setEnergy(this->getMaxEnergy());
-	this->setResource(this->getInitialResource());
+	this->setMinerals(this->getInitialMinerals());
+	this->setVespeneGas(this->getInitialVespeneGas());
 	
 	this->m_cleanup_called = false; // for debugging
 }
@@ -231,7 +228,9 @@ bool Object::doMovement(float time)
 			return true;
 		}
 		else
+		{
 			this->getDestination().set(this->calculateDestination_TargetedMoving());
+		}
 	#endif
 		this->setAngle(this->getMovementStartPoint().calculateAngle(this->getDestination()));
 	}
@@ -284,7 +283,9 @@ bool Object::doMovement(float time)
 bool Object::move_notAligned(const Coordinate &dest, MovementFlags_t flags)
 {
 	if(!this->canMove())
+	{
 		return false;
+	}
 	
 	#if 0
 	Coordinate next_pos = this->calculateNextDestination();
@@ -306,7 +307,9 @@ bool Object::move_notAligned(const Coordinate &dest, MovementFlags_t flags)
 bool Object::move(Object *target, float minimum_distance, MovementFlags_t flags)
 {
 	if(!this->canMove())
+	{
 		return false;
+	}
 	
 	this->setMovementFlags(flags);
 	this->setMovementTarget(target, minimum_distance);
@@ -351,7 +354,7 @@ Coordinate Object::calculateDestination_TargetedMoving()
 }
 
 
-static float calculateDistance(float x1, float y1, float x2, float y2)
+static float calculate_distance(float x1, float y1, float x2, float y2)
 {
 	float dx = fabs(x2 - x1);
 	float dy = fabs(y2 - y1);
@@ -379,10 +382,10 @@ bool Object::checkMinDistanceOld(Object *target, float min_distance, Coordinate 
 	{
 		for(int j = 0; j < 2; j++)
 		{
-			distances[idx++] = calculateDistance(my_xarr[j], my_yarr[i], target_xarr[j], target_yarr[i]);
-			distances[idx++] = calculateDistance(my_xarr[j], my_yarr[i], target_xarr[j], target_yarr[!i]);
-			distances[idx++] = calculateDistance(my_xarr[j], my_yarr[i], target_xarr[!j], target_yarr[i]);
-			distances[idx++] = calculateDistance(my_xarr[j], my_yarr[i], target_xarr[!j], target_yarr[!i]);
+			distances[idx++] = calculate_distance(my_xarr[j], my_yarr[i], target_xarr[j], target_yarr[i]);
+			distances[idx++] = calculate_distance(my_xarr[j], my_yarr[i], target_xarr[j], target_yarr[!i]);
+			distances[idx++] = calculate_distance(my_xarr[j], my_yarr[i], target_xarr[!j], target_yarr[i]);
+			distances[idx++] = calculate_distance(my_xarr[j], my_yarr[i], target_xarr[!j], target_yarr[!i]);
 		}
 	}
 	/*
@@ -413,7 +416,9 @@ bool Object::checkMinDistanceOld(Object *target, float min_distance, Coordinate 
 	for(int i = 1; i < 16; i++)
 	{
 		if(distances[i] <= distances[min])
+		{
 			min = i;
+		}
 	}
 	
 	if(distances[min] <= min_distance)
@@ -528,12 +533,12 @@ bool Object::doAttack(float time)
 				this->stopAttacking();
 				// FIXME
 				//target->kill();
-				this->getGame()->removeObject(target);
+				this->m_game->removeObject(target);
 				break;
 			}
 		}
 		return true;
-	}
+	} /* if(this->checkMinDistance(target, this->getNetAttackRange(), &where_to_move)) */
 	else
 	{
 		#if 0
@@ -546,7 +551,7 @@ bool Object::doAttack(float time)
 		#endif
 		
 		return false;
-	}
+	} /* else */
 }
 
 void Object::stopAttacking()
@@ -560,12 +565,12 @@ void Object::stopAttacking()
 
 bool Object::attack(Object *target)
 {
-	if(!this->canAttack())
+	if(!this->canAttack() || target->isInvincible())
+	{
 		return false;
-	if(target->isInvincible())
-		return false;
-	float range = this->getNetAttackRange();
+	}
 	
+	float range = this->getNetAttackRange();
 	this->setAttackTarget(target);
 	if(this->checkMinDistance(target, range, NULL) == false)
 	{
@@ -580,7 +585,7 @@ bool Object::attack(Object *target)
 			this->setAttackTarget(NULL);
 			return false;
 		}
-	}
+	} /* if(this->checkMinDistance(target, range, NULL) == false) */
 	else
 	{
 		this->setState(ObjectState::Attacking, true);
@@ -621,7 +626,7 @@ bool Object::cmd_move(Object *target, float minimum_distance, MovementFlags_t fl
 
 void Object::processFrame()
 {
-	float deltat = this->getGame()->getFrameDelta();
+	float deltat = this->m_game->getFrameDelta();
 	if(this->isMoving())
 	{
 		bool ret = doMovement(deltat);

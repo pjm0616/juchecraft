@@ -304,7 +304,7 @@ void UserInterface_ncurses::draw()
 
 void UserInterface_ncurses::drawUI()
 {
-	Game *game = this->getGame();
+	Game *game = this->m_game;
 	Player *me = &Player::Players[1];
 	
 	//ncurses::mvwprintw(this->m_wnd_stat, 0, 0, 

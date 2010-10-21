@@ -45,11 +45,11 @@ int main(int argc, char *argv[])
 		game.setMapSize(640*2, 480*2);
 		
 		SC::UserInterface *ui;
-		
 		if(argc >= 2 && !strcmp(argv[1], "ncurses"))
 			ui = new SC::UserInterface_ncurses(&game);
 		else
 			ui = new SC::UserInterface_SDL(&game);
+		
 		ui->initUI();
 		
 		game.setUI(ui);

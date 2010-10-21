@@ -23,7 +23,7 @@ public:
 		this->m_width = 32;
 		this->m_height = 32;
 		
-		this->m_initial_resource = 1500;
+		this->m_initial_minerals = 1500;
 	}
 	virtual ~MineralField() {}
 	
