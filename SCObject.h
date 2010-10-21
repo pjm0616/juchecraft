@@ -70,40 +70,38 @@ class Object
 public:
 	/** @name Constructor/destructor */
 	//@{
-	/** @brief Constructor
-	 *  @details You MUST call SC::Object::init() IMMEDIATELY after construction
+	/** @details You MUST call SC::Object::init() IMMEDIATELY after construction.
 	 *
-	 *  @param[in] game A pointer to SC::Game object
+	 *  @param[in] game A pointer to SC::Game object.
 	 */
 	Object(Game *game);
-	/** @brief Destructor
-	 *  @details You MUST call SC::Object::cleanup() before destruction
+	/** @details You MUST call SC::Object::cleanup() before destruction.
 	 */
 	virtual ~Object();
 	
-	/** @brief initializes the object after ctor
-	 *  @details init() performs some initialization that uses virtual functions or variables that initialized at derived classes
+	/** @brief initializes the object after ctor.
+	 *  @details init() performs some initialization that uses virtual functions or variables that initialized at derived classes.
 	 */
 	void init();
-	/** @brief initializes the object after ctor
-	 *  @details cleanup() performs some initialization that uses virtual functions
+	/** @brief initializes the object after ctor.
+	 *  @details cleanup() performs some initialization that uses virtual functions.
 	 */
 	void cleanup();
 	//@}
 	
-	/** @brief processes current frame
-	 *  @details This function is called from game main loop, in SC::Game
+	/** @brief processes current frame.
+	 *  @details This function is called from game main loop, in SC::Game.
 	 */
 	void processFrame();
 	
 	/** @name Unit owner related */
 	//@{
-	/** @brief Get player that owns this object
+	/** @brief Get player that owns this object.
 	 *
 	 *  @return A pointer to SC::Player that owns this object
 	 */
 	Player *getOwner() { return this->m_owner; }
-	/** @brief Changes owner of the object
+	/** @brief Changes owner of the object.
 	 *
 	 *  @param[in] new_owner A pointer to SC::Player
 	 */
@@ -131,18 +129,18 @@ public:
 	void addPosition(float x, float y) { this->m_pos.add(x, y); } /**< Increase object's coordinate */
 	//@}
 	
-	/** @brief Get object's current angle
+	/** @brief Get object's current angle.
 	 *
 	 *  @return The angle in degrees
 	 */
 	float getAngle() const { return this->m_angle; }
 	//@{
-	/** @brief Calculates angle from object to destination coordinate
+	/** @brief Calculates angle from object to destination coordinate.
 	 *
 	 *  @return The angle in degrees
 	 */
 	float calculateAngle(const Coordinate &dest) const { return this->getPosition().calculateAngle(dest); }
-	/** @brief Calculates angle from object to destination object
+	/** @brief Calculates angle from object to destination object.
 	 *  
 	 *  @return The angle in degrees
 	 */
@@ -217,7 +215,7 @@ public:
 	 */
 	bool cmd_move(Object *target, float minumum_distance = 0.0, MovementFlags_t flags = MovementFlags::None);
 	
-	/** @brief 이동중인 시간을 구함
+	/** @brief 이동중인 시간을 구함.
 	 *  @return 이동중인 시간
 	 */
 	float getMovingSeconds() const { return this->m_moving_secs; } // 이동중인 시간
@@ -248,7 +246,7 @@ public:
 	/** @name Unit states */
 	/*@{*/
 	
-	/** @brief Get current unit state
+	/** @brief Get current unit state.
 	 *
 	 *  @return true or false
 	 */
@@ -290,20 +288,20 @@ public:
 	void increaseVespeneGas(int res) { this->m_remaining_vespene_gas += res; }
 	void decreaseVespeneGas(int res) { this->m_remaining_vespene_gas -= res; }
 	
-	/** @brief Calculates total armor of the object
+	/** @brief Calculates total armor of the object.
 	 *  @sa getArmor(), getArmorBonusA(), getArmorBonusM()
 	 */
 	float getNetArmor() const { return (this->getArmor() * this->getArmorBonusM()) + this->getArmorBonusA(); }
-	/** @brief Calculates total damage of the object
+	/** @brief Calculates total damage of the object.
 	 */
 	float getNetDamage() const;
-	/** @brief Calculates total moving speed of the object
+	/** @brief Calculates total moving speed of the object.
 	 */
 	float getNetMovingSpeed() const;
-	/** @brief Calculates total attack speed of the object
+	/** @brief Calculates total attack speed of the object.
 	 */
 	float getNetAttackSpeed() const { return (this->getAttackSpeed() * this->getAttackSpeedBonusM()) + this->getAttackSpeedBonusA(); }
-	/** @brief Calculates total attack range of the object
+	/** @brief Calculates total attack range of the object.
 	 */
 	float getNetAttackRange() const { return this->getAttackRange(); }
 	//@}
@@ -332,36 +330,36 @@ public:
 	//@}
 	
 	//@{
-	/** @brief Calculate total 'added armor bonuses'
+	/** @brief Calculate total 'added armor bonuses'.
 	 *  @sa getNetArmor()
 	 */
 	float getArmorBonusA() const { return this->m_owner->getPlayerArmorBonusA() + this->getObjectArmorBonusA();}
-	/** @brief Calculate total 'added damage bonuses'
+	/** @brief Calculate total 'added damage bonuses'.
 	 *  @sa getNetArmor()
 	 */
 	float getDamageBonusA() const { return this->m_owner->getPlayerDamageBonusA() + this->getObjectDamageBonusA();}
-	/** @brief Calculate total 'added moving speed bonuses'
+	/** @brief Calculate total 'added moving speed bonuses'.
 	 *  @sa getNetArmor()
 	 */
 	float getMovingSpeedBonusA() const { return this->m_owner->getPlayerMovingSpeedBonusA() + this->getObjectMovingSpeedBonusA();}
-	/** @brief Calculate total 'added attack speed bonuses'
+	/** @brief Calculate total 'added attack speed bonuses'.
 	 *  @sa getNetArmor()
 	 */
 	float getAttackSpeedBonusA() const { return this->m_owner->getPlayerAttackSpeedBonusA() + this->getObjectAttackSpeedBonusA();}
 	
-	/** @brief Calculate total 'multiplied armor bonuses'
+	/** @brief Calculate total 'multiplied armor bonuses'.
 	 *  @sa getNetArmor()
 	 */
 	float getArmorBonusM() const { return this->getObjectArmorBonusM();}
-	/** @brief Calculate total 'multiplied damage bonuses'
+	/** @brief Calculate total 'multiplied damage bonuses'.
 	 *  @sa getNetArmor()
 	 */
 	float getDamageBonusM() const { return this->getObjectDamageBonusM();}
-	/** @brief Calculate total 'multiplied moving speed bonuses'
+	/** @brief Calculate total 'multiplied moving speed bonuses'.
 	 *  @sa getNetArmor()
 	 */
 	float getMovingSpeedBonusM() const { return this->getObjectMovingSpeedBonusM();}
-	/** @brief Calculate total 'multiplied attack speed bonuses'
+	/** @brief Calculate total 'multiplied attack speed bonuses'.
 	 *  @sa getNetArmor()
 	 */
 	float getAttackSpeedBonusM() const { return this->getObjectAttackSpeedBonusM();}
@@ -370,17 +368,17 @@ public:
 protected:
 	/** @name Current unit states */
 	//@{{
-	/** @brief Get unit states
+	/** @brief Get unit states.
 	 *  @return unit's states
 	 *  @sa ObjectState
 	 */
 	ObjectState_t getState() const { return this->m_state; }
-	/** @brief Set unit states
+	/** @brief Set unit states.
 	 *  @param[in] state new unit state
 	 *  @sa ObjectState
 	 */
 	void setState(ObjectState_t state) { this->m_state = state; } // FIXME: change name
-	/** @brief Toggle specific unit state
+	/** @brief Toggle specific unit state.
 	 *  @param[in] state type of unit state to change
 	 *  @param[in] onoff true or false
 	 *  @sa ObjectState
@@ -405,11 +403,11 @@ private:
 	/** @name Unit owner related */
 	//@{
 	void setOwner(Player *new_owner) { this->m_owner = new_owner; }
-	/** @brief Attaches to current owner
+	/** @brief Attaches to current owner.
 	 *  @detail updates owner's suppliy statistics, etc.
 	 */
 	void attachToOwner();
-	/** @brief Detaches from current owner
+	/** @brief Detaches from current owner.
 	 *  @detail updates owner's suppliy statistics, etc.
 	 */
 	void detachFromOwner();
@@ -417,11 +415,11 @@ private:
 	
 	/** @name Movement related */
 	//@{
-	/** @brief 이 오브젝트가 움직인 시간 설정
+	/** @brief 이 오브젝트가 움직인 시간 설정.
 	 *  @detail only called my setMovementTarget()
 	 */
 	void setMovingSeconds(float time) { this->m_moving_secs = time; }
-	/** @brief 이 오브젝트가 움직인 시간 증가
+	/** @brief 이 오브젝트가 움직인 시간 증가.
 	 *  @detail only called my setMovementTarget()
 	 */
 	void increaseMovingSeconds(float time) { this->m_moving_secs += time; }
@@ -435,7 +433,7 @@ private:
 	
 	Coordinate calculateDestination_TargetedMoving();
 	Coordinate calculateMovementSpeed(float time);
-	/** @brief processes movement
+	/** @brief Processes movement.
 	 *  @detail Called by game main loop.
 	 *  @param[in] time this->game->getFrameDelta()
 	 */
@@ -457,7 +455,7 @@ private:
 	// 그렇지 않을 경우 where_to_move에 이동해야할 위치를 저장한 후 return false
 	bool checkMinDistanceOld(Object *target, float min_distance, Coordinate *where_to_move);
 	bool checkMinDistance(Object *target, float min_distance, Coordinate *where_to_move);
-	/** @brief processes attack
+	/** @brief Processes attack.
 	 *  @detail Called by game main loop.
 	 *  @param[in] time this->game->getFrameDelta()
 	 */
@@ -530,7 +528,7 @@ public:
 	int getHeight() const { return this->m_height; }
 	void getSize(int *w, int *h) const { *w = this->getWidth(); *h = this->getHeight(); }
 	
-	/** @brief Get object's initial state
+	/** @brief Get object's initial state.
 	 *  @sa ObjectState
 	 */
 	ObjectState_t getInitialState() const { return this->m_initial_state; }
@@ -541,27 +539,27 @@ public:
 	int getSuppliedFood() const { return this->m_supplied_food; }
 	int getSuppliesInUse() const { return this->m_supplies_in_use; }
 	
-	/** @brief Get bare armor of the object
+	/** @brief Get bare armor of the object.
 	 *  @detail DO NOT use this function unless you want the RAW unit attribute(without upgrades).
 	 *  @detail use getNetArmor() instead.
 	 */
 	float getArmor() const { return this->m_armor; }
-	/** @brief Get bare damage of the object
+	/** @brief Get bare damage of the object.
 	 *  @detail DO NOT use this function unless you want the RAW unit attribute(without upgrades).
 	 *  @detail use getNetDamage() instead.
 	 */
 	float getDamage() const { return this->m_damage; }
-	/** @brief Get bare moving speed of the object
+	/** @brief Get bare moving speed of the object.
 	 *  @detail DO NOT use this function unless you want the RAW unit attribute(without upgrades).
 	 *  @detail use getNetMovingSpeed() instead.
 	 */
 	float getMovingSpeed() const { return this->m_moving_speed; }
-	/** @brief Get bare attack speed of the object
+	/** @brief Get bare attack speed of the object.
 	 *  @detail DO NOT use this function unless you want the RAW unit attribute(without upgrades).
 	 *  @detail use getNetAttackSpeed() instead.
 	 */
 	float getAttackSpeed() const { return this->m_attack_speed; }
-	/** @brief Get bare attack range of the object
+	/** @brief Get bare attack range of the object.
 	 *  @detail DO NOT use this function unless you want the RAW unit attribute(without upgrades).
 	 *  @detail use getNetAttackRange() instead.
 	 */
