@@ -429,7 +429,7 @@ bool UserInterface_SDL::cleanupUI()
 	// free game resources
 	SDL_FreeSurface(this->m_sf_console);
 	
-	#if 0 // this causes segfault -_-
+	#if 0 // this causes segfault -_-.. I wonder why
 	// free game surfaces
 	SDL_FreeSurface(this->m_buttons_wnd);
 	SDL_FreeSurface(this->m_unitstat_wnd);
@@ -441,8 +441,8 @@ bool UserInterface_SDL::cleanupUI()
 	TTF_CloseFont(this->m_font);
 	
 	TTF_Quit();
-	#endif
 	SDL_Quit();
+	#endif
 	
 	return true;
 }
