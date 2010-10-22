@@ -1,6 +1,10 @@
 // Copyright (C) 2010 Park Jeongmin <pjm0616@gmail.com>
 // See LICENSE.txt for details
 
+#include "config.h"
+
+#include <cstdio>
+
 #include <iostream>
 #include <tr1/memory>
 #include <list>
@@ -10,6 +14,12 @@
 #include <cstring>
 #include <cstdlib>
 
+#ifdef __WIN32__
+# include <windows.h>
+#endif
+
+#include "defs.h"
+#include "compat.h"
 #include "SCException.h"
 #include "SCCoordinate.h"
 #include "SCPlayer.h"
@@ -31,7 +41,9 @@ int main(int argc, char *argv[])
 	srand48(time(NULL) ^ getpid());
 	
 	SC::Player::initialize();
+	#ifndef NO_NCURSES_UI
 	SC::UserInterface_ncurses::load_resources("./res/ui/ncurses/objects/");
+	#endif
 	
 	try
 	{
@@ -44,15 +56,20 @@ int main(int argc, char *argv[])
 		SC::Game game;
 		game.setMapSize(640*2, 480*2);
 		
+		fprintf(stderr, "Initializing UI...\n");
 		SC::UserInterface *ui;
+		#ifndef NO_NCURSES_UI
 		if(argc >= 2 && !strcmp(argv[1], "ncurses"))
 			ui = new SC::UserInterface_ncurses(&game);
 		else
+		#endif
 			ui = new SC::UserInterface_SDL(&game);
 		
+		fprintf(stderr, "Creating UI...\n");
 		ui->initUI();
 		
 		game.setUI(ui);
+		//fprintf(stderr, "Starting game...\n");
 		game.run();
 		
 		ui->cleanupUI();
@@ -66,5 +83,14 @@ int main(int argc, char *argv[])
 	
 	return 0;
 }
+
+#ifdef __WIN32__
+int WinMain(HINSTANCE,HINSTANCE,LPSTR,int)
+{
+	char *argv[] = {"mini_sc", NULL}; // fixme
+	return main(1, argv);
+}
+#endif
+
 
 

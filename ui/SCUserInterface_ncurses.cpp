@@ -1,7 +1,9 @@
 // Copyright (C) 2010 Park Jeongmin <pjm0616@gmail.com>
 // See LICENSE.txt for details
 
+#include "config.h"
 
+#ifndef NO_NCURSES_UI
 
 #include <tr1/memory>
 #include <string>
@@ -22,6 +24,7 @@ namespace ncurses
 #include <ncurses.h>
 }
 
+#include "defs.h"
 #include "SCException.h"
 #include "SCCoordinate.h"
 #include "SCPlayer.h"
@@ -390,7 +393,7 @@ void UserInterface_ncurses::drawObject(Object &obj)
 
 
 
-
+#endif /* #ifndef NO_NCURSES_UI */
 
 
 

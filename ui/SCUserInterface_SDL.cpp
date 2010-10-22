@@ -1,6 +1,7 @@
 // Copyright (C) 2010 Park Jeongmin <pjm0616@gmail.com>
 // See LICENSE.txt for details
 
+#include "config.h"
 
 
 #ifdef DEBUG
@@ -31,6 +32,8 @@ namespace SDL
 //#include <SDL/SDL_gfxBlitFunc.h>
 }
 
+#include "defs.h"
+#include "compat.h"
 #include "SCException.h"
 #include "SCCoordinate.h"
 #include "SCPlayer.h"

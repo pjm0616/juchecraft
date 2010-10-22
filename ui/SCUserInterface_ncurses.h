@@ -4,6 +4,12 @@
 #ifndef SCUserInterface_ncurses_H_
 #define SCUserInterface_ncurses_H_
 
+#ifndef SC_CONFIG_H_
+#error Include "config.h" first
+#endif
+
+#ifndef NO_NCURSES_UI
+
 // damn..
 namespace ncurses
 {
@@ -51,6 +57,8 @@ private:
 
 
 } // end of namespace SC
+
+#endif /* #ifndef NO_NCURSES_UI */
 
 #endif
 

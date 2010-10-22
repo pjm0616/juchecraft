@@ -582,8 +582,8 @@ protected:
 	int m_max_energy; /**< Object's max energy */
 	int m_initial_minerals; /**< The initial amount of minerals */
 	int m_initial_vespene_gas; /**< The initial amount of vespene gas */
-	int m_supplied_food; /**< The amount of food this object supplits */
-	int m_supplies_in_use; /**< The amount of food thie object uses */
+	int m_supplied_food; /**< The amount of food this object supplies */
+	int m_supplies_in_use; /**< The amount of food this object uses */
 	
 	float m_armor; /**< Bare armor of the object. Bonuses can be applied. @sa getNetArmor() */
 	float m_damage; /**< Bare damage of the object @sa getNetDamage() */

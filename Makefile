@@ -9,7 +9,7 @@ SRCS				= $(SRCS_UI) SCCoordinate.cpp SCObject.cpp SCPlayer.cpp SCObjectList.cpp
 TARGET1				= mini_sc
 
 DEFS				= -D_FILE_OFFSET_BITS=64
-LIBS				= -lncursesw -lSDL -lSDL_ttf -lSDL_image -lSDL_gfx
+LIBS				= -lSDL -lSDL_ttf -lSDL_image -lSDL_gfx -lncursesw
 INCLUDEDIR			= -I.
 LIBDIR				=
 
@@ -46,7 +46,7 @@ CFLAGS				= $(DEFS) $(CFLAGS_DBG) $(INCLUDEDIR) \
 						-std=gnu99 -Wall -Wextra -Wno-unused -Wno-unused-function #-Wextra -Wshadow
 CXXFLAGS			= $(CXXFLAGS_DBG) $(INCLUDEDIR) \
 						-std=gnu++98 -Wall -Wextra -Wno-unused -Wno-unused-function #-Wextra -Wshadow
-LDFLAGS				= $(LDFLAGS_DBG) $(LIBDIR) $(LIBS) 
+LDFLAGS				= $(LDFLAGS_DBG) $(LIBDIR)
 OBJS				=$(SRCS:.cpp=.o) 
 
 
@@ -60,11 +60,11 @@ all:    $(TARGET1)
 .SUFFIXES: .cpp .o
 .cpp.o:
 	@echo CXX $<
-	@$(CXX) -c $(CXXFLAGS) -o $@ $<
+	$(CXX) -c $(CXXFLAGS) -o $@ $<
 
 $(TARGET1):     $(OBJS)
 	@echo LD $@
-	@$(LD) -o $@ $(LDFLAGS) $(OBJS) 
+	$(LD) -o $@ $(LDFLAGS) $(OBJS) $(LIBS)
 
 doc:
 	doxygen ./Doxyfile

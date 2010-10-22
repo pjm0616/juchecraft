@@ -1,6 +1,8 @@
 // Copyright (C) 2010 Park Jeongmin <pjm0616@gmail.com>
 // See LICENSE.txt for details
 
+#include "config.h"
+
 #ifdef DEBUG
 #include <stdio.h>
 #include <cassert>
@@ -13,6 +15,8 @@
 #include <cmath>
 #include <cstdlib>
 
+#include "defs.h"
+#include "compat.h"
 #include "SCException.h"
 #include "SCCoordinate.h"
 #include "SCPlayer.h"
