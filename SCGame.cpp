@@ -3,11 +3,6 @@
 
 #include "config.h"
 
-#ifdef DEBUG
-#include <stdio.h>
-#include <stdlib.h>
-#endif
-
 #ifdef __WIN32__
 #include <windows.h>
 #endif
@@ -16,6 +11,12 @@
 #include <string>
 #include <list>
 #include <map>
+#include <cassert>
+
+#ifdef DEBUG
+#include <cstdio>
+#include <cstdlib>
+#endif
 
 #ifndef __WIN32__
 #include <sys/time.h>

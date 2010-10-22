@@ -1,12 +1,11 @@
 
-#ifndef NDEBUG
-#include <stdio.h>
-#endif
+#include "config.h"
 
-#include <string.h>
-#include <stdlib.h>
+#include <cstdio>
+#include <cstring>
+#include <cstdlib>
+#include <cassert>
 #include <inttypes.h>
-#include <assert.h>
 
 #include "grp.h"
 
@@ -21,30 +20,30 @@ static long fgetfilesize(FILE *fp)
 
 grp_palette_t *load_palette(const char *filename)
 {
-	FILE *fp = fopen(filename, "r");
+	FILE *fp = fopen(filename, "rb");
+	assert(fp != NULL);
+	
 	long filesize = fgetfilesize(fp);
+	// filesize is maximum 1024 bytes
+	if(filesize > 1024)
+		filesize = 1024;
 	
-	uint32_t *palette_buf = (uint32_t *)malloc(filesize); // FIXME
-	
-	if(filesize >= 1024)
+	uint32_t *palette_buf;
+	if(filesize == 768)
 	{
-		memset(palette_buf, 0, 1024);
-		fread(palette_buf, 1024, 1, fp);
-	}
-	else if(filesize == 768)
-	{
-		uint8_t *buf = (uint8_t *)malloc(768);
-		memset(buf, 0, 768);
-		fread(buf, 768, 1, fp);
-		for(int i = 0; i < 256; i++)
+		palette_buf = (uint32_t *)calloc(1, 1024);
+		uint8_t buf[768] = {0, };
+		int nread = fread(buf, 768, 1, fp);
+		for(int i = 0; i < 768/3; i++)
 		{
-			memcpy(&palette_buf[i], buf + i*3, 3);
-			*(((uint8_t *)&palette_buf[i]) + 3) = 0;
+			uint8_t *p = (uint8_t *)&palette_buf[i];
+			memcpy(p, &buf[i * 3], 3);
+			p[3] = 0;
 		}
 	}
 	else
 	{
-		memset(palette_buf, 0, 1024);
+		palette_buf = (uint32_t *)calloc(1, filesize);
 		fread(palette_buf, filesize, 1, fp);
 	}
 	fclose(fp);
@@ -52,10 +51,11 @@ grp_palette_t *load_palette(const char *filename)
 	return palette_buf;
 }
 
-
 grp_data_t *load_grp(const char *filename)
 {
-	FILE *fp = fopen(filename, "r");
+	FILE *fp = fopen(filename, "rb");
+	assert(fp != NULL);
+	
 	long filesize = fgetfilesize(fp);
 	if(filesize < 6)
 	{
@@ -69,7 +69,6 @@ grp_data_t *load_grp(const char *filename)
 	
 	return grpdata;
 }
-
 
 
 

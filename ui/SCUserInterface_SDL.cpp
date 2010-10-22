@@ -4,19 +4,17 @@
 #include "config.h"
 
 
-#ifdef DEBUG
-#include <cstdio>
-#include <cassert>
-#endif
 
 #include "smart_ptrs.h"
 #include <string>
 #include <list>
 #include <map>
 
+#include <cstdio>
 #include <cstring>
 #include <cstdlib>
 #include <inttypes.h>
+#include <cassert>
 
 namespace SDL
 {
@@ -704,10 +702,6 @@ static int calculate_unit_framenum(Object *obj, int attack_start, int attack_end
 		fprintf(stderr, "Cannot happen: row: %d; angle: %f\n", row, obj->getAngle());
 		row = 0;
 	}
-	
-	/* 홀수라면 1을 뺌. grp데이터에 0, 1이 같고, 2, 3도 같게 되어있음. 그리고 1을 읽으면 메모리 접근이 잘못됨 -.- */
-	if(row % 2 == 1)
-		row--;
 	
 	int framenum = col*17 + row;
 	return framenum;

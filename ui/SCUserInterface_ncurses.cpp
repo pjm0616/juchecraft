@@ -10,8 +10,10 @@
 #include <list>
 #include <map>
 
+#include <cstdio>
 #include <cstring>
 #include <cstdlib>
+#include <cassert>
 #include <cmath>
 
 #include <unistd.h>

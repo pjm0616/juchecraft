@@ -3,17 +3,17 @@
 
 #include "config.h"
 
-#ifdef DEBUG
-#include <stdio.h>
-#include <cassert>
-#endif
-
 #include "smart_ptrs.h"
 #include <string>
 #include <list>
 #include <map>
 #include <cmath>
 #include <cstdlib>
+#include <cassert>
+
+#ifdef DEBUG
+#include <stdio.h>
+#endif
 
 #include "defs.h"
 #include "compat.h"

@@ -5,13 +5,13 @@
 
 #ifdef DEBUG
 #include <stdio.h>
-#include <cassert>
 #endif
 
 #include "smart_ptrs.h"
 #include <string>
 #include <cmath>
 #include <cstdlib>
+#include <cassert>
 
 #include "defs.h"
 #include "SCException.h"
