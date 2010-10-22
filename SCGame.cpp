@@ -37,10 +37,7 @@ using namespace SC;
 
 
 Game::Game()
-	:m_start_time(0), 
-	m_frame_delta(0.0), 
-	m_elapsed_time(0.0), 
-	m_last_draw(0.0), 
+	:m_start_time(0.0), 
 	m_is_game_ended(false)
 {
 }
@@ -49,7 +46,7 @@ Game::~Game()
 {
 }
 
-double Game::getTime() const
+double Game::getElapsedTime() const
 {
 #ifdef __WIN32__
 	DWORD milisec = timeGetTime();
@@ -93,39 +90,42 @@ void Game::processObjects()
 
 void Game::run()
 {
-	this->setStartTime(this->getTime());
+	this->setStartTime(this->getElapsedTime());
 	
 	this->test_tmp1(); // debug
 	
 	// precalculate some constants
-	float fixed_deltat = 1.0 / this->getFPS();
-	unsigned long sleep_time = 1000000.0 / this->getFPS();
-	float ui_drawtime_delta = 1.0 / this->m_ui->getRedrawFPS();
+	float fixed_deltat = 1.0 / this->getUpdateRate();
+	unsigned long sleep_time = 1000000.0 / this->getUpdateRate();
+	float fixed_frame_deltat = 1.0 / this->m_ui->getFPS();
 	
 	// initizlize loop variables
-	float deltat = fixed_deltat;
+	this->setDelta(fixed_deltat);
 	this->setFrameNumber(0);
-	this->setFrameDelta(deltat);
+	this->setFrameDelta(fixed_frame_deltat);
+	this->setLastDrawTime(0.0);
 	while(!this->isGameEnded())
 	{
-		double frame_start_time = this->getTime();
+		double start_time = this->getElapsedTime();
 		
 		this->processObjects();
 		this->m_ui->processFrame();
-		if(this->getElapsedTime() - this->getLastDrawTime() > ui_drawtime_delta)
+		
+		double process_finished_time = this->getElapsedTime();
+		if(process_finished_time - this->getLastDrawTime() > fixed_frame_deltat)
 		{
 			this->m_ui->draw();
-			this->setLastDrawTime(this->getElapsedTime());
+			
+			this->increaseFrameNumber();
+			double draw_finished_time = this->getElapsedTime();
+			this->setFrameDelta(draw_finished_time - this->getLastDrawTime());
+			this->setLastDrawTime(draw_finished_time);
 		}
 		
-		// limit fps
+		// limit update rate
 		usleep(sleep_time);
-		
 		// calculate time
-		this->increaseFrameNumber();
-		deltat = this->getTime() - frame_start_time;
-		this->setFrameDelta(deltat);
-		this->increaseElapsedTime(deltat);
+		this->setDelta(this->getElapsedTime() - start_time);
 	}
 }
 

@@ -155,7 +155,7 @@ UserInterface_ncurses::UserInterface_ncurses(Game *game)
 	:UserInterface(game)
 {
 	
-	this->setRedrawFPS(10);
+	this->setFPS(8);
 }
 
 UserInterface_ncurses::~UserInterface_ncurses()

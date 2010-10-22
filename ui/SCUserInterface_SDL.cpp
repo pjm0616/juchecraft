@@ -315,7 +315,7 @@ void render_grp_frame_to_surface(grp_data_t *grpdata, int framenum, SDL_Surface 
 UserInterface_SDL::UserInterface_SDL(Game *game)
 	:UserInterface(game)
 {
-	this->setRedrawFPS(20);
+	this->setFPS(30);
 }
 
 UserInterface_SDL::~UserInterface_SDL()
@@ -607,8 +607,8 @@ void UserInterface_SDL::drawUI()
 		x -= 68;
 	}
 	
-	snprintf(buf, sizeof(buf), "FPS: %f  |  Frame#: %u", 
-		game->getCurrentFPS(), game->getFrameNumber());
+	snprintf(buf, sizeof(buf), "Rate: %f  |  FPS: %f  |  Frame#: %u", 
+		game->getCurrentUpdateRate(), game->getCurrentFPS(), game->getFrameNumber());
 	SDL_print(this->m_font, this->m_screen, 0, 0, 640, 16, 0x00ff00, buf);
 	
 	// draw console area

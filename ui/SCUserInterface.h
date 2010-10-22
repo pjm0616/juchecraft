@@ -19,7 +19,7 @@ public:
 	UserInterface(Game *game)
 		:m_game(game)
 	{
-		this->setRedrawFPS(this->m_game->getFPS() / 3);
+		this->setFPS(20);
 	}
 	virtual ~UserInterface() {}
 	
@@ -29,7 +29,7 @@ public:
 	/** @brief 1초동안 화면을 다시 그리는 횟수
 	 *  @detail 너무 높으면 메인 루프가 지연됨. 메인 FPS제한 푼 상태에서도 RedrawFPS가 30을 넘으면 FPS가 50을 못넘음
 	 */
-	inline unsigned int getRedrawFPS() const { return this->m_redraw_fps; }
+	inline unsigned int getFPS() const { return this->m_fps; }
 	
 	virtual void processFrame() = 0;
 	virtual void draw() = 0;
@@ -38,7 +38,7 @@ public:
 	//Game *getGame() { return this->m_game; }
 	
 protected:
-	void setRedrawFPS(unsigned int fps) { this->m_redraw_fps = fps; }
+	void setFPS(unsigned int fps) { this->m_fps = fps; }
 	
 	#ifdef DRAW_OBJECTS_WITH_VIRTUAL_FXNS
 	virtual void drawObject(Object &obj) = 0;
@@ -49,7 +49,7 @@ protected:
 	#endif
 	
 	Game *m_game;
-	unsigned m_redraw_fps;
+	unsigned m_fps;
 };
 
 

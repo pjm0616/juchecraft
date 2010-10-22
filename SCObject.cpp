@@ -631,7 +631,7 @@ bool Object::cmd_move(Object *target, float minimum_distance, MovementFlags_t fl
 
 void Object::processFrame()
 {
-	float deltat = this->m_game->getFrameDelta();
+	float deltat = this->m_game->getDelta();
 	if(this->isMoving())
 	{
 		bool ret = doMovement(deltat);
