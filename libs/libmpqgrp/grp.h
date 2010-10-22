@@ -1,5 +1,10 @@
 
 
+
+#define ENABLE_MPQ
+
+
+
 enum
 {
 	// Causes the graphic to be drawn in one color
@@ -71,6 +76,12 @@ typedef struct grp_pixel_funcs
 typedef uint32_t grp_palette_t;
 typedef uint8_t grp_data_t;
 
+
+#ifdef ENABLE_MPQ
+#define GRP_USE_FILE 0
+#define GRP_USE_MPQ 1
+void grp_set_file_method(unsigned int v);
+#endif
 
 grp_palette_t *load_palette(const char *filename);
 grp_data_t *load_grp(const char *filename);

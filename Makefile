@@ -4,13 +4,14 @@ DEBUG				?= 1
 
 CROSSC				=
 
+SRCS_LIBMPQ			= libs/libmpq/SComp/SComp.cpp libs/libmpq/SComp/SErr.cpp libs/libmpq/SComp/SMem.cpp libs/libmpq/SComp/crc32.c libs/libmpq/SComp/explode.c libs/libmpq/SComp/huffman.cpp libs/libmpq/SComp/implode.c libs/libmpq/SComp/wave.cpp libs/libmpq/SFmpqapi/MpqBlockTable.cpp libs/libmpq/SFmpqapi/MpqCrypt.cpp libs/libmpq/SFmpqapi/MpqHashTable.cpp libs/libmpq/SFmpqapi/SFUtil.cpp libs/libmpq/SFmpqapi/SFmpqapi.cpp libs/libmpq/SFmpqapi/windows.cpp
 SRCS_UI				= ui/SCUserInterface.cpp ui/SCUserInterface_ncurses.cpp ui/SCUserInterface_SDL.cpp
-SRCS				= libs/libmpqgrp/grp.cpp $(SRCS_UI) SCCoordinate.cpp SCObject.cpp SCPlayer.cpp SCObjectList.cpp SCGame.cpp main.cpp
+SRCS				= libs/libmpqgrp/grp.cpp $(SRCS_UI) $(SRCS_LIBMPQ) SCCoordinate.cpp SCObject.cpp SCPlayer.cpp SCObjectList.cpp SCGame.cpp main.cpp
 TARGET1				= mini_sc
 
 DEFS				= -D_FILE_OFFSET_BITS=64
-LIBS				= -lSDL -lSDL_ttf -lSDL_image -lSDL_gfx -lncursesw
-INCLUDEDIR			= -I. 
+LIBS				= -lSDL -lSDL_ttf -lSDL_image -lSDL_gfx -lz -lbz2 -lncursesw
+INCLUDEDIR			= -I. -Ilibs/libmpq/SFmpqapi
 LIBDIR				=
 
 ifeq ($(DEBUG),1)
@@ -47,7 +48,9 @@ CFLAGS				= $(DEFS) $(CFLAGS_DBG) $(INCLUDEDIR) \
 CXXFLAGS			= $(CXXFLAGS_DBG) $(INCLUDEDIR) \
 						-std=gnu++98 -Wall -Wextra -Wno-unused -Wno-unused-function #-Wextra -Wshadow
 LDFLAGS				= $(LDFLAGS_DBG) $(LIBDIR)
-OBJS				=$(SRCS:.cpp=.o) 
+#OBJS				=$(SRCS:.cpp=.o) 
+OBJS_TMP				=$(SRCS:.c=.o) 
+OBJS				=$(OBJS_TMP:.cpp=.o) 
 
 
 all:    $(TARGET1)

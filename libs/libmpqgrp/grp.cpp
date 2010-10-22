@@ -9,6 +9,39 @@
 
 #include "grp.h"
 
+#ifdef ENABLE_MPQ
+#include "../libmpq/SFmpqapi/SFmpqapi.h"
+
+static FILE *mpq_fopen(const char *filename, const char *mode)
+{
+	HANDLE hFile;
+	if(SFileOpenFileEx(0, filename, 1, &hFile) == false)
+		return (FILE *)NULL;
+	return (FILE *)hFile;
+}
+static long mpq_fgetfilesize(FILE *fp)
+{
+	return SFileGetFileSize((HANDLE)fp, 0);
+}
+static size_t mpq_fread(void *ptr, size_t size, size_t nmemb, FILE *fp)
+{
+	if(SFileReadFile((HANDLE)fp, ptr, size, 0, 0) == false)
+		return 0;
+	return nmemb;
+}
+static int mpq_fseek(FILE *fp, long off, int whence)
+{
+	return SFileSetFilePointer((HANDLE)fp, 0, 0, whence);
+}
+static int mpq_fclose(FILE *fp)
+{
+	SFileCloseFile((HANDLE)fp);
+	return 0;
+}
+
+
+
+#endif
 
 static long fgetfilesize(FILE *fp)
 {
@@ -18,12 +51,42 @@ static long fgetfilesize(FILE *fp)
 	return filesize;
 }
 
+
+
+static FILE *(*my_fopen)(const char *filename, const char *mode) = fopen;
+static long (*my_fgetfilesize)(FILE *fp) = fgetfilesize;
+static size_t (*my_fread)(void *ptr, size_t size, size_t nmemb, FILE *fp) = fread;
+static int (*my_fseek)(FILE *fp, long off, int whence) = fseek;
+static int (*my_fclose)(FILE *fp) = fclose;
+
+
+void grp_set_file_method(unsigned int v)
+{
+	if(v == GRP_USE_MPQ)
+	{
+		my_fopen = mpq_fopen;
+		my_fgetfilesize = mpq_fgetfilesize;
+		my_fread = mpq_fread;
+		my_fseek = mpq_fseek;
+		my_fclose = mpq_fclose;
+	}
+	else
+	{
+		my_fopen = fopen;
+		my_fgetfilesize = fgetfilesize;
+		my_fread = fread;
+		my_fseek = fseek;
+		my_fclose = fclose;
+	}
+}
+
+
 grp_palette_t *load_palette(const char *filename)
 {
-	FILE *fp = fopen(filename, "rb");
+	FILE *fp = my_fopen(filename, "rb");
 	assert(fp != NULL);
 	
-	long filesize = fgetfilesize(fp);
+	long filesize = my_fgetfilesize(fp);
 	// filesize is maximum 1024 bytes
 	if(filesize > 1024)
 		filesize = 1024;
@@ -33,7 +96,7 @@ grp_palette_t *load_palette(const char *filename)
 	{
 		palette_buf = (uint32_t *)calloc(1, 1024);
 		uint8_t buf[768] = {0, };
-		int nread = fread(buf, 768, 1, fp);
+		int nread = my_fread(buf, 768, 1, fp);
 		for(int i = 0; i < 768/3; i++)
 		{
 			uint8_t *p = (uint8_t *)&palette_buf[i];
@@ -44,19 +107,19 @@ grp_palette_t *load_palette(const char *filename)
 	else
 	{
 		palette_buf = (uint32_t *)calloc(1, filesize);
-		fread(palette_buf, filesize, 1, fp);
+		my_fread(palette_buf, filesize, 1, fp);
 	}
-	fclose(fp);
+	my_fclose(fp);
 	
 	return palette_buf;
 }
 
 grp_data_t *load_grp(const char *filename)
 {
-	FILE *fp = fopen(filename, "rb");
+	FILE *fp = my_fopen(filename, "rb");
 	assert(fp != NULL);
 	
-	long filesize = fgetfilesize(fp);
+	long filesize = my_fgetfilesize(fp);
 	if(filesize < 6)
 	{
 		fclose(fp);
@@ -64,8 +127,8 @@ grp_data_t *load_grp(const char *filename)
 	}
 	
 	grp_data_t *grpdata = (grp_data_t *)malloc(filesize);
-	int nread = fread(grpdata, filesize, 1, fp);
-	fclose(fp);
+	int nread = my_fread(grpdata, filesize, 1, fp);
+	my_fclose(fp);
 	
 	return grpdata;
 }

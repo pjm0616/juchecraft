@@ -39,6 +39,7 @@ namespace SDL
 
 #if 1
 #include "libs/libmpqgrp/grp.h"
+#include "libs/libmpq/SFmpqapi/SFmpqapi.h"
 #endif
 
 
@@ -354,15 +355,34 @@ bool UserInterface_SDL::initUI()
 	this->m_sf_console = IMG_Load(GAME_ROOT_DIR "./res/ui/sdl/imgs/tconsole.png");
 	
 	// FIXME
+	
+	HANDLE mpq_handles[3];
+	SFileOpenArchive(GAME_DATA_DIR "./StarDat.mpq", 1000, 0, &mpq_handles[0]);
+	SFileOpenArchive(GAME_DATA_DIR "./BrooDat.mpq", 2000, 0, &mpq_handles[1]);
+	SFileOpenArchive(GAME_DATA_DIR "./patch_rt.mpq", 3000, 0, &mpq_handles[2]);
+	
+	grp_set_file_method(GRP_USE_FILE);
 	g_palette_units = load_palette(GAME_DATA_DIR "./libmpqgrp/sc_palettes/units.pal");
-	g_grp_icons = load_grp(GAME_DATA_DIR "./StarDat/game/icons.grp");
-	g_grp_minfield0 = load_grp(GAME_DATA_DIR "./StarDat/unit/neutral/min01.grp");
-	g_grp_wirefram = load_grp(GAME_DATA_DIR "./StarDat/unit/wirefram/wirefram.grp");
-	g_grp_t_ccenter = load_grp(GAME_DATA_DIR "./StarDat/unit/terran/control.grp");
-	g_grp_t_marine = load_grp(GAME_DATA_DIR "./StarDat/unit/terran/marine.grp");
-	g_grp_t_firebat = load_grp(GAME_DATA_DIR "./StarDat/unit/terran/firebat.grp");
-	g_grp_z_zergling = load_grp(GAME_DATA_DIR "./StarDat/unit/zerg/zergling.grp");
-	g_grp_z_zergling_shad = load_grp(GAME_DATA_DIR "./StarDat/unit/zerg/zzeshad.grp");
+	grp_set_file_method(GRP_USE_MPQ);
+	#if 0
+	g_grp_icons = load_grp("game/icons.grp");
+	g_grp_minfield0 = load_grp("unit/neutral/min01.grp");
+	g_grp_wirefram = load_grp("unit/wirefram/wirefram.grp");
+	g_grp_t_ccenter = load_grp("unit/terran/control.grp");
+	g_grp_t_marine = load_grp("unit/terran/marine.grp");
+	g_grp_t_firebat = load_grp("unit/terran/firebat.grp");
+	g_grp_z_zergling = load_grp("unit/zerg/zergling.grp");
+	g_grp_z_zergling_shad = load_grp("unit/zerg/zzeshad.grp");
+	#else
+	g_grp_icons = load_grp("game\\icons.grp");
+	g_grp_minfield0 = load_grp("unit\\neutral\\min01.grp");
+	g_grp_wirefram = load_grp("unit\\wirefram\\wirefram.grp");
+	g_grp_t_ccenter = load_grp("unit\\terran\\control.grp");
+	g_grp_t_marine = load_grp("unit\\terran\\marine.grp");
+	g_grp_t_firebat = load_grp("unit\\terran\\firebat.grp");
+	g_grp_z_zergling = load_grp("unit\\zerg\\zergling.grp");
+	g_grp_z_zergling_shad = load_grp("unit\\zerg\\zzeshad.grp");
+	#endif
 	
 	return true;
 }
