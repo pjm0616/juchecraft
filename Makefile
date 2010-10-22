@@ -5,12 +5,12 @@ DEBUG				?= 1
 CROSSC				=
 
 SRCS_UI				= ui/SCUserInterface.cpp ui/SCUserInterface_ncurses.cpp ui/SCUserInterface_SDL.cpp
-SRCS				= $(SRCS_UI) SCCoordinate.cpp SCObject.cpp SCPlayer.cpp SCObjectList.cpp SCGame.cpp main.cpp
+SRCS				= libs/libmpqgrp/grp.cpp $(SRCS_UI) SCCoordinate.cpp SCObject.cpp SCPlayer.cpp SCObjectList.cpp SCGame.cpp main.cpp
 TARGET1				= mini_sc
 
 DEFS				= -D_FILE_OFFSET_BITS=64
 LIBS				= -lSDL -lSDL_ttf -lSDL_image -lSDL_gfx -lncursesw
-INCLUDEDIR			= -I.
+INCLUDEDIR			= -I. 
 LIBDIR				=
 
 ifeq ($(DEBUG),1)

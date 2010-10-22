@@ -8,7 +8,7 @@
 #include <cassert>
 #endif
 
-#include <tr1/memory>
+#include "smart_ptrs.h"
 #include <string>
 #include <list>
 #include <map>
@@ -367,10 +367,11 @@ static float calculate_distance(float x1, float y1, float x2, float y2)
 }
 
 
-// 이렇게 하지 말고, 아래 코드 다 날리고 -.-
-// 나와 대상간의 각도를 구한 후
-// 그걸로 최단거리가 되는 방향을 구한 후
-// 최단거리는 한번만 계산함
+/* 이렇게 하지 말고, 아래 코드 다 날리고 -.-
+ * 나와 대상간의 각도를 구한 후
+ * 그걸로 최단거리가 되는 방향을 구한 후
+ * 최단거리는 한번만 계산함
+ */
 bool Object::checkMinDistanceOld(Object *target, float min_distance, Coordinate *where_to_move)
 {
 	float my_xarr[4], target_xarr[4]; // 0, 1 = left, right

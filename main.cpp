@@ -6,13 +6,15 @@
 #include <cstdio>
 
 #include <iostream>
-#include <tr1/memory>
+#include "smart_ptrs.h"
 #include <list>
 #include <map>
 #include <clocale>
 
 #include <cstring>
 #include <cstdlib>
+
+#include <time.h>
 
 #ifdef __WIN32__
 # include <windows.h>
@@ -42,7 +44,7 @@ int main(int argc, char *argv[])
 	
 	SC::Player::initialize();
 	#ifndef NO_NCURSES_UI
-	SC::UserInterface_ncurses::load_resources("./res/ui/ncurses/objects/");
+	SC::UserInterface_ncurses::load_resources(GAME_ROOT_DIR "./res/ui/ncurses/objects/");
 	#endif
 	
 	try
@@ -78,7 +80,8 @@ int main(int argc, char *argv[])
 	}
 	catch(SC::Exception *e)
 	{
-		std::cerr << "Error: " << e->getErrorMsg() << std::endl;
+		//std::cerr << "Error: " << e->getErrorMsg() << std::endl;
+		std::cerr << "Error: " << e->getErrorMsg().c_str() << std::endl;
 	}
 	
 	return 0;

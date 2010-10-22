@@ -5,38 +5,37 @@
 
 #include <string.h>
 #include <stdlib.h>
-#include <unistd.h>
-#include <fcntl.h>
-#include <sys/stat.h>
 #include <inttypes.h>
 #include <assert.h>
 
 #include "grp.h"
 
 
-static off_t fdgetfilesize(int fd)
+static long fgetfilesize(FILE *fp)
 {
-	struct stat stbuf;
-	fstat(fd, &stbuf);
-	return stbuf.st_size;
+	fseek(fp, 0, SEEK_END);
+	long filesize = ftell(fp);
+	rewind(fp);
+	return filesize;
 }
 
 grp_palette_t *load_palette(const char *filename)
 {
-	int fd = open(filename, O_RDONLY);
-	off_t filesize = fdgetfilesize(fd);
+	FILE *fp = fopen(filename, "r");
+	long filesize = fgetfilesize(fp);
+	
 	uint32_t *palette_buf = (uint32_t *)malloc(filesize); // FIXME
 	
 	if(filesize >= 1024)
 	{
 		memset(palette_buf, 0, 1024);
-		read(fd, palette_buf, 1024);
+		fread(palette_buf, 1024, 1, fp);
 	}
 	else if(filesize == 768)
 	{
 		uint8_t *buf = (uint8_t *)malloc(768);
 		memset(buf, 0, 768);
-		read(fd, buf, 768);
+		fread(buf, 768, 1, fp);
 		for(int i = 0; i < 256; i++)
 		{
 			memcpy(&palette_buf[i], buf + i*3, 3);
@@ -46,9 +45,9 @@ grp_palette_t *load_palette(const char *filename)
 	else
 	{
 		memset(palette_buf, 0, 1024);
-		read(fd, palette_buf, filesize);
+		fread(palette_buf, filesize, 1, fp);
 	}
-	close(fd);
+	fclose(fp);
 	
 	return palette_buf;
 }
@@ -56,17 +55,17 @@ grp_palette_t *load_palette(const char *filename)
 
 grp_data_t *load_grp(const char *filename)
 {
-	int fd = open(filename, O_RDONLY);
-	off_t filesize = fdgetfilesize(fd);
+	FILE *fp = fopen(filename, "r");
+	long filesize = fgetfilesize(fp);
 	if(filesize < 6)
 	{
-		close(fd);
+		fclose(fp);
 		return NULL;
 	}
 	
 	grp_data_t *grpdata = (grp_data_t *)malloc(filesize);
-	int nread = read(fd, grpdata, filesize);
-	close(fd);
+	int nread = fread(grpdata, filesize, 1, fp);
+	fclose(fp);
 	
 	return grpdata;
 }

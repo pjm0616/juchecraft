@@ -23,7 +23,7 @@ public:
 	float getX() const { return this->m_x; }
 	float getY() const { return this->m_y; }
 	void get(float *x, float *y) const { *x = this->getX(); *y = this->getY(); }
-	void get(int *x, int *y) const { *x = this->getX(); *y = this->getY(); }
+	void get(int *x, int *y) const { *x = (int)this->getX(); *y = (int)this->getY(); }
 	
 	void setX(float x) { this->m_x = x; }
 	void setY(float y) { this->m_y = y; }

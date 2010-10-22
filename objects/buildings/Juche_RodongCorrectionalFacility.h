@@ -17,7 +17,7 @@ public:
 		this->m_object_type = ObjectType::Unit;
 		this->m_object_id = ObjectId::Juche_RodongCorrectionalFacility;
 		this->m_object_id_name = "Juche_RodongCorrectionalFacility";
-		this->m_object_name = "주체 로동교화소";
+		this->m_object_name = "Juche RodongCorrectionalFacility";
 		this->m_race_id = RaceId::Juche;
 		
 		this->m_width = 117;

@@ -9,7 +9,7 @@
 #include <cassert>
 #endif
 
-#include <tr1/memory>
+#include "smart_ptrs.h"
 #include <string>
 #include <list>
 #include <map>
@@ -17,11 +17,6 @@
 #include <cstring>
 #include <cstdlib>
 #include <inttypes.h>
-
-#include <unistd.h>
-#include <fcntl.h>
-#include <sys/types.h>
-#include <dirent.h>
 
 namespace SDL
 {
@@ -45,7 +40,7 @@ namespace SDL
 #include "ui/SCUserInterface_SDL.h"
 
 #if 1
-#include "libs/libmpqgrp/grp.cpp"
+#include "libs/libmpqgrp/grp.h"
 #endif
 
 
@@ -56,64 +51,11 @@ std::map<ObjectId_t, std::string> UserInterface_SDL::obj_images;
 bool UserInterface_SDL::is_initialized = false;
 
 
-// filename: "ID.comment.txt"
-static int check_resource_filename(const char *filename)
-{
-	const char *p = filename;
-	while(isdigit(*p++)){}
-	if(filename != p && *(p - 1) == '.')
-		return atoi(filename);
-	else
-		return -1;
-}
-
-static void readfile(const char *filename, std::string &dest)
-{
-	int fd = open(filename, O_RDONLY);
-	if(fd < 0)
-		throw new Exception("open() failed");
-	
-	dest.clear();
-	int nread;
-	do
-	{
-		char buf[512];
-		nread = read(fd, buf, sizeof(buf));
-		if(nread > 0)
-			dest.append(buf, nread);
-	} while(nread > 0);
-	close(fd);
-}
-
-static void replace_char(std::string &str, char needle, char replacement)
-{
-	size_t size = str.size();
-	for(size_t i = 0; i < size; i++)
-	{
-		if(str[i] == needle)
-			str[i] = replacement;
-	}
-}
-
 
 /* static */
 void UserInterface_SDL::load_resources(const char *dirpath)
 {
-	DIR *dp = opendir(dirpath);
-	if(!dp)
-		throw new Exception("opendir() failed");
-	dirent *entry;
-	while((entry = readdir(dp)) != NULL)
-	{
-		int id = check_resource_filename(entry->d_name);
-		if(id >= 0)
-		{
-			std::string filepath(dirpath); filepath += entry->d_name;
-			readfile(filepath.c_str(), UserInterface_SDL::obj_images[id]);
-			replace_char(UserInterface_SDL::obj_images[id], '\n', '\0');
-		}
-	}
-	closedir(dp);
+	(void)dirpath;
 	UserInterface_SDL::is_initialized = true;
 }
 
@@ -209,7 +151,7 @@ static void SDL_print(TTF_Font *font, SDL_Surface *sf, int x, int y, int w, int 
 ///////////
 //
 
-static void grp_setpix(void *surface, int x, int y, uint32_t color)
+static void grp_setpix(void *surface, int x, int y, Uint32 color)
 {
 	Uint8 r = color&0xFF, g = (color&0xFF00)>>8, b = (color&0xFF0000)>>16;
 	
@@ -225,7 +167,7 @@ static void grp_setpix(void *surface, int x, int y, uint32_t color)
 static grp_pixel_funcs g_grp_pixelfuncs={grp_setpix, NULL};
 
 
-static void grp_setpix_wirefram_green(void *surface, int x, int y, uint32_t color)
+static void grp_setpix_wirefram_green(void *surface, int x, int y, Uint32 color)
 {
 	return DrawPixel((SDL_Surface *)surface, x, y, 0, 255, 0);
 }
@@ -298,7 +240,7 @@ SDL_Surface *render_grp_frame_flipped(grp_data_t *grpdata, int framenum, bool do
 	return sf;
 }
 
-// 유닛 색상을 비율에 따라 바꿔줌
+/* 유닛 색상을 비율에 따라 바꿔줌 */
 void replace_unit_colors(SDL_Surface *sf, Uint32 newcolor)
 {
 	//static const Uint32 orig_unit_colors[] = {0xde00de, 0x5b005b, 0xbd00bd, 0x9c009c, 0x7c007c, 0x190019, 0xff00ff, 0x3a003a};
@@ -392,10 +334,10 @@ bool UserInterface_SDL::initUI()
 	
 	SDL_Surface *screen;
 	this->m_screen = SDL_SetVideoMode(640, 480, 32, SDL_SWSURFACE);
-	SDL_WM_SetCaption("주체크래프트", NULL);
+	SDL_WM_SetCaption("JucheCraft", NULL);
 	SDL_ShowCursor(SDL_ENABLE);
 	
-	this->m_font = TTF_OpenFont("./res/ui/sdl/fonts/NanumGothic.ttf", this->getFontSize());
+	this->m_font = TTF_OpenFont(GAME_ROOT_DIR "./res/ui/sdl/fonts/NanumGothic.ttf", this->getFontSize());
 	TTF_SetFontStyle(this->m_font, TTF_STYLE_NORMAL);
 	
 	// color format: 0x00RRGGBB
@@ -411,18 +353,18 @@ bool UserInterface_SDL::initUI()
 	this->m_buttons_wnd = SDL_CreateRGBSurface(SDL_SWSURFACE, 128, 128, 32, 0xff, 0xff00, 0xff0000, 0xff000000);
 	
 	// game resources;
-	this->m_sf_console = IMG_Load("./res/ui/sdl/imgs/tconsole.png");
+	this->m_sf_console = IMG_Load(GAME_ROOT_DIR "./res/ui/sdl/imgs/tconsole.png");
 	
 	// FIXME
-	g_palette_units = load_palette("../mini_sc_data/libmpqgrp/sc_palettes/units.pal");
-	g_grp_icons = load_grp("../mini_sc_data/StarDat/game/icons.grp");
-	g_grp_minfield0 = load_grp("../mini_sc_data/StarDat/unit/neutral/min01.grp");
-	g_grp_wirefram = load_grp("../mini_sc_data/StarDat/unit/wirefram/wirefram.grp");
-	g_grp_t_ccenter = load_grp("../mini_sc_data/StarDat/unit/terran/control.grp");
-	g_grp_t_marine = load_grp("../mini_sc_data/StarDat/unit/terran/marine.grp");
-	g_grp_t_firebat = load_grp("../mini_sc_data/StarDat/unit/terran/firebat.grp");
-	g_grp_z_zergling = load_grp("../mini_sc_data/StarDat/unit/zerg/zergling.grp");
-	g_grp_z_zergling_shad = load_grp("../mini_sc_data/StarDat/unit/zerg/zzeshad.grp");
+	g_palette_units = load_palette(GAME_DATA_DIR "./libmpqgrp/sc_palettes/units.pal");
+	g_grp_icons = load_grp(GAME_DATA_DIR "./StarDat/game/icons.grp");
+	g_grp_minfield0 = load_grp(GAME_DATA_DIR "./StarDat/unit/neutral/min01.grp");
+	g_grp_wirefram = load_grp(GAME_DATA_DIR "./StarDat/unit/wirefram/wirefram.grp");
+	g_grp_t_ccenter = load_grp(GAME_DATA_DIR "./StarDat/unit/terran/control.grp");
+	g_grp_t_marine = load_grp(GAME_DATA_DIR "./StarDat/unit/terran/marine.grp");
+	g_grp_t_firebat = load_grp(GAME_DATA_DIR "./StarDat/unit/terran/firebat.grp");
+	g_grp_z_zergling = load_grp(GAME_DATA_DIR "./StarDat/unit/zerg/zergling.grp");
+	g_grp_z_zergling_shad = load_grp(GAME_DATA_DIR "./StarDat/unit/zerg/zzeshad.grp");
 	
 	return true;
 }
@@ -692,8 +634,7 @@ void UserInterface_SDL::drawUI_UnitStatWnd()
 	// right-bottom: 390, 470
 	
 	// unit name coord: 255,390
-	//SDL_print(this->m_font, this->m_screen, 260, 390, (470-390)-255, this->getFontSize(), 0xffffff, name);
-	SDL_print(this->m_font, this->m_screen, 260, 390, (470-390)-255, this->getFontSize(), 0xffffff, "주체 대포동발사병");
+	SDL_print(this->m_font, this->m_screen, 260, 390, (470-390)-255, this->getFontSize(), 0xffffff, name);
 }
 
 void UserInterface_SDL::drawUI_ButtonsWnd()
@@ -718,10 +659,10 @@ const std::string *UserInterface_SDL::getObjectImg(ObjectId_t id) const
 
 static int convertAngleToDirection(float angle)
 {
-	float angle2 = 360 - (angle - 90); // 0시 방향이 0도가 되도록 회전 후 좌-우를 뒤집음
-	if(angle2 > 360) angle2 -= 360; // 0시 방향이 0도가 되도록 회전 후 기존0~90도 사이의 각들에 생긴 오류를 고침
+	float angle2 = 360 - (angle - 90); /* 0시 방향이 0도가 되도록 회전 후 좌-우를 뒤집음 */
+	if(angle2 > 360) angle2 -= 360; /* 0시 방향이 0도가 되도록 회전 후 기존0~90도 사이의 각들에 생긴 오류를 고침 */
 	
-	int direction = angle2 / (180.0/17); // 0~90 도 사이에 9개의 이미지가 있음. 10도당 이미지 한개
+	int direction = angle2 / (180.0/17); /* 0~90 도 사이에 9개의 이미지가 있음. 10도당 이미지 한개 */
 	
 	//fprintf(stderr, "a: %f, a2: %f, dir: %d\n", angle, angle2, direction);
 	return direction;
@@ -751,8 +692,8 @@ static int calculate_unit_framenum(Object *obj, int attack_start, int attack_end
 	
 	if(row == 34) // angle == 90deg
 		row = 0;
-	else if(row >= 0 && row <= 16){} // 오른쪽
-	else if(row >= 17 && row <= 33) // 왼쪽
+	else if(row >= 0 && row <= 16){} /* 오른쪽 */
+	else if(row >= 17 && row <= 33) /* 왼쪽 */
 	{
 		row = row - 17;
 		row = 16 - row;
@@ -763,6 +704,10 @@ static int calculate_unit_framenum(Object *obj, int attack_start, int attack_end
 		fprintf(stderr, "Cannot happen: row: %d; angle: %f\n", row, obj->getAngle());
 		row = 0;
 	}
+	
+	/* 홀수라면 1을 뺌. grp데이터에 0, 1이 같고, 2, 3도 같게 되어있음. 그리고 1을 읽으면 메모리 접근이 잘못됨 -.- */
+	if(row % 2 == 1)
+		row--;
 	
 	int framenum = col*17 + row;
 	return framenum;
@@ -842,7 +787,7 @@ void UserInterface_SDL::drawObject(Object &obj)
 		
 		if(do_draw)
 		{
-			{ // 이동시 마우스 포인터 중앙이 아래 점에 오도록 이동
+			{ /* 이동시 마우스 포인터 중앙이 아래 점에 오도록 이동 */
 				grp_header_t *grphdr = get_grp_info(grpdata);
 				grp_frameheader_t *frame = grp_get_frame_info(grpdata, framenum);
 				int center_x = (grphdr->max_width/2 - 1) - frame->left;

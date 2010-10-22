@@ -17,7 +17,7 @@ public:
 		this->m_object_type = ObjectType::Unit;
 		this->m_object_id = ObjectId::Juche_AojiWorker;
 		this->m_object_id_name = "Juche_AojiWorker";
-		this->m_object_name = "주체 아오지 탄광 노동자";
+		this->m_object_name = "Juche AojiWorker";
 		this->m_race_id = RaceId::Juche;
 		
 		this->m_width = 23;

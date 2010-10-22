@@ -10,10 +10,10 @@
 # define lrand48 rand
 #endif
 #ifndef usleep
-# define usleep(x) 
+# define usleep(x) Sleep((x) / 1000)
 #endif
 #ifndef getpid
-# define getpid(x) 0
+# define getpid() 0
 #endif
 #endif
 

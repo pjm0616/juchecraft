@@ -8,12 +8,18 @@
 #include <stdlib.h>
 #endif
 
-#include <tr1/memory>
+#ifdef __WIN32__
+#include <windows.h>
+#endif
+
+#include "smart_ptrs.h"
 #include <string>
 #include <list>
 #include <map>
 
+#ifndef __WIN32__
 #include <sys/time.h>
+#endif
 
 #include "defs.h"
 #include "compat.h"
@@ -44,10 +50,15 @@ Game::~Game()
 
 double Game::getTime() const
 {
+#ifdef __WIN32__
+	DWORD milisec = timeGetTime();
+	return (double)milisec / 1000;
+#else
 	timeval tv;
 	gettimeofday(&tv, NULL);
 	double time = (tv.tv_sec - this->getStartTime()) + ((double)tv.tv_usec / 1000000);
 	return time;
+#endif
 }
 
 void Game::processObjects()

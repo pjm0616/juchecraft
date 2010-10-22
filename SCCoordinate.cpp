@@ -1,16 +1,19 @@
 // Copyright (C) 2010 Park Jeongmin <pjm0616@gmail.com>
 // See LICENSE.txt for details
 
+#include "config.h"
+
 #ifdef DEBUG
 #include <stdio.h>
 #include <cassert>
 #endif
 
-#include <tr1/memory>
+#include "smart_ptrs.h"
 #include <string>
 #include <cmath>
 #include <cstdlib>
 
+#include "defs.h"
 #include "SCException.h"
 #include "SCCoordinate.h"
 

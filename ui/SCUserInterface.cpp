@@ -3,7 +3,7 @@
 
 
 
-#include <tr1/memory>
+#include "smart_ptrs.h"
 #include <string>
 #include <list>
 #include <map>
