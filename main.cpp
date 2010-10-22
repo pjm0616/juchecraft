@@ -5,8 +5,9 @@
 
 #include <cstdio>
 
-#include <iostream>
 #include "smart_ptrs.h"
+#include <iostream>
+#include <string>
 #include <list>
 #include <map>
 #include <clocale>
@@ -80,8 +81,7 @@ int main(int argc, char *argv[])
 	}
 	catch(SC::Exception *e)
 	{
-		//std::cerr << "Error: " << e->getErrorMsg() << std::endl;
-		std::cerr << "Error: " << e->getErrorMsg().c_str() << std::endl;
+		std::cerr << "Error: " << e->getErrorMsg() << std::endl;
 	}
 	
 	return 0;

@@ -171,7 +171,9 @@ bool draw_grp(void *dest, int dest_x, int dest_y, grp_pixel_funcs_t *pixelfuncs,
 	{
 		for(y = 0; y < grp_frame->height; y++)
 		{
-			row_data = (uint8_t *)((char *)grp_offsets + grp_offsets[y]);
+			uint16_t offs_add = grp_offsets[y];
+			row_data = (uint8_t *)((char *)grp_offsets + offs_add);
+			
 			x = 0; ofs = 0;
 			while(x < grp_frame->width)
 			{

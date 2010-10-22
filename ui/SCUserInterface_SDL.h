@@ -4,11 +4,12 @@
 #ifndef SCUserInterface_SDL_H_
 #define SCUserInterface_SDL_H_
 
-// damn..
 namespace SDL
 {
-#include <SDL/SDL.h>
-#include <SDL/SDL_ttf.h>
+	struct SDL_Surface;
+	
+	struct _TTF_Font;
+	typedef _TTF_Font TTF_Font;
 }
 
 namespace SC {
