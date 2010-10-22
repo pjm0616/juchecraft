@@ -16,10 +16,10 @@
 #define USE_ZLIB
 
 // Comment this out to disable bzip 2 compression support.
-#define USE_BZIP2
+//#define USE_BZIP2
 
 //
-#define __SYS_BZLIB
+//#define __SYS_BZLIB
 #define __SYS_ZLIB
 
 

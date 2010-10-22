@@ -147,22 +147,27 @@ BOOL WINAPI ReadFile(HANDLE hFile, LPVOID lpBuffer, DWORD nNumberOfBytesToRead, 
 BOOL WINAPI WriteFile(HANDLE hFile, LPCVOID lpBuffer, DWORD nNumberOfBytesToWrite, LPDWORD lpNumberOfBytesWritten, LPOVERLAPPED lpOverlapped);
 BOOL WINAPI DeleteFile(LPCSTR lpFileName);
 
-// Declarations for C runtime functions
-char * strlwr(char *lpString);
-char * strupr(char *lpString);
-//char * strdup(const char *lpString);
-#define stricmp strcasecmp
-#define strnicmp strncasecmp
-int memicmp(const char *lpString1, const char *lpString2, size_t dwSize);
-
 // Other functions
 void SlashToBackslash(char *lpPath);
 void BackslashToSlash(char *lpPath);
+
+// Declarations for C runtime functions
+char * my_strlwr(char *lpString);
+char * my_strupr(char *lpString);
+char * my_strdup(const char *lpString);
+#define stricmp strcasecmp
+#define strnicmp strncasecmp
+int my_memicmp(const char *lpString1, const char *lpString2, size_t dwSize);
+#define strlwr my_strlwr
+#define strupr my_strupr
+//#define strdup my_strdup
+#define memicmp my_memicmp
 
 #ifdef __cplusplus
 };  // extern "C"
 #endif
 
-#endif
+#endif // ifdef win32
+
 #endif
 

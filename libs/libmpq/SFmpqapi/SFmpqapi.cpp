@@ -13,6 +13,11 @@
 
 #include "../SComp/SComp.h"
 
+// 20101022 pjm0616 added: always build static
+//#ifndef _WIN32
+#define SFMPQ_STATIC
+//#endif
+
 #include "MpqCrypt.h"
 #include "MpqHashTable.h"
 #include "MpqBlockTable.h"
@@ -25,8 +30,11 @@ struct SFMPQAPIMODULE {
 	~SFMPQAPIMODULE();
 } SFMpqApi;
 
+// 20101022 pjm0616: commented out
+#if 0
 #ifndef _WIN32
 #define SFMPQ_STATIC
+#endif
 #endif
 
 #if defined(SFMPQ_STATIC) || !defined(SFMPQAPI_EXPORTS)

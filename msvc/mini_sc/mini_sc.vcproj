@@ -21,7 +21,7 @@
 			OutputDirectory="$(SolutionDir)$(ConfigurationName)"
 			IntermediateDirectory="$(ConfigurationName)"
 			ConfigurationType="1"
-			CharacterSet="1"
+			CharacterSet="2"
 			>
 			<Tool
 				Name="VCPreBuildEventTool"
@@ -61,7 +61,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="winmm.lib $(SolutionDir)..\platform_local\win32\lib\SDL.lib $(SolutionDir)..\platform_local\win32\lib\SDL_ttf.lib $(SolutionDir)..\platform_local\win32\lib\SDL_image.lib $(SolutionDir)..\platform_local\win32\lib\SDL_gfx.lib"
+				AdditionalDependencies="winmm.lib msvcrt.lib $(SolutionDir)..\platform_local\win32\lib\zlib.lib $(SolutionDir)..\platform_local\win32\lib\SDL.lib $(SolutionDir)..\platform_local\win32\lib\SDL_ttf.lib $(SolutionDir)..\platform_local\win32\lib\SDL_image.lib $(SolutionDir)..\platform_local\win32\lib\SDL_gfx.lib"
 				LinkIncremental="2"
 				GenerateDebugInformation="true"
 				SubSystem="2"
@@ -94,7 +94,7 @@
 			OutputDirectory="$(SolutionDir)$(ConfigurationName)"
 			IntermediateDirectory="$(ConfigurationName)"
 			ConfigurationType="1"
-			CharacterSet="1"
+			CharacterSet="2"
 			WholeProgramOptimization="1"
 			>
 			<Tool
@@ -135,7 +135,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="winmm.lib $(SolutionDir)..\platform_local\win32\lib\SDL.lib $(SolutionDir)..\platform_local\win32\lib\SDL_ttf.lib $(SolutionDir)..\platform_local\win32\lib\SDL_image.lib $(SolutionDir)..\platform_local\win32\lib\SDL_gfx.lib"
+				AdditionalDependencies="winmm.lib msvcrt.lib $(SolutionDir)..\platform_local\win32\lib\zlib.lib $(SolutionDir)..\platform_local\win32\lib\SDL.lib $(SolutionDir)..\platform_local\win32\lib\SDL_ttf.lib $(SolutionDir)..\platform_local\win32\lib\SDL_image.lib $(SolutionDir)..\platform_local\win32\lib\SDL_gfx.lib"
 				LinkIncremental="1"
 				GenerateDebugInformation="true"
 				SubSystem="2"
@@ -175,10 +175,6 @@
 			UniqueIdentifier="{4FC737F1-C7A5-4376-A066-2A32D752A2FF}"
 			>
 			<File
-				RelativePath="..\..\libs\libmpqgrp\grp.cpp"
-				>
-			</File>
-			<File
 				RelativePath="..\..\main.cpp"
 				>
 			</File>
@@ -217,6 +213,94 @@
 					RelativePath="..\..\ui\SCUserInterface_SDL.cpp"
 					>
 				</File>
+			</Filter>
+			<Filter
+				Name="libs"
+				>
+				<Filter
+					Name="libmpqgrp"
+					>
+					<File
+						RelativePath="..\..\libs\libmpqgrp\grp.cpp"
+						>
+					</File>
+				</Filter>
+				<Filter
+					Name="libmpq"
+					>
+					<Filter
+						Name="SComp"
+						>
+						<File
+							RelativePath="..\..\libs\libmpq\SComp\crc32.c"
+							>
+						</File>
+						<File
+							RelativePath="..\..\libs\libmpq\SComp\explode.c"
+							>
+						</File>
+						<File
+							RelativePath="..\..\libs\libmpq\SComp\huffman.cpp"
+							>
+						</File>
+						<File
+							RelativePath="..\..\libs\libmpq\SComp\implode.c"
+							>
+						</File>
+						<File
+							RelativePath="..\..\libs\libmpq\SComp\SComp.cpp"
+							>
+						</File>
+						<File
+							RelativePath="..\..\libs\libmpq\SComp\SErr.cpp"
+							>
+						</File>
+						<File
+							RelativePath="..\..\libs\libmpq\SComp\SMem.cpp"
+							>
+						</File>
+						<File
+							RelativePath="..\..\libs\libmpq\SComp\wave.cpp"
+							>
+						</File>
+					</Filter>
+					<Filter
+						Name="SFmpqapi"
+						>
+						<File
+							RelativePath="..\..\libs\libmpq\SFmpqapi\MpqBlockTable.cpp"
+							>
+						</File>
+						<File
+							RelativePath="..\..\libs\libmpq\SFmpqapi\MpqCrypt.cpp"
+							>
+						</File>
+						<File
+							RelativePath="..\..\libs\libmpq\SFmpqapi\MpqHashTable.cpp"
+							>
+						</File>
+						<File
+							RelativePath="..\..\libs\libmpq\SFmpqapi\SFmpq_static.cpp"
+							>
+						</File>
+						<File
+							RelativePath="..\..\libs\libmpq\SFmpqapi\SFmpqapi.cpp"
+							>
+						</File>
+						<File
+							RelativePath="..\..\libs\libmpq\SFmpqapi\SFmpqapi_no-lib.cpp"
+							>
+						</File>
+						<File
+							RelativePath="..\..\libs\libmpq\SFmpqapi\SFUtil.cpp"
+							>
+						</File>
+						<File
+							RelativePath="..\..\libs\libmpq\SFmpqapi\windows.cpp"
+							>
+						</File>
+					</Filter>
+				</Filter>
 			</Filter>
 		</Filter>
 		<Filter

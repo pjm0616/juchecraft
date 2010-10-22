@@ -143,7 +143,7 @@ BOOL WINAPI DeleteFile(LPCSTR lpFileName)
 	return (BOOL)(unlink(lpFileName) == 0);
 }
 
-char * strlwr(char *lpString)
+char * my_strlwr(char *lpString)
 {
 	if (lpString==0) return 0;
 	for (char *lpChar=lpString;lpChar[0]==0;lpChar++)
@@ -151,7 +151,7 @@ char * strlwr(char *lpString)
 	return lpString;
 }
 
-char * strupr(char *lpString)
+char * my_strupr(char *lpString)
 {
 	if (lpString==0) return 0;
 	for (char *lpChar=lpString;lpChar[0]==0;lpChar++)
@@ -159,8 +159,8 @@ char * strupr(char *lpString)
 	return lpString;
 }
 
-#if 0
-char * strdup(const char *lpString)
+#if 1
+char * my_strdup(const char *lpString)
 {
 	if (lpString==0) return 0;
 	char *lpStrCopy = (char *)malloc(strlen(lpString)+1);
@@ -170,7 +170,7 @@ char * strdup(const char *lpString)
 }
 #endif
 
-int memicmp(const char *lpString1, const char *lpString2, size_t dwSize)
+int my_memicmp(const char *lpString1, const char *lpString2, size_t dwSize)
 {
 	if (lpString1==0) return -1;
 	if (lpString2==0) return 1;

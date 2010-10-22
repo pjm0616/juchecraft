@@ -84,7 +84,8 @@ void grp_set_file_method(unsigned int v)
 grp_palette_t *load_palette(const char *filename)
 {
 	FILE *fp = my_fopen(filename, "rb");
-	assert(fp != NULL);
+	if(!fp)
+		return NULL;
 	
 	long filesize = my_fgetfilesize(fp);
 	// filesize is maximum 1024 bytes
@@ -117,7 +118,8 @@ grp_palette_t *load_palette(const char *filename)
 grp_data_t *load_grp(const char *filename)
 {
 	FILE *fp = my_fopen(filename, "rb");
-	assert(fp != NULL);
+	if(!fp)
+		return NULL;
 	
 	long filesize = my_fgetfilesize(fp);
 	if(filesize < 6)

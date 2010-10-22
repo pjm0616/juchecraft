@@ -177,7 +177,7 @@ static grp_pixel_funcs g_grp_pixelfuncs_wirefram_green={grp_setpix_wirefram_gree
 
 static grp_palette_t *g_palette_units;
 static grp_data_t *g_grp_icons;
-static grp_data_t *g_grp_minfield0;
+static grp_data_t *g_grp_minfield01, *g_grp_minfield01_shad;
 static grp_data_t *g_grp_wirefram;
 static grp_data_t *g_grp_t_ccenter, *g_grp_t_marine, *g_grp_t_firebat;
 static grp_data_t *g_grp_z_zergling, *g_grp_z_zergling_shad;
@@ -361,12 +361,17 @@ bool UserInterface_SDL::initUI()
 	SFileOpenArchive(GAME_DATA_DIR "./BrooDat.mpq", 2000, 0, &mpq_handles[1]);
 	SFileOpenArchive(GAME_DATA_DIR "./patch_rt.mpq", 3000, 0, &mpq_handles[2]);
 	
+	#if 0
+	#if 0
 	grp_set_file_method(GRP_USE_FILE);
 	g_palette_units = load_palette(GAME_DATA_DIR "./libmpqgrp/sc_palettes/units.pal");
 	grp_set_file_method(GRP_USE_MPQ);
-	#if 0
+	#else
+	g_palette_units = load_palette(GAME_DATA_DIR "./libmpqgrp/sc_palettes/units.pal");
+	#endif
 	g_grp_icons = load_grp("game/icons.grp");
-	g_grp_minfield0 = load_grp("unit/neutral/min01.grp");
+	g_grp_minfield01 = load_grp("unit/neutral/min01.grp");
+	g_grp_minfield01_shad = load_grp("unit/neutral/min01sha.grp");
 	g_grp_wirefram = load_grp("unit/wirefram/wirefram.grp");
 	g_grp_t_ccenter = load_grp("unit/terran/control.grp");
 	g_grp_t_marine = load_grp("unit/terran/marine.grp");
@@ -374,8 +379,11 @@ bool UserInterface_SDL::initUI()
 	g_grp_z_zergling = load_grp("unit/zerg/zergling.grp");
 	g_grp_z_zergling_shad = load_grp("unit/zerg/zzeshad.grp");
 	#else
+	grp_set_file_method(GRP_USE_MPQ);
+	g_palette_units = load_palette("tileset\\Platform.wpe");
 	g_grp_icons = load_grp("game\\icons.grp");
-	g_grp_minfield0 = load_grp("unit\\neutral\\min01.grp");
+	g_grp_minfield01 = load_grp("unit\\neutral\\min01.grp");
+	g_grp_minfield01_shad = load_grp("unit\\neutral\\min01sha.grp");
 	g_grp_wirefram = load_grp("unit\\wirefram\\wirefram.grp");
 	g_grp_t_ccenter = load_grp("unit\\terran\\control.grp");
 	g_grp_t_marine = load_grp("unit\\terran\\marine.grp");
@@ -794,7 +802,8 @@ void UserInterface_SDL::drawObject(Object &obj)
 		}
 		else if(objid == SC::ObjectId::Resource_MineralField)
 		{
-			grpdata = g_grp_minfield0;
+			grpdata = g_grp_minfield01;
+			grpdata2 = g_grp_minfield01_shad;
 			framenum = 0;
 			do_draw = true;
 		}
