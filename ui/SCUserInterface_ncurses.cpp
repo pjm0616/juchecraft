@@ -154,6 +154,8 @@ void UserInterface_ncurses::load_resources(const char *dirpath)
 UserInterface_ncurses::UserInterface_ncurses(Game *game)
 	:UserInterface(game)
 {
+	
+	this->setRedrawFPS(10);
 }
 
 UserInterface_ncurses::~UserInterface_ncurses()
@@ -164,8 +166,6 @@ UserInterface_ncurses::~UserInterface_ncurses()
 bool UserInterface_ncurses::initUI()
 {
 	int ret;
-	
-	this->setUIFPS(10);
 	
 	// initialize
 	ncurses::initscr();
@@ -387,6 +387,27 @@ void UserInterface_ncurses::drawObject(Object &obj)
 
 
 
+
+
+
+#ifndef DRAW_OBJECTS_WITH_VIRTUAL_FXNS
+void UserInterface_ncurses::drawObjects()
+{
+	ObjectList &objs = this->m_game->getObjectList();
+	
+	#if 0
+	for(ObjectList::const_iterator it = objs.begin(); it != objs.end(); it++)
+	{
+		this->drawObject(*it->get());
+	}
+	#else
+	for(ObjectList::const_reverse_iterator it = objs.rbegin(); it != objs.rend(); it++)
+	{
+		this->drawObject(*it->get());
+	}
+	#endif
+}
+#endif
 
 
 

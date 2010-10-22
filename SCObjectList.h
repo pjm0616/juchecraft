@@ -14,7 +14,7 @@ namespace SC {
 class ObjectList
 {
 public:
-	typedef boost::shared_ptr<Object> objptr_t;
+	typedef SC::shared_ptr<Object> objptr_t;
 	typedef std::list<ObjectList::objptr_t> objlist_t;
 	typedef objlist_t::iterator iterator;
 	typedef objlist_t::const_iterator const_iterator;

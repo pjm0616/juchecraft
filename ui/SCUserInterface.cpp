@@ -1,13 +1,14 @@
 // Copyright (C) 2010 Park Jeongmin <pjm0616@gmail.com>
 // See LICENSE.txt for details
 
-
+#include "config.h"
 
 #include "smart_ptrs.h"
 #include <string>
 #include <list>
 #include <map>
 
+#include "defs.h"
 #include "SCException.h"
 #include "SCCoordinate.h"
 #include "SCPlayer.h"
@@ -20,6 +21,7 @@
 
 using namespace SC;
 
+#ifdef DRAW_OBJECTS_WITH_VIRTUAL_FXNS
 void UserInterface::drawObjects()
 {
 	ObjectList &objs = this->m_game->getObjectList();
@@ -36,6 +38,7 @@ void UserInterface::drawObjects()
 	}
 	#endif
 }
+#endif
 
 
 

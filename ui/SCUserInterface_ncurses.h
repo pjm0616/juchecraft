@@ -39,7 +39,12 @@ protected:
 	static bool is_initialized;
 	
 	const std::string *getObjectImg(ObjectId_t id) const;
+	#ifdef DRAW_OBJECTS_WITH_VIRTUAL_FXNS
 	virtual void drawObject(Object &obj);
+	#else
+	void drawObject(Object &obj);
+	void drawObjects();
+	#endif
 	
 private:
 	void drawUI();

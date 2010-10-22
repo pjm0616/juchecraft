@@ -44,9 +44,9 @@ ZIP					=zip
 UNZIP				=unzip
 
 CFLAGS				= $(DEFS) $(CFLAGS_DBG) $(INCLUDEDIR) \
-						-std=gnu99 -Wall -Wextra -Wno-unused -Wno-unused-function #-Wextra -Wshadow
+						-std=gnu99 -finline-functions -Wall -Wextra -Wno-unused -Wno-unused-function #-Wextra -Wshadow
 CXXFLAGS			= $(CXXFLAGS_DBG) $(INCLUDEDIR) \
-						-std=gnu++98 -Wall -Wextra -Wno-unused -Wno-unused-function #-Wextra -Wshadow
+						-std=gnu++98 -finline-functions -Wall -Wextra -Wno-unused -Wno-unused-function #-Wextra -Wshadow
 LDFLAGS				= $(LDFLAGS_DBG) $(LIBDIR)
 #OBJS				=$(SRCS:.cpp=.o) 
 OBJS_TMP				=$(SRCS:.c=.o) 

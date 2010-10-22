@@ -33,7 +33,7 @@ public:
 	double getElapsedTime() const { return this->m_elapsed_time; }
 	double getFrameDelta() const { return this->m_frame_delta; }
 	unsigned int getFrameNumber() const { return this->m_frame_number; }
-	unsigned int getFPS() const { return 30; }
+	unsigned int getFPS() const { return 60; }
 	float getCurrentFPS() const { return 1.0 / this->getFrameDelta(); }
 	
 	int getMapWidth() const { return this->m_map_width; }
@@ -50,21 +50,21 @@ public:
 	//UserInterface *getUI() { return this->m_ui; }
 	
 	void endGame() { this->m_is_game_ended = true; }
-	bool isGameEnded() const { return this->m_is_game_ended; }
+	inline bool isGameEnded() const { return this->m_is_game_ended; }
 	
 protected:
 	double getTime() const;
 	
 private:
 	void setStartTime(time_t t) { this->m_start_time = t; }
-	time_t getStartTime() const { return this->m_start_time; }
+	inline time_t getStartTime() const { return this->m_start_time; }
 	void setFrameNumber(unsigned int n) { this->m_frame_number = n; }
-	void increaseFrameNumber(unsigned int n = 1) { this->m_frame_number += n; }
-	void setFrameDelta(double val) { this->m_frame_delta = val; }
+	inline void increaseFrameNumber(unsigned int n = 1) { this->m_frame_number += n; }
+	inline void setFrameDelta(double val) { this->m_frame_delta = val; }
 	void setElapsedTime(double val) { this->m_elapsed_time = val; }
-	void increaseElapsedTime(double val) { this->m_elapsed_time += val; }
+	inline void increaseElapsedTime(double val) { this->m_elapsed_time += val; }
 	void setLastDrawTime(double val) { this->m_last_draw = val; }
-	double getLastDrawTime() const { return this->m_last_draw; }
+	inline double getLastDrawTime() const { return this->m_last_draw; }
 	
 	void processObjects();
 	

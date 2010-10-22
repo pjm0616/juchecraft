@@ -97,26 +97,35 @@ void Game::run()
 	
 	this->test_tmp1(); // debug
 	
+	// precalculate some constants
+	float fixed_deltat = 1.0 / this->getFPS();
+	unsigned long sleep_time = 1000000.0 / this->getFPS();
+	float ui_drawtime_delta = 1.0 / this->m_ui->getRedrawFPS();
+	
+	// initizlize loop variables
+	float deltat = fixed_deltat;
 	this->setFrameNumber(0);
-	this->setFrameDelta(1.0 / this->getFPS());
+	this->setFrameDelta(deltat);
 	while(!this->isGameEnded())
 	{
-		double frame_start_time = getTime();
+		double frame_start_time = this->getTime();
 		
 		this->processObjects();
 		this->m_ui->processFrame();
-		if(this->getElapsedTime() - this->getLastDrawTime() > (1.0 / this->m_ui->getUIFPS()))
+		if(this->getElapsedTime() - this->getLastDrawTime() > ui_drawtime_delta)
 		{
 			this->m_ui->draw();
 			this->setLastDrawTime(this->getElapsedTime());
 		}
 		
 		// limit fps
-		usleep(1000000.0 / this->getFPS()); // avg. 30fps
+		usleep(sleep_time);
+		
 		// calculate time
 		this->increaseFrameNumber();
-		this->setFrameDelta(getTime() - frame_start_time);
-		this->increaseElapsedTime(this->getFrameDelta());
+		deltat = this->getTime() - frame_start_time;
+		this->setFrameDelta(deltat);
+		this->increaseElapsedTime(deltat);
 	}
 }
 

@@ -315,6 +315,7 @@ void render_grp_frame_to_surface(grp_data_t *grpdata, int framenum, SDL_Surface 
 UserInterface_SDL::UserInterface_SDL(Game *game)
 	:UserInterface(game)
 {
+	this->setRedrawFPS(20);
 }
 
 UserInterface_SDL::~UserInterface_SDL()
@@ -332,7 +333,7 @@ bool UserInterface_SDL::initUI()
 		throw new Exception("TTF_Init() failed");
 	
 	SDL_Surface *screen;
-	this->m_screen = SDL_SetVideoMode(640, 480, 32, SDL_SWSURFACE);
+	this->m_screen = SDL_SetVideoMode(640, 480, 32, SDL_HWSURFACE);
 	SDL_WM_SetCaption("JucheCraft", NULL);
 	SDL_ShowCursor(SDL_ENABLE);
 	
@@ -340,7 +341,7 @@ bool UserInterface_SDL::initUI()
 	TTF_SetFontStyle(this->m_font, TTF_STYLE_NORMAL);
 	
 	// color format: 0x00RRGGBB
-	this->m_game_scr = SDL_CreateRGBSurface(SDL_SWSURFACE, this->m_game->getMapWidth(), this->m_game->getMapHeight(), 32, 0, 0, 0, 0);
+	this->m_game_scr = SDL_CreateRGBSurface(SDL_HWSURFACE, this->m_game->getMapWidth(), this->m_game->getMapHeight(), 32, 0, 0, 0, 0);
 	// color format: 0xAABBGGRR; 0xffBBGGRR
 	//this->m_game_scr = SDL_CreateRGBSurface(SDL_SWSURFACE, this->m_game->getMapWidth(), this->m_game->getMapHeight(), 32, 0xff, 0xff00, 0xff0000, 0xff000000);
 	
@@ -397,10 +398,12 @@ bool UserInterface_SDL::initUI()
 
 bool UserInterface_SDL::cleanupUI()
 {
+	// do SFileCloseArchive
+	// do free(g_grp_*)
+	
 	// free game resources
 	SDL_FreeSurface(this->m_sf_console);
 	
-	#if 0 // this causes segfault -_-.. I wonder why
 	// free game surfaces
 	SDL_FreeSurface(this->m_buttons_wnd);
 	SDL_FreeSurface(this->m_unitstat_wnd);
@@ -413,7 +416,6 @@ bool UserInterface_SDL::cleanupUI()
 	
 	TTF_Quit();
 	SDL_Quit();
-	#endif
 	
 	return true;
 }
@@ -511,7 +513,7 @@ void UserInterface_SDL::draw()
 	{
 		SDL_FillSurfaceP(this->m_game_scr, 0, 0, this->m_game->getMapWidth(), this->m_game->getMapHeight(), MAP_COLOR);
 		this->drawMap();
-		this->drawObjects();
+		this->drawObjects(); // THIS IS VERY SLOW. avg. 0.02secs
 		{
 			SDL_Rect sr = {this->m_gamescr_left_pos, this->m_gamescr_top_pos, 640, 480};
 			SDL_Rect dr = {0, 0, 640, 480};
@@ -532,7 +534,6 @@ void UserInterface_SDL::drawUI()
 	Player *me = &Player::Players[2];
 	RaceId_t my_raceid = me->getRaceId();
 	
-	
 	// 640-572=68
 	// y: 3px
 	// x: 640-68
@@ -541,7 +542,6 @@ void UserInterface_SDL::drawUI()
 	//mineral 436, 3
 	//gas 504, 3
 	//food 572, 3
-	
 	int y = 3;
 	int x = 640 - 68;
 	
@@ -607,14 +607,12 @@ void UserInterface_SDL::drawUI()
 		x -= 68;
 	}
 	
-	
 	snprintf(buf, sizeof(buf), "FPS: %f  |  Frame#: %u", 
 		game->getCurrentFPS(), game->getFrameNumber());
 	SDL_print(this->m_font, this->m_screen, 0, 0, 640, 16, 0x00ff00, buf);
 	
-	
 	// draw console area
-	SDL_BlitSurface(this->m_sf_console, NULL, this->m_screen, NULL);
+	SDL_BlitSurface(this->m_sf_console, NULL, this->m_screen, NULL); // this takes avg 0.006 secss
 	this->drawUI_MinimapWnd();
 	this->drawUI_UnitStatWnd();
 	this->drawUI_ButtonsWnd();
@@ -841,9 +839,24 @@ void UserInterface_SDL::drawObject(Object &obj)
 
 
 
-
-
-
+#ifndef DRAW_OBJECTS_WITH_VIRTUAL_FXNS
+void UserInterface_SDL::drawObjects()
+{
+	ObjectList &objs = this->m_game->getObjectList();
+	
+	#if 0
+	for(ObjectList::const_iterator it = objs.begin(); it != objs.end(); it++)
+	{
+		this->drawObject(*it->get());
+	}
+	#else
+	for(ObjectList::const_reverse_iterator it = objs.rbegin(); it != objs.rend(); it++)
+	{
+		this->drawObject(*it->get());
+	}
+	#endif
+}
+#endif
 
 
 
