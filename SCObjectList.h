@@ -27,12 +27,12 @@ public:
 	}
 	~ObjectList()
 	{
-		this->removeAllObjects();
 	}
 	
 	Object *addObject(Object *obj);
 	int removeObject(Object *obj);
-	void removeAllObjects();
+	
+	void clear() { this->getObjects().clear(); }
 	
 	iterator find(Object *obj);
 	const_iterator find(Object *obj) const;

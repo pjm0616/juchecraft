@@ -56,10 +56,7 @@ using ObjectState::ObjectState_t;
 namespace ObjectId
 {
 	typedef unsigned int ObjectId_t;
-	enum ObjectId
-	{
-#		include "SCObjectIdList.h"
-	};
+	// enum ObjectId: see SCObjectIdList.h
 }
 using ObjectId::ObjectId_t;
 
@@ -490,7 +487,7 @@ private:
 	
 	/** @name Movement related */
 	//@{
-	float m_moving_secs; /**< 이동 시작 후 지금까지 총 시간 */
+	float m_moving_secs; /**< elapsed time since last move() call */
 	Coordinate m_movement_start_point, m_destination, m_final_destination;
 	MovementFlags_t m_movement_flags;
 	// if target is set, object moves to target. is target is not set, object moves to coordinate.
@@ -502,8 +499,8 @@ private:
 	
 	/** @name Attack related */
 	//@{
-	float m_attacking_secs; /**< 공격 시작 후 지금까지 총 시간 */
-	float m_last_attack_time; /**< `공격 시작 후 지금까지 총 시간'을 기준으로 마지막 공격 시각 */
+	float m_attacking_secs; /**< elapsed time since last attack() call */
+	float m_last_attack_time; /**< last attack time, measured in m_attacking_secs */
 	// if(this->m_isMoving() && this->getAttackTarget()) then this object is moving to attack target
 	Object *m_attack_target; // not null if attack target is set.
 	//@}

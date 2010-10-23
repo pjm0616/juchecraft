@@ -18,7 +18,6 @@ using namespace SC;
 
 Object *ObjectList::addObject(Object *obj)
 {
-	obj->init();
 	this->getObjects().push_back(ObjectList::objptr_t(obj));
 	this->setIteratorAsInvalidated();
 	return obj;
@@ -27,7 +26,6 @@ Object *ObjectList::addObject(Object *obj)
 int ObjectList::removeObject(Object *obj)
 {
 	ObjectList::objlist_t &objs = this->getObjects();
-	obj->cleanup();
 	int nremoved = 0;
 	for(ObjectList::iterator it = this->begin(); 
 		it != this->end(); )
@@ -48,15 +46,6 @@ int ObjectList::removeObject(Object *obj)
 	return nremoved;
 }
 
-void ObjectList::removeAllObjects()
-{
-	ObjectList::objlist_t &objs = this->getObjects();
-	for(ObjectList::iterator it = this->begin(); it != this->end(); )
-	{
-		it->get()->cleanup();
-		objs.erase(it++);
-	}
-}
 
 
 ObjectList::iterator ObjectList::find(Object *obj)

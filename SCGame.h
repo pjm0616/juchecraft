@@ -23,12 +23,13 @@ public:
 	void setUI(UserInterface *ui) { this->m_ui = ui; }
 	
 	void run();
-	void test_tmp1(); // 디버깅&테스트용
+	void test_tmp1(); // for debugging & testing
 	
 	// adds/removes an object.
 	// DO NOT call this function while iterating ObjectList.
-	Object *addObject(Object *obj) { return this->getObjectList().addObject(obj); }
-	int removeObject(Object *obj) { return this->getObjectList().removeObject(obj); }
+	Object *addObject(Object *obj);
+	int removeObject(Object *obj);
+	void removeAllObjects();
 	
 	double getElapsedTime() const;
 	inline float getDelta() const { return this->m_deltat; }

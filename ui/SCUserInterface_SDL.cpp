@@ -32,6 +32,7 @@ namespace SDL
 #include "SCPlayer.h"
 #include "SCObject.h"
 #include "SCObjectList.h"
+#include "SCObjectIdList.h"
 #include "SCGame.h"
 
 #include "ui/SCUserInterface.h"

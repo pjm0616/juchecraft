@@ -31,8 +31,9 @@ static float deg2radf(float deg)
 	return deg * M_PI / 180;
 }
 
-// dx, dy: 데카르트 좌표계 사용; 변환해서 넘겨야됨 주의할것
+// dx, dy: coordinates in Cartesian coordinate system
 // float angle = calculateAngle_Cartesian((x2 - x1), -(y2 - y1));
+// float angle = calculateAngle_Cartesian(dx, -dy);
 static float calculateAngle_Cartesian(float dx, float dy)
 {
 	float deg;

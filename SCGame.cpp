@@ -29,6 +29,7 @@
 #include "SCPlayer.h"
 #include "SCObject.h"
 #include "SCObjectList.h"
+#include "SCObjectIdList.h"
 #include "SCGame.h"
 #include "objects/SCObjects.h"
 #include "ui/SCUserInterface.h"
@@ -45,6 +46,30 @@ Game::Game()
 Game::~Game()
 {
 }
+
+
+Object *Game::addObject(Object *obj)
+{
+	obj->init();
+	return this->getObjectList().addObject(obj);
+}
+
+int Game::removeObject(Object *obj)
+{
+	obj->cleanup();
+	return this->getObjectList().removeObject(obj);
+}
+
+void Game::removeAllObjects()
+{
+	ObjectList &objs = this->getObjectList();
+	for(ObjectList::iterator it = objs.begin(); it != objs.end(); )
+	{
+		it->get()->cleanup();
+	}
+	objs.clear();
+}
+
 
 double Game::getElapsedTime() const
 {
@@ -128,6 +153,7 @@ void Game::run()
 		this->setDelta(this->getElapsedTime() - start_time);
 	}
 }
+
 
 
 void Game::test_tmp1()
