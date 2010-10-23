@@ -10,7 +10,7 @@ SRCS				= libs/libmpqgrp/grp.cpp $(SRCS_UI) $(SRCS_LIBMPQ) SCCoordinate.cpp SCOb
 TARGET1				= mini_sc
 
 DEFS				= -D_FILE_OFFSET_BITS=64
-LIBS				= -lSDL -lSDL_ttf -lSDL_image -lSDL_gfx -lz -lbz2 -lncursesw
+LIBS				= ./libs/lua/src/liblua.a -lSDL -lSDL_ttf -lSDL_image -lSDL_gfx -lz -lbz2 -lncursesw
 INCLUDEDIR			= -I. -Ilibs/libmpq/SFmpqapi
 LIBDIR				=
 
@@ -53,7 +53,7 @@ OBJS_TMP				=$(SRCS:.c=.o)
 OBJS				=$(OBJS_TMP:.cpp=.o) 
 
 
-all:    $(TARGET1)
+all:	lua $(TARGET1)
 
 .SUFFIXES: .c .o
 .c.o:
@@ -69,6 +69,12 @@ $(TARGET1):     $(OBJS)
 	@echo LD $@
 	$(LD) -o $@ $(LDFLAGS) $(OBJS) $(LIBS)
 
+lua:
+	make -C ./libs/lua linux
+
+luaclean:
+	make -C ./libs/lua clean
+
 doc:
 	doxygen ./Doxyfile
 
@@ -79,7 +85,7 @@ clean:
 	rm -f $(OBJS)
 	rm -f $(TARGET1)
 	
-distclean: clean docclean
+distclean: luaclean clean docclean
 	rm -f .depend
 
 dep:    depend
