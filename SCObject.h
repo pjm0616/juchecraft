@@ -24,6 +24,7 @@ namespace ObjectType
 		Resource = 1, 
 		Unit = 2, 
 		Building = 3, 
+		SIZE
 	};
 }
 using ObjectType::ObjectType_t;

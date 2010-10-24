@@ -558,10 +558,33 @@ void UserInterface_SDL::processFrame()
 				this->m_selection_in_progress = false;
 				Coordinate selection_end(x, y);
 				this->m_game->findObjectByRect(this->m_selected_objs, this->m_selection_start_coordinate, selection_end);
+				{
+					int stats[ObjectType::SIZE] = {0, };
+					for(ObjectList::const_iterator it = this->m_selected_objs.begin(); 
+						it != this->m_selected_objs.end(); ++it)
+					{
+						const ObjectSPtr_t &obj = *it;
+						stats[obj->getObjectType()]++;
+					}
+					
+					/* 유닛이 하나 이상 있다면 유닛 빼고 다른 물체는 선택하지 않음 */
+					if(stats[ObjectType::Unit] > 0)
+					{
+						for(ObjectList::iterator it = this->m_selected_objs.begin(); 
+							it != this->m_selected_objs.end(); )
+						{
+							const ObjectSPtr_t &obj = *it;
+							if(obj->getObjectType() != ObjectType::Unit)
+								this->m_selected_objs.erase(it++);
+							else
+								++it;
+						}
+					}
+				}
 				if(this->m_selection_start_coordinate == selection_end)
 				{
-					ObjectList::iterator it = this->m_selected_objs.begin();
 					ObjectList::iterator end = this->m_selected_objs.end();
+					ObjectList::iterator it = this->m_selected_objs.begin();
 					if(it != end)
 						++it;
 					while(it != end)
