@@ -70,9 +70,9 @@ $(TARGET1):     $(OBJS)
 	$(LD) -o $@ $(LDFLAGS) $(OBJS) $(LIBS)
 
 lua:
-	make -C ./libs/lua linux
+	make -C ./libs/lua/src linux
 luaclean:
-	make -C ./libs/lua clean
+	make -C ./libs/lua/src clean
 
 resources:
 	make -C res_raw

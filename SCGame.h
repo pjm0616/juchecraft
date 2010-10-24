@@ -29,6 +29,7 @@ public:
 	// adds/removes an object.
 	// DO NOT call this function while iterating ObjectList.
 	const ObjectSPtr_t &addObject(const ObjectSPtr_t &obj);
+	ObjectSPtr_t newObject(ObjectId_t objid);
 	int removeObject(const ObjectSPtr_t &obj);
 	void removeAllObjects();
 	

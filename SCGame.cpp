@@ -62,6 +62,11 @@ const ObjectSPtr_t &Game::addObject(const ObjectSPtr_t &obj)
 	return this->m_objects.addObject(obj);
 }
 
+ObjectSPtr_t Game::newObject(ObjectId_t objid)
+{
+	return this->addObject(this->m_obj_protos.newObjectByObjectId(objid));
+}
+
 int Game::removeObject(const ObjectSPtr_t &obj)
 {
 	obj->cleanup();
@@ -174,7 +179,7 @@ void Game::test_tmp1()
 	Player::Players[1].increaseMinerals(50);
 	Player::Players[2].increaseMinerals(50);
 	
-	o = this->addObject(this->m_obj_protos.newObjectByObjectId(ObjectId::Juche_DaepodongLauncher));
+	o = this->newObject(ObjectId::Juche_DaepodongLauncher);
 	o->changeOwner(&Player::Players[2]);
 	o->setPosition(40, 40);
 	o->setObjectMovingSpeedBonusM(4.0);
@@ -182,7 +187,7 @@ void Game::test_tmp1()
 	o->setObjectDamageBonusM(2.0);
 	o->setObjectArmorBonusA(3.0);
 	
-	o = this->addObject(this->m_obj_protos.newObjectByObjectId(ObjectId::Zerg_Zergling));
+	o = this->newObject(ObjectId::Zerg_Zergling);
 	o->changeOwner(&Player::Players[2]);
 	o->setPosition(80, 50);
 	o->setObjectMovingSpeedBonusM(2.0);
@@ -191,29 +196,29 @@ void Game::test_tmp1()
 	o->setObjectArmorBonusA(3.0);
 	o->move(Coordinate(410, 250));
 	
-	o = this->addObject(this->m_obj_protos.newObjectByObjectId(ObjectId::Juche_AojiWorker));
+	o = this->newObject(ObjectId::Juche_AojiWorker);
 	o->changeOwner(&Player::Players[1]);
 	o->setPosition(200, 100);
 	o->setObjectMovingSpeedBonusM(1.0);
 	o->move(Coordinate(210, 300));
 	
-	o = this->addObject(this->m_obj_protos.newObjectByObjectId(ObjectId::Terran_CommandCenter));
+	o = this->newObject(ObjectId::Terran_CommandCenter);
 	o->changeOwner(&Player::Players[2]);
 	o->setPosition(440, 180);
 	
-	o = this->addObject(this->m_obj_protos.newObjectByObjectId(ObjectId::Juche_RodongCorrectionalFacility));
+	o = this->newObject(ObjectId::Juche_RodongCorrectionalFacility);
 	o->changeOwner(&Player::Players[1]);
 	o->setPosition(80, 80);
 	
 	#if 1
 	for(int i = 0; i < 10; i++)
 	{
-		o = this->addObject(this->m_obj_protos.newObjectByObjectId(ObjectId::Resource_MineralField));
+		o = this->newObject(ObjectId::Resource_MineralField);
 		o->setPosition(10, 270 + i*32);
 	}
 	for(int i = 0; i < 10; i++)
 	{
-		o = this->addObject(this->m_obj_protos.newObjectByObjectId(ObjectId::Resource_MineralField));
+		o = this->newObject(ObjectId::Resource_MineralField);
 		o->setPosition(10 + i*32, 270 + 32*3);
 	}
 	#endif
