@@ -53,6 +53,7 @@ loaddata('', object_list)
 
 loaddata('data_dumper')
 local s = DataDumper(object_prototypes)
+--io.write(string.dump(s))
 io.write(s)
 
 
