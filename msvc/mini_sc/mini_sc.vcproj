@@ -41,7 +41,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="&quot;$(SolutionDir)\..\&quot;;&quot;$(SolutionDir)\..\platform_local\win32\include\&quot;;&quot;$(SolutionDir)\..\libs\boost\include\&quot;"
+				AdditionalIncludeDirectories="&quot;$(SolutionDir)\..\platform_local\win32\include\&quot;;&quot;$(SolutionDir)\..\libs\boost\include\&quot;;&quot;$(SolutionDir)\..\&quot;;&quot;$(SolutionDir)\..\libs\&quot;;&quot;$(SolutionDir)\..\libs\lua\src\&quot;"
 				PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
@@ -116,7 +116,7 @@
 				Name="VCCLCompilerTool"
 				Optimization="2"
 				EnableIntrinsicFunctions="true"
-				AdditionalIncludeDirectories="&quot;$(SolutionDir)\..\&quot;;&quot;$(SolutionDir)\..\platform_local\win32\include\&quot;;&quot;$(SolutionDir)\..\libs\boost\include\&quot;"
+				AdditionalIncludeDirectories="&quot;$(SolutionDir)\..\platform_local\win32\include\&quot;;&quot;$(SolutionDir)\..\libs\boost\include\&quot;;&quot;$(SolutionDir)\..\&quot;;&quot;$(SolutionDir)\..\libs\&quot;;&quot;$(SolutionDir)\..\libs\lua\src\&quot;"
 				PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS"
 				RuntimeLibrary="2"
 				EnableFunctionLevelLinking="true"
@@ -192,6 +192,10 @@
 			</File>
 			<File
 				RelativePath="..\..\SCObjectList.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\SCObjectPrototypes.cpp"
 				>
 			</File>
 			<File
@@ -429,6 +433,14 @@
 						</File>
 					</Filter>
 				</Filter>
+				<Filter
+					Name="luacpp"
+					>
+					<File
+						RelativePath="..\..\libs\luacpp\luacpp.cpp"
+						>
+					</File>
+				</Filter>
 			</Filter>
 		</Filter>
 		<Filter
@@ -474,6 +486,10 @@
 			</File>
 			<File
 				RelativePath="..\..\SCObjectList.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\SCObjectPrototypes.h"
 				>
 			</File>
 			<File
@@ -758,6 +774,18 @@
 							>
 						</File>
 					</Filter>
+				</Filter>
+				<Filter
+					Name="luacpp"
+					>
+					<File
+						RelativePath="..\..\libs\luacpp\luacpp.h"
+						>
+					</File>
+					<File
+						RelativePath="..\..\libs\luacpp\luacpp_lua.h"
+						>
+					</File>
 				</Filter>
 			</Filter>
 		</Filter>
