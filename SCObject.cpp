@@ -606,7 +606,7 @@ void Object::stopAttacking()
 
 bool Object::attack(const ObjectSPtr_t &target)
 {
-	if(!this->canAttack() || target->isInvincible())
+	if(!this->canAttack() || target->isInvincible() || target.get() == this)
 	{
 		return false;
 	}
@@ -709,8 +709,34 @@ void Object::processFrame()
 
 
 
+bool Object::insideRect(int left, int top, int right, int bottom)
+{
+	int obj_left, obj_top, obj_width, obj_height;
+	this->getPosition(&obj_left, &obj_top);
+	this->getSize(&obj_width, &obj_height);
+	int obj_right = obj_left + obj_width, obj_bottom = obj_top + obj_height;
+	
+	if(	(left <= obj_left && obj_right <= right) || 
+		(obj_left <= left && left <= obj_right) || 
+		(obj_left <= right && right <= obj_right))
+	{
+		if(	(top <= obj_top && obj_bottom <= bottom) || 
+			(obj_top <= top && top <= obj_bottom) || 
+			(obj_top <= bottom && bottom <= obj_bottom))
+		{
+			return true;
+		}
+	}
+	return false;
+}
 
-
+bool Object::insideRect(const Coordinate &top_left, const Coordinate &bottom_right)
+{
+	Coordinate top_left2(top_left), bottom_right2(bottom_right);
+	Coordinate::normalizeTopLeftCoordinate(top_left2, bottom_right2);
+	
+	return this->insideRect(top_left2.getX(), top_left2.getY(), bottom_right2.getX(), bottom_right2.getY());
+}
 
 
 

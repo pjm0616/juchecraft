@@ -43,6 +43,16 @@ protected:
 	#endif
 	
 private:
+	bool isSelectedUnit(const ObjectSPtr_t &obj);
+	
+	// FIXME: use accessor, mutators
+	bool m_selection_in_progress;
+	Coordinate m_selection_start_coordinate;
+	ObjectList m_selected_objs;
+	
+	Coordinate m_mouse_pos_in_gamescr;
+	
+private:
 	void drawUI();
 	void drawMap();
 	void drawUI_MinimapWnd();

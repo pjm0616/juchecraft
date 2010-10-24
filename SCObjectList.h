@@ -14,13 +14,10 @@ namespace SC {
 
 
 
-//typedef std::list<ObjectSPtr> ObjectSList;
-typedef std::map<ObjectId_t, ObjectSPtr_t> ObjectSMap;
+//typedef std::list<ObjectSPtr> ObjectList;
+typedef std::map<ObjectId_t, ObjectSPtr_t> ObjectMap;
 
-typedef std::list<Object *> ObjectList;
-typedef std::map<ObjectId_t, Object *> ObjectMap;
-
-class ObjectSList
+class ObjectList
 {
 public:
 	typedef std::list<ObjectSPtr_t> objlist_t;
@@ -29,11 +26,11 @@ public:
 	typedef objlist_t::reverse_iterator reverse_iterator;
 	typedef objlist_t::const_reverse_iterator const_reverse_iterator;
 	
-	ObjectSList()
+	ObjectList()
 		:m_iterator_invalidated(false)
 	{
 	}
-	~ObjectSList()
+	~ObjectList()
 	{
 	}
 	
@@ -41,6 +38,8 @@ public:
 	int removeObject(const ObjectSPtr_t &obj);
 	
 	void clear() { this->getObjects().clear(); }
+	size_t size() const { return this->getObjects().size(); }
+	bool empty() const { return this->getObjects().empty(); }
 	
 	iterator find(const ObjectSPtr_t &obj);
 	const_iterator find(const ObjectSPtr_t &obj) const;

@@ -83,7 +83,23 @@ float Coordinate::calculateDistance(const Coordinate &dest) const
 
 
 
-
+/* static */
+void Coordinate::normalizeTopLeftCoordinate(Coordinate &top_left, Coordinate &bottom_right)
+{
+	int tl_x = top_left.getX(), br_x = bottom_right.getX();
+	int tl_y = top_left.getY(), br_y = bottom_right.getY();
+	
+	if(tl_x > br_x)
+	{
+		top_left.setX(br_x);
+		bottom_right.setX(tl_x);
+	}
+	if(tl_y > br_y)
+	{
+		top_left.setY(br_y);
+		bottom_right.setY(tl_y);
+	}
+}
 
 
 

@@ -33,6 +33,9 @@ public:
 	int removeObject(const ObjectSPtr_t &obj);
 	void removeAllObjects();
 	
+	ObjectSPtr_t findObjectByRect(ObjectList &matched_objs, int left, int top, int right, int bottom);
+	ObjectSPtr_t findObjectByRect(ObjectList &matched_objs, const Coordinate &top_left, const Coordinate &bottom_right);
+	
 	double getElapsedTime() const;
 	inline float getDelta() const { return this->m_deltat; }
 	inline float getFrameDelta() const { return this->m_frame_deltat; }
@@ -48,8 +51,8 @@ public:
 	void setMapSize(int width, int height) { this->m_map_width = width; this->m_map_height = height; }
 	
 	// should be protected
-	ObjectSList &getObjectList() { return this->m_objects; }
-	const ObjectSList &getObjectList() const { return this->m_objects; }
+	ObjectList &getObjectList() { return this->m_objects; }
+	const ObjectList &getObjectList() const { return this->m_objects; }
 	
 	// There's no point having an accessor for m_ui.
 	//UserInterface *getUI() { return this->m_ui; }
@@ -73,7 +76,7 @@ private:
 	
 	UserInterface *m_ui;
 	ObjectPrototypes m_obj_protos;
-	ObjectSList m_objects;
+	ObjectList m_objects;
 	
 	time_t m_start_time;
 	float m_deltat;

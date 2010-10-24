@@ -75,8 +75,8 @@ int Game::removeObject(const ObjectSPtr_t &obj)
 
 void Game::removeAllObjects()
 {
-	ObjectSList &objs = this->getObjectList();
-	for(ObjectSList::const_iterator it = objs.begin(); it != objs.end(); ++it)
+	ObjectList &objs = this->getObjectList();
+	for(ObjectList::const_iterator it = objs.begin(); it != objs.end(); ++it)
 	{
 		const ObjectSPtr_t &obj = *it;
 		obj->cleanup();
@@ -100,7 +100,7 @@ double Game::getElapsedTime() const
 
 void Game::processObjects()
 {
-	ObjectSList &objs = this->getObjectList();
+	ObjectList &objs = this->getObjectList();
 #if 0
 	for(ObjectList::iterator it = objs.begin(); it != objs.end(); ++it)
 	{
@@ -108,7 +108,7 @@ void Game::processObjects()
 	}
 #else
 	objs.resetIteratorChecker();
-	for(ObjectSList::const_iterator it = objs.begin(); it != objs.end(); )
+	for(ObjectList::const_iterator it = objs.begin(); it != objs.end(); )
 	{
 		const ObjectSPtr_t &obj = *it;
 		obj->processFrame();
@@ -214,12 +214,12 @@ void Game::test_tmp1()
 	for(int i = 0; i < 10; i++)
 	{
 		o = this->newObject(ObjectId::Resource_MineralField);
-		o->setPosition(10, 270 + i*32);
+		o->setPosition(10, 270 + i*54);
 	}
 	for(int i = 0; i < 10; i++)
 	{
 		o = this->newObject(ObjectId::Resource_MineralField);
-		o->setPosition(10 + i*32, 270 + 32*3);
+		o->setPosition(10 + i*64, 270 + 54*3);
 	}
 	#endif
 }
@@ -228,6 +228,33 @@ void Game::test_tmp1()
 
 
 
+ObjectSPtr_t Game::findObjectByRect(ObjectList &matched_objs, int left, int top, int right, int bottom)
+{
+	ObjectList &objs = this->getObjectList();
+	
+	matched_objs.clear();
+	for(ObjectList::const_iterator it = objs.begin(); it != objs.end(); ++it)
+	{
+		const ObjectSPtr_t &obj = *it;
+		if(obj->insideRect(left, top, right, bottom))
+		{
+			//fprintf(stderr, "adding object %s\n", obj->getObjectName());
+			matched_objs.addObject(obj);
+		}
+	}
+	
+	if(matched_objs.empty())
+		return ObjectSPtr_t();
+	else
+		return *matched_objs.begin();
+}
+ObjectSPtr_t Game::findObjectByRect(ObjectList &matched_objs, const Coordinate &top_left, const Coordinate &bottom_right)
+{
+	Coordinate top_left2(top_left), bottom_right2(bottom_right);
+	Coordinate::normalizeTopLeftCoordinate(top_left2, bottom_right2);
+	
+	return this->findObjectByRect(matched_objs, top_left2.getX(), top_left2.getY(), bottom_right2.getX(), bottom_right2.getY());
+}
 
 
 

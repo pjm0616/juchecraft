@@ -273,13 +273,13 @@ void UserInterface_ncurses::processFrame()
 		case KEY_LEFT: this->m_cur_x--; break;
 		case KEY_RIGHT: this->m_cur_x++; break;
 		case '\n': {
-				SC::ObjectSList::iterator it = this->m_game->getObjectList().begin();
+				SC::ObjectList::iterator it = this->m_game->getObjectList().begin();
 				(*it)->cmd_move(Coordinate(this->m_cur_x * 10, (this->m_cur_y-1) * 20));
 			}
 			break;
 		case 'a': {
-				SC::ObjectSList::iterator it = this->m_game->getObjectList().begin();
-				SC::ObjectSList::iterator it2 = this->m_game->getObjectList().begin(); ++it2;
+				SC::ObjectList::iterator it = this->m_game->getObjectList().begin();
+				SC::ObjectList::iterator it2 = this->m_game->getObjectList().begin(); ++it2;
 				
 				(*it)->cmd_attack(*it2);
 			}
@@ -397,15 +397,15 @@ void UserInterface_ncurses::drawObject(const ObjectSPtr_t &obj)
 #ifndef DRAW_OBJECTS_WITH_VIRTUAL_FXNS
 void UserInterface_ncurses::drawObjects()
 {
-	ObjectSList &objs = this->m_game->getObjectList();
+	ObjectList &objs = this->m_game->getObjectList();
 	
 	#if 0
-	for(ObjectSList::const_iterator it = objs.begin(); it != objs.end(); it++)
+	for(ObjectList::const_iterator it = objs.begin(); it != objs.end(); it++)
 	{
 		this->drawObject(*it);
 	}
 	#else
-	for(ObjectSList::const_reverse_iterator it = objs.rbegin(); it != objs.rend(); it++)
+	for(ObjectList::const_reverse_iterator it = objs.rbegin(); it != objs.rend(); it++)
 	{
 		this->drawObject(*it);
 	}

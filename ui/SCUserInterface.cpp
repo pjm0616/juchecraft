@@ -27,15 +27,15 @@ using namespace SC;
 #ifdef DRAW_OBJECTS_WITH_VIRTUAL_FXNS
 void UserInterface::drawObjects()
 {
-	ObjectSList &objs = this->m_game->getObjectList();
+	ObjectList &objs = this->m_game->getObjectList();
 	
 	#if 0
-	for(ObjectSList::const_iterator it = objs.begin(); it != objs.end(); it++)
+	for(ObjectList::const_iterator it = objs.begin(); it != objs.end(); it++)
 	{
 		this->drawObject(*it);
 	}
 	#else
-	for(ObjectSList::const_reverse_iterator it = objs.rbegin(); it != objs.rend(); it++)
+	for(ObjectList::const_reverse_iterator it = objs.rbegin(); it != objs.rend(); it++)
 	{
 		this->drawObject(*it);
 	}

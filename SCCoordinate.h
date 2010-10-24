@@ -41,11 +41,18 @@ public:
 	bool equals(const Coordinate &o) const { return ((int)o.getX() == (int)this->getX()) && ((int)o.getY() == (int)this->getY()); }
 	bool operator==(const Coordinate &o) const { return this->equals(o); }
 	
-	Coordinate operator+(const Coordinate &o)
+	Coordinate operator+(const Coordinate &o) const
 	{
 		Coordinate coord(*this);
 		coord.addX(o.getX());
 		coord.addY(o.getY());
+		return coord;
+	}
+	Coordinate operator-(const Coordinate &o) const
+	{
+		Coordinate coord(*this);
+		coord.addX(-o.getX());
+		coord.addY(-o.getY());
 		return coord;
 	}
 	
@@ -59,6 +66,8 @@ public:
 	 *  @return The distance
 	 */
 	float calculateDistance(const Coordinate &dest) const;
+	
+	static void normalizeTopLeftCoordinate(Coordinate &top_left, Coordinate &bottom_right);
 	
 private:
 	float m_x, m_y;

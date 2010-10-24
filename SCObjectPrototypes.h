@@ -21,8 +21,8 @@ public:
 	ObjectSPtr_t newObjectByObjectId(ObjectId_t id) { return ObjectSPtr_t(this->m_obj_protos_by_id[id].get()->duplicate()); }
 	
 protected:
-	ObjectSList m_obj_prototypes;
-	ObjectSMap m_obj_protos_by_id;
+	ObjectList m_obj_prototypes;
+	ObjectMap m_obj_protos_by_id;
 
 private:
 	void parseObjectData(Object *obj, int stack_idx);

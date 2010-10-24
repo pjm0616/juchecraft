@@ -167,6 +167,11 @@ public:
 	float calculateAngle(const ObjectSPtr_t &dest) const { return this->calculateAngle(dest->getPosition()); }
 	//@}
 	
+	/** @brief Checks if this object is inside the rect
+	 */
+	bool insideRect(int left, int top, int right, int bottom);
+	bool insideRect(const Coordinate &top_left, const Coordinate &bottom_right);
+	
 	/** @name Movement methods */
 	//@{
 	

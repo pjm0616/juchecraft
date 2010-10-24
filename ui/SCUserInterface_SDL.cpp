@@ -49,6 +49,21 @@ namespace SDL
 using namespace SDL;
 using namespace SC;
 
+static inline Uint32 bswap32(Uint32 v)
+{
+	return (
+			((v & 0xff000000) >> 24) | 
+			((v & 0x00ff0000) >> 8) | 
+			((v & 0x0000ff00) << 8) | 
+			((v & 0x000000ff) << 24) 
+			);
+}
+
+static inline Uint32 convert_color_from_bgra_to_rgba(Uint32 color_in_bgra)
+{
+	return (bswap32(color_in_bgra) >> 8) | (color_in_bgra & 0xff000000);
+}
+
 std::map<ObjectId_t, std::string> UserInterface_SDL::obj_images;
 bool UserInterface_SDL::is_initialized = false;
 
@@ -139,6 +154,14 @@ static void SDL_FillSurfaceP(SDL_Surface *sf, int x, int y, int w, int h, unsign
 {
 	SDL_Rect r = {x, y, w, h};
 	SDL_FillRect(sf, &r, color);
+}
+static void SDL_BlitRectP(SDL_Surface *sf, int x, int y, int w, int h, unsigned int color)
+{
+	SDL_Surface *tmp = SDL_CreateRGBSurface(SDL_SWSURFACE, w, h, 32, 0xff, 0xff00, 0xff0000, 0xff000000);
+	SDL_FillRect(tmp, NULL, color);
+	SDL_Rect r = {x, y, w, h};
+	SDL_BlitSurface(tmp, NULL, sf, &r);
+	SDL_FreeSurface(tmp);
 }
 
 static void SDL_print(TTF_Font *font, SDL_Surface *sf, int x, int y, int w, int h, unsigned int color, const char *text)
@@ -248,9 +271,9 @@ SDL_Surface *render_grp_frame_flipped(grp_data_t *grpdata, int framenum, bool do
 void replace_unit_colors(SDL_Surface *sf, Uint32 newcolor)
 {
 	//static const Uint32 orig_unit_colors[] = {0xde00de, 0x5b005b, 0xbd00bd, 0x9c009c, 0x7c007c, 0x190019, 0xff00ff, 0x3a003a};
-	Uint8 nc_r = (newcolor & 0xff0000) >> 16;
+	Uint8 nc_r = (newcolor & 0x0000ff) >> 0;
 	Uint8 nc_g = (newcolor & 0x00ff00) >> 8;
-	Uint8 nc_b = (newcolor & 0x0000ff) >> 0;
+	Uint8 nc_b = (newcolor & 0xff0000) >> 16;
 	
 	for(int y = 0; y < sf->h; y++)
 	{
@@ -290,7 +313,7 @@ void render_shadow_image(SDL_Surface *sf)
 
 void render_grp_frame_to_surface(grp_data_t *grpdata, int framenum, SDL_Surface *dest_sf, int x, int y, 
 	int opt_align_w = -1, int opt_align_h = -1, bool do_hflip = false, bool do_yflip = false, 
-	Uint32 new_unit_color = 0xffffffff, unsigned int grpflags = 0)
+	Uint32 new_unit_color = 0x00000000, unsigned int grpflags = 0)
 {
 	grp_frameheader_t *frame = grp_get_frame_info(grpdata, framenum);
 	
@@ -302,7 +325,7 @@ void render_grp_frame_to_surface(grp_data_t *grpdata, int framenum, SDL_Surface 
 	if(opt_align_h > 0)
 		dest_rect.y -= (frame->height - opt_align_h);
 	
-	if(new_unit_color != 0xffffffff)
+	if(new_unit_color != 0x00000000)
 		replace_unit_colors(rmodel, new_unit_color);
 	else if(grpflags & SHADOW_COLOR)
 		render_shadow_image(rmodel);
@@ -345,10 +368,9 @@ bool UserInterface_SDL::initUI()
 	this->m_font = TTF_OpenFont(GAME_ROOT_DIR "./res/ui/sdl/fonts/NanumGothic.ttf", this->getFontSize());
 	TTF_SetFontStyle(this->m_font, TTF_STYLE_NORMAL);
 	
-	// color format: 0x00RRGGBB
-	this->m_game_scr = SDL_CreateRGBSurface(SDL_HWSURFACE, this->m_game->getMapWidth(), this->m_game->getMapHeight(), 32, 0, 0, 0, 0);
 	// color format: 0xAABBGGRR; 0xffBBGGRR
-	//this->m_game_scr = SDL_CreateRGBSurface(SDL_SWSURFACE, this->m_game->getMapWidth(), this->m_game->getMapHeight(), 32, 0xff, 0xff00, 0xff0000, 0xff000000);
+	this->m_game_scr = SDL_CreateRGBSurface(SDL_HWSURFACE, this->m_game->getMapWidth(), this->m_game->getMapHeight(), 
+		32, 0xff, 0xff00, 0xff0000, 0xff000000);
 	
 	this->m_gamescr_left_pos = 0;
 	this->m_gamescr_top_pos = 0;
@@ -407,6 +429,8 @@ bool UserInterface_SDL::initUI()
 
 bool UserInterface_SDL::cleanupUI()
 {
+	this->m_selected_objs.clear();
+	
 	// do SFileCloseArchive
 	// do free(g_grp_*)
 	
@@ -427,6 +451,18 @@ bool UserInterface_SDL::cleanupUI()
 	SDL_Quit();
 	
 	return true;
+}
+
+
+bool UserInterface_SDL::isSelectedUnit(const ObjectSPtr_t &obj)
+{
+	for(ObjectList::const_iterator it = this->m_selected_objs.begin(); 
+		it != this->m_selected_objs.end(); ++it)
+	{
+		if(*it == obj)
+			return true;
+	}
+	return false;
 }
 
 void UserInterface_SDL::processFrame()
@@ -460,20 +496,25 @@ void UserInterface_SDL::processFrame()
 		case SDL_KEYUP:
 			// ev.key.
 			break;
-		case SDL_MOUSEMOTION:
+		case SDL_MOUSEMOTION: {
 			// ev.motion.
+			int x = this->m_gamescr_left_pos + ev.button.x;
+			int y = this->m_gamescr_top_pos + ev.button.y;
+			this->m_mouse_pos_in_gamescr.set(x, y);
 			break;
-		case SDL_MOUSEBUTTONDOWN:
+		}
+		case SDL_MOUSEBUTTONDOWN: {
 			// ev.button.
-			if(ev.button.state == SDL_PRESSED)
+			int x = this->m_gamescr_left_pos + ev.button.x;
+			int y = this->m_gamescr_top_pos + ev.button.y;
+			this->m_mouse_pos_in_gamescr.set(x, y);
+			if(ev.button.button == 3)
 			{
-				if(ev.button.button == 3)
-				{
-					//fprintf(stderr, "move: %d, %d\n", ev.button.x, ev.button.y);
-					SC::ObjectSList::iterator it = this->m_game->getObjectList().begin();
-					int x = this->m_gamescr_left_pos + ev.button.x;
-					int y = this->m_gamescr_top_pos + ev.button.y;
+				//fprintf(stderr, "move: %d, %d\n", ev.button.x, ev.button.y);
 				
+				for(ObjectList::const_iterator it = this->m_selected_objs.begin(); 
+					it != this->m_selected_objs.end(); ++it)
+				{
 					#if 0
 					if(0)
 					{
@@ -484,25 +525,42 @@ void UserInterface_SDL::processFrame()
 					else
 					#endif
 					(*it)->cmd_move(Coordinate(x, y));
-				
-					//fprintf(stderr, "name:%s\n", (*it)->getObjectName());
 				}
-				else if(ev.button.button == 1)
+			}
+			else if(ev.button.button == 1)
+			{
+				this->m_selection_start_coordinate.set(x, y);
+				this->m_selection_in_progress = true;
+			}
+			else if(ev.button.button == 2)
+			{
+				ObjectList selected_objs;
+				ObjectSPtr_t first = this->m_game->findObjectByRect(selected_objs, x, y, x+10, y+10);
+				
+				if(first)
 				{
-					//fprintf(stderr, "attack: %d, %d\n", ev.button.x, ev.button.y);
-					SC::ObjectSList::iterator it = this->m_game->getObjectList().begin();
-					//int x = this->m_gamescr_left_pos + ev.button.x;
-					//int y = this->m_gamescr_top_pos + ev.button.y;
-					SC::ObjectSList::iterator it2 = this->m_game->getObjectList().begin(); ++it2;
-					
-					(*it)->cmd_attack(*it2);
-					//(*it)->cmd_move(*it2);
+					for(ObjectList::const_iterator it = this->m_selected_objs.begin(); 
+						it != this->m_selected_objs.end(); ++it)
+					{
+						(*it)->cmd_attack(first);
+					}
 				}
 			}
 			break;
-		case SDL_MOUSEBUTTONUP:
+		}
+		case SDL_MOUSEBUTTONUP: {
 			// ev.button.
+			int x = this->m_gamescr_left_pos + ev.button.x;
+			int y = this->m_gamescr_top_pos + ev.button.y;
+			this->m_mouse_pos_in_gamescr.set(x, y);
+			if(ev.button.button == 1)
+			{
+				this->m_selection_in_progress = false;
+				Coordinate selection_end(x, y);
+				this->m_game->findObjectByRect(this->m_selected_objs, this->m_selection_start_coordinate, selection_end);
+			}
 			break;
+		}
 		case SDL_QUIT:
 			//std::exit(0);
 			this->m_game->endGame();
@@ -513,16 +571,29 @@ void UserInterface_SDL::processFrame()
 	}
 }
 
-#define MAP_COLOR 0x808080
+#define MAP_COLOR 0xff808080
 void UserInterface_SDL::draw()
 {
-	SDL_FillSurfaceP(this->m_screen, 0, 0, 640, 480, 0x000000); // 0xffffff
+	SDL_FillSurfaceP(this->m_screen, 0, 0, 640, 480, 0x00000000); // 0xffffff
 	
 	// draw game screen
 	{
 		SDL_FillSurfaceP(this->m_game_scr, 0, 0, this->m_game->getMapWidth(), this->m_game->getMapHeight(), MAP_COLOR);
 		this->drawMap();
 		this->drawObjects(); // THIS IS VERY SLOW. avg. 0.02secs
+		// etc..
+		{
+			if(this->m_selection_in_progress)
+			{
+				Coordinate tl(this->m_selection_start_coordinate), br(this->m_mouse_pos_in_gamescr);
+				Coordinate::normalizeTopLeftCoordinate(tl, br);
+				
+				int w = br.getX() - tl.getX(), h = br.getY() - tl.getY();
+				SDL_BlitRectP(this->m_game_scr, tl.getX(), tl.getY(), w, h, 0x4000ff00);
+				rectangleRGBA(this->m_game_scr, tl.getX(), tl.getY(), br.getX(), br.getY(), 0, 255, 0, 255);
+			}
+		}
+		// blit game screen
 		{
 			SDL_Rect sr = {this->m_gamescr_left_pos, this->m_gamescr_top_pos, 640, 480};
 			SDL_Rect dr = {0, 0, 640, 480};
@@ -652,8 +723,8 @@ void UserInterface_SDL::drawUI_MinimapWnd()
 	
 	SDL_FillSurfaceP(this->m_minimap_wnd, 0, 0, minimap_w, minimap_h, MAP_COLOR);
 	
-	ObjectSList &objs = this->m_game->getObjectList();
-	for(ObjectSList::const_iterator it = objs.begin(); it != objs.end(); it++)
+	ObjectList &objs = this->m_game->getObjectList();
+	for(ObjectList::const_iterator it = objs.begin(); it != objs.end(); it++)
 	{
 		const ObjectSPtr_t &obj = *it;
 		float unit_x = obj->getX(), unit_y = obj->getY();
@@ -668,7 +739,7 @@ void UserInterface_SDL::drawUI_MinimapWnd()
 
 void UserInterface_SDL::drawUI_UnitStatWnd()
 {
-	SC::ObjectSList::iterator it = this->m_game->getObjectList().begin();
+	SC::ObjectList::iterator it = this->m_game->getObjectList().begin();
 	const char *name = (*it)->getObjectName();
 	
 	// left-top: 155, 390
@@ -760,23 +831,32 @@ void UserInterface_SDL::drawObject(const ObjectSPtr_t &obj)
 	
 	#if 0
 	#else
-	//printf("Drawing object: %d,%d,%d,%d\t%x\n",x,y,w,h,owner->getPlayerColor());
+	//printf("Drawing object: %d,%d,%d,%d\t%x\n",x,y,w,h, owner->getPlayerColor());
 	
 	#if 1
 	if(owner->getPlayerId() == 1)
 	{
-		//SDL_FillSurfaceP(this->m_game_scr, x, y, w, h, owner->getPlayerColor());
-		SDL_print(this->m_font, this->m_game_scr, x, y, w, h, 0xffffff, obj->getObjectName());
+		//SDL_FillSurfaceP(this->m_game_scr, x, y, w, h, convert_color_from_bgra_to_rgba(owner->getPlayerColor()));
+		SDL_print(this->m_font, this->m_game_scr, x, y, w, h, 0xffffffff, obj->getObjectName());
 	}
 	#endif
 	
 	#if 1
-	if(objid == SC::ObjectId::Juche_DaepodongLauncher)
+	//if(objid == SC::ObjectId::Juche_DaepodongLauncher)
+	if(this->m_selection_in_progress)
 	{
-		//ellipseColor(this->m_game_scr, x+w/2, y+h/2, w/2, h/2, (owner->getPlayerColor()<<8)|0xff);
-		//ellipseRGBA(this->m_game_scr, x+w/2, y+h/2, w/2, h/2, 0, 255, 0, 255);
-		
-		ellipseRGBA(this->m_game_scr, x+w/2, y+h/2 +1, w/2 +1, h/2 +1, 0, 255, 0, 255);
+		if(obj->insideRect(this->m_selection_start_coordinate, this->m_mouse_pos_in_gamescr))
+		{
+			ellipseRGBA(this->m_game_scr, x+w/2, y+h/2 +1, w/2 +1, h/2 +1, 0, 255, 0, 255);
+		}
+	}
+	else
+	{
+		if(this->isSelectedUnit(obj))
+		{
+			//ellipseRGBA(this->m_game_scr, x+w/2, y+h/2, w/2, h/2, 0, 255, 0, 255);
+			ellipseRGBA(this->m_game_scr, x+w/2, y+h/2 +1, w/2 +1, h/2 +1, 0, 255, 0, 255);
+		}
 	}
 	#endif
 	
@@ -786,7 +866,7 @@ void UserInterface_SDL::drawObject(const ObjectSPtr_t &obj)
 		SDL_Surface *sf1 = NULL;
 		short framenum;
 		bool do_hflip = false, do_vflip = false;
-		Uint32 unit_color = owner->getPlayerColor();
+		Uint32 unit_color = convert_color_from_bgra_to_rgba(owner->getPlayerColor());
 		
 		if(objid == SC::ObjectId::Terran_CommandCenter)
 		{
@@ -844,8 +924,8 @@ void UserInterface_SDL::drawObject(const ObjectSPtr_t &obj)
 					int center_y = (grphdr->max_height/2 - 1) - frame->top;
 				}
 			
-				if(grpdata2)
-					render_grp_frame_to_surface(grpdata2, framenum, this->m_game_scr, x, y, 0, h, do_hflip, false, 0xffffffff, SHADOW_COLOR|(SHADOW_MAGIC_COLOR<<8));
+				if(grpdata2) // shadow
+					render_grp_frame_to_surface(grpdata2, framenum, this->m_game_scr, x, y, 0, h, do_hflip, false, 0x00000000, SHADOW_COLOR|(SHADOW_MAGIC_COLOR<<8));
 				if(grpdata)
 					render_grp_frame_to_surface(grpdata, framenum, this->m_game_scr, x, y, 0, h, do_hflip, false, unit_color);
 			}
@@ -866,15 +946,15 @@ void UserInterface_SDL::drawObject(const ObjectSPtr_t &obj)
 #ifndef DRAW_OBJECTS_WITH_VIRTUAL_FXNS
 void UserInterface_SDL::drawObjects()
 {
-	ObjectSList &objs = this->m_game->getObjectList();
+	ObjectList &objs = this->m_game->getObjectList();
 	
 	#if 0
-	for(ObjectSList::const_iterator it = objs.begin(); it != objs.end(); it++)
+	for(ObjectList::const_iterator it = objs.begin(); it != objs.end(); it++)
 	{
 		this->drawObject(*it);
 	}
 	#else
-	for(ObjectSList::const_reverse_iterator it = objs.rbegin(); it != objs.rend(); it++)
+	for(ObjectList::const_reverse_iterator it = objs.rbegin(); it != objs.rend(); it++)
 	{
 		this->drawObject(*it);
 	}

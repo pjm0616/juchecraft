@@ -18,18 +18,18 @@
 using namespace SC;
 
 
-const ObjectSPtr_t &ObjectSList::addObject(const ObjectSPtr_t &obj)
+const ObjectSPtr_t &ObjectList::addObject(const ObjectSPtr_t &obj)
 {
 	this->getObjects().push_back(obj);
 	this->setIteratorAsInvalidated();
 	return obj;
 }
 
-int ObjectSList::removeObject(const ObjectSPtr_t &obj)
+int ObjectList::removeObject(const ObjectSPtr_t &obj)
 {
-	ObjectSList::objlist_t &objs = this->getObjects();
+	ObjectList::objlist_t &objs = this->getObjects();
 	int nremoved = 0;
-	for(ObjectSList::iterator it = this->begin(); 
+	for(ObjectList::iterator it = this->begin(); 
 		it != this->end(); )
 	{
 		if(*it == obj)
@@ -50,12 +50,12 @@ int ObjectSList::removeObject(const ObjectSPtr_t &obj)
 
 
 
-ObjectSList::iterator ObjectSList::find(const ObjectSPtr_t &obj)
+ObjectList::iterator ObjectList::find(const ObjectSPtr_t &obj)
 {
 	return std::find(this->begin(), this->end(), obj);
 }
 
-ObjectSList::const_iterator ObjectSList::find(const ObjectSPtr_t &obj) const
+ObjectList::const_iterator ObjectList::find(const ObjectSPtr_t &obj) const
 {
 	return std::find(this->begin(), this->end(), obj);
 }
