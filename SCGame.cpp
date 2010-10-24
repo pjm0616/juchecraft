@@ -174,7 +174,7 @@ void Game::test_tmp1()
 	Player::Players[1].increaseMinerals(50);
 	Player::Players[2].increaseMinerals(50);
 	
-	o = this->addObject(this->m_obj_protos.newObjectByObjectId(ObjectId::Terran_Marine));
+	o = this->addObject(this->m_obj_protos.newObjectByObjectId(ObjectId::Juche_DaepodongLauncher));
 	o->changeOwner(&Player::Players[2]);
 	o->setPosition(40, 40);
 	o->setObjectMovingSpeedBonusM(4.0);

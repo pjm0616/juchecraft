@@ -4,15 +4,16 @@ return {
 		{'objects/', {
 			'SCBuildingObject', 
 			{'buildings/', {
-				'Juche_RodongCorrectionalFacility', 
 				'Terran_CommandCenter', 
+				'Juche_RodongCorrectionalFacility', 
 			}}, -- end of buildings
 			'SCUnitObject', 
 			{'units/', {
-				'Juche_AojiWorker', 
 				'Terran_Marine', 
 				'Terran_SCV', 
 				'Zerg_Zergling', 
+				'Juche_AojiWorker', 
+				'Juche_DaepodongLauncher', 
 			}}, -- end of units
 			'SCResourceObject', 
 			{'resources/', {

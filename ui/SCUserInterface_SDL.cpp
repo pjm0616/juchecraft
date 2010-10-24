@@ -610,7 +610,7 @@ void UserInterface_SDL::drawUI()
 		x -= 68;
 	}
 	
-	snprintf(buf, sizeof(buf), "Rate: %f  |  FPS: %f  |  Frame#: %u", 
+	snprintf(buf, sizeof(buf), "Rate: %.02f |  FPS: %.02f |  Frame#: %u", 
 		game->getCurrentUpdateRate(), game->getCurrentFPS(), game->getFrameNumber());
 	SDL_print(this->m_font, this->m_screen, 0, 0, 640, 16, 0x00ff00, buf);
 	
@@ -758,7 +758,7 @@ void UserInterface_SDL::drawObject(const ObjectSPtr_t &obj)
 	#endif
 	
 	#if 1
-	if(objid == SC::ObjectId::Terran_Marine)
+	if(objid == SC::ObjectId::Juche_DaepodongLauncher)
 	{
 		//ellipseColor(this->m_game_scr, x+w/2, y+h/2, w/2, h/2, (owner->getPlayerColor()<<8)|0xff);
 		//ellipseRGBA(this->m_game_scr, x+w/2, y+h/2, w/2, h/2, 0, 255, 0, 255);
@@ -780,7 +780,7 @@ void UserInterface_SDL::drawObject(const ObjectSPtr_t &obj)
 			framenum = 0;
 			do_draw = true;
 		}
-		else if(objid == SC::ObjectId::Terran_Marine)
+		else if((objid == SC::ObjectId::Terran_Marine) || (objid == SC::ObjectId::Juche_DaepodongLauncher))
 		{
 			grpdata = g_grp_t_marine;
 			// 0~1: attack preparation images

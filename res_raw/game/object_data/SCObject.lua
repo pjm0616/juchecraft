@@ -6,7 +6,7 @@ SCObjects.Object = {
 	object_name = "Object";
 	race_id = RaceId.None;
 	
-	initial_state = '';
+	initial_state = ObjectState.None;
 	width = 0;
 	height = 0;
 	max_hp = -1;

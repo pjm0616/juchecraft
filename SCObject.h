@@ -48,6 +48,23 @@ namespace ObjectState
 		Moving = 64, /**< Object is moving */
 		Attacking = 128, /**< Object is attacking @detail does not include pending attack */
 	};
+	
+	// FIXME, move to elsewhere
+	static struct
+	{
+		ObjectState_t state;
+		const char *str;
+	} gs_objectstate_stringified[] = {
+		{ObjectState::None, "None"}, 
+		{ObjectState::Burrowed, "Burrowed"}, 
+		{ObjectState::InTransit, "InTransit"}, 
+		{ObjectState::Cloaked, "Cloaked"}, 
+		{ObjectState::Invincible, "Invincible"}, 
+		{ObjectState::Hallucinated, "Hallucinated"}, 
+		{ObjectState::Moving, "Moving"}, 
+		{ObjectState::Attacking, "Attacking"}, 
+		{ObjectState::None, NULL}
+	};
 }
 using ObjectState::ObjectState_t;
 

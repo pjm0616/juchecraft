@@ -8,6 +8,9 @@
 #include <list>
 #include <map>
 
+#include <cstdio>
+#include <cstring>
+
 #include "defs.h"
 #include "luacpp/luacpp_lua.h"
 #include "luacpp/luacpp.h"
@@ -70,9 +73,20 @@ bool ObjectPrototypes::load(const char *listfile)
 	return true;
 }
 
-ObjectState_t parseLuaInitialStateString(const char *str)
+static ObjectState_t convertStringToObjectState(const char *str)
 {
+	for(int i = 0; ; i++)
+	{
+		if(!ObjectState::gs_objectstate_stringified[i].str)
+			break;
+		if(strcmp(ObjectState::gs_objectstate_stringified[i].str, str) == 0)
+			return ObjectState::gs_objectstate_stringified[i].state;
+	}
 	return ObjectState::None;
+}
+static ObjectState_t parseLuaObjectStateString(const char *str)
+{
+	return convertStringToObjectState(str);
 }
 
 
@@ -111,7 +125,7 @@ void ObjectPrototypes::parseObjectData(Object *obj, int stack_idx)
 	{
 		lua_pushliteral(L, "initial_state");
 		lua_gettable(L, stack_idx);
-		obj->m_initial_state = parseLuaInitialStateString(luaL_checkstring(L, -1));
+		obj->m_initial_state = parseLuaObjectStateString(luaL_checkstring(L, -1));
 		lua_pop(L, 1);
 	}
 	SET_OBJ_PROPERTY_INT(L, stack_idx, width);
