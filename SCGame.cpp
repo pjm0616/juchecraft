@@ -24,48 +24,57 @@
 
 #include "defs.h"
 #include "compat.h"
+#include "luacpp/luacpp.h"
 #include "SCException.h"
 #include "SCCoordinate.h"
 #include "SCPlayer.h"
 #include "SCObject.h"
 #include "SCObjectList.h"
 #include "SCObjectIdList.h"
+#include "SCObjectPrototypes.h"
 #include "SCGame.h"
-#include "objects/SCObjects.h"
 #include "ui/SCUserInterface.h"
 
 using namespace SC;
 
 
 Game::Game()
-	:m_start_time(0.0), 
+	:m_obj_protos(this), 
+	m_start_time(0.0), 
 	m_is_game_ended(false)
 {
 }
 
 Game::~Game()
 {
+	this->removeAllObjects();
 }
 
+void Game::loadGameData(const char *dir)
+{
+	std::string basedir(dir);
+	this->m_obj_protos.load(std::string(basedir + "./object_data/objects.dat").c_str());
+}
 
-Object *Game::addObject(Object *obj)
+const ObjectSPtr_t &Game::addObject(const ObjectSPtr_t &obj)
 {
 	obj->init();
-	return this->getObjectList().addObject(obj);
+	return this->m_objects.addObject(obj);
 }
 
-int Game::removeObject(Object *obj)
+int Game::removeObject(const ObjectSPtr_t &obj)
 {
 	obj->cleanup();
-	return this->getObjectList().removeObject(obj);
+	return this->m_objects.removeObject(obj);
 }
 
 void Game::removeAllObjects()
 {
-	ObjectList &objs = this->getObjectList();
-	for(ObjectList::iterator it = objs.begin(); it != objs.end(); )
+	ObjectSList &objs = this->getObjectList();
+	for(ObjectSList::const_iterator it = objs.begin(); it != objs.end(); ++it)
 	{
-		it->get()->cleanup();
+		const ObjectSPtr_t &obj = *it;
+		obj->cleanup();
 	}
 	objs.clear();
 }
@@ -86,7 +95,7 @@ double Game::getElapsedTime() const
 
 void Game::processObjects()
 {
-	ObjectList &objs = this->getObjectList();
+	ObjectSList &objs = this->getObjectList();
 #if 0
 	for(ObjectList::iterator it = objs.begin(); it != objs.end(); ++it)
 	{
@@ -94,9 +103,9 @@ void Game::processObjects()
 	}
 #else
 	objs.resetIteratorChecker();
-	for(ObjectList::const_iterator it = objs.begin(); it != objs.end(); )
+	for(ObjectSList::const_iterator it = objs.begin(); it != objs.end(); )
 	{
-		Object *obj = it->get();
+		const ObjectSPtr_t &obj = *it;
 		obj->processFrame();
 		if(objs.isIteratorInvalidated())
 		{
@@ -158,15 +167,14 @@ void Game::run()
 
 void Game::test_tmp1()
 {
-	Object *o;
+	ObjectSPtr_t o;
 	
 	Player::Players[1].setRace(RaceId::Juche);
 	Player::Players[2].setRace(RaceId::Terran);
 	Player::Players[1].increaseMinerals(50);
 	Player::Players[2].increaseMinerals(50);
 	
-	
-	o = this->addObject(new Objects::Units::Terran_Marine(this));
+	o = this->addObject(this->m_obj_protos.newObjectByObjectId(ObjectId::Terran_Marine));
 	o->changeOwner(&Player::Players[2]);
 	o->setPosition(40, 40);
 	o->setObjectMovingSpeedBonusM(4.0);
@@ -174,7 +182,7 @@ void Game::test_tmp1()
 	o->setObjectDamageBonusM(2.0);
 	o->setObjectArmorBonusA(3.0);
 	
-	o = this->addObject(new Objects::Units::Zerg_Zergling(this));
+	o = this->addObject(this->m_obj_protos.newObjectByObjectId(ObjectId::Zerg_Zergling));
 	o->changeOwner(&Player::Players[2]);
 	o->setPosition(80, 50);
 	o->setObjectMovingSpeedBonusM(2.0);
@@ -183,29 +191,29 @@ void Game::test_tmp1()
 	o->setObjectArmorBonusA(3.0);
 	o->move(Coordinate(410, 250));
 	
-	o = this->addObject(new Objects::Units::Juche_AojiWorker(this));
+	o = this->addObject(this->m_obj_protos.newObjectByObjectId(ObjectId::Juche_AojiWorker));
 	o->changeOwner(&Player::Players[1]);
 	o->setPosition(200, 100);
 	o->setObjectMovingSpeedBonusM(1.0);
 	o->move(Coordinate(210, 300));
 	
-	o = this->addObject(new Objects::Buildings::Terran_CommandCenter(this));
+	o = this->addObject(this->m_obj_protos.newObjectByObjectId(ObjectId::Terran_CommandCenter));
 	o->changeOwner(&Player::Players[2]);
 	o->setPosition(440, 180);
 	
-	o = this->addObject(new Objects::Buildings::Juche_RodongCorrectionalFacility(this));
+	o = this->addObject(this->m_obj_protos.newObjectByObjectId(ObjectId::Juche_RodongCorrectionalFacility));
 	o->changeOwner(&Player::Players[1]);
 	o->setPosition(80, 80);
 	
 	#if 1
 	for(int i = 0; i < 10; i++)
 	{
-		o = this->addObject(new Objects::Resources::MineralField(this));
+		o = this->addObject(this->m_obj_protos.newObjectByObjectId(ObjectId::Resource_MineralField));
 		o->setPosition(10, 270 + i*32);
 	}
 	for(int i = 0; i < 10; i++)
 	{
-		o = this->addObject(new Objects::Resources::MineralField(this));
+		o = this->addObject(this->m_obj_protos.newObjectByObjectId(ObjectId::Resource_MineralField));
 		o->setPosition(10 + i*32, 270 + 32*3);
 	}
 	#endif

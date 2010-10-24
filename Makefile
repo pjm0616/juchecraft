@@ -6,12 +6,12 @@ CROSSC				=
 
 SRCS_LIBMPQ			= libs/libmpq/SComp/SComp.cpp libs/libmpq/SComp/SErr.cpp libs/libmpq/SComp/SMem.cpp libs/libmpq/SComp/crc32.c libs/libmpq/SComp/explode.c libs/libmpq/SComp/huffman.cpp libs/libmpq/SComp/implode.c libs/libmpq/SComp/wave.cpp libs/libmpq/SFmpqapi/MpqBlockTable.cpp libs/libmpq/SFmpqapi/MpqCrypt.cpp libs/libmpq/SFmpqapi/MpqHashTable.cpp libs/libmpq/SFmpqapi/SFUtil.cpp libs/libmpq/SFmpqapi/SFmpqapi.cpp libs/libmpq/SFmpqapi/windows.cpp
 SRCS_UI				= ui/SCUserInterface.cpp ui/SCUserInterface_ncurses.cpp ui/SCUserInterface_SDL.cpp
-SRCS				= libs/libmpqgrp/grp.cpp $(SRCS_UI) $(SRCS_LIBMPQ) SCCoordinate.cpp SCObject.cpp SCPlayer.cpp SCObjectList.cpp SCGame.cpp main.cpp
+SRCS				= libs/libmpqgrp/grp.cpp libs/luacpp/luacpp.cpp $(SRCS_UI) $(SRCS_LIBMPQ) SCCoordinate.cpp SCObject.cpp SCPlayer.cpp SCObjectList.cpp SCObjectPrototypes.cpp SCGame.cpp main.cpp
 TARGET1				= mini_sc
 
 DEFS				= -D_FILE_OFFSET_BITS=64
 LIBS				= ./libs/lua/src/liblua.a -lSDL -lSDL_ttf -lSDL_image -lSDL_gfx -lz -lbz2 -lncursesw
-INCLUDEDIR			= -I. -Ilibs/libmpq/SFmpqapi
+INCLUDEDIR			= -I. -Ilibs/lua/src -Ilibs -Ilibs/libmpq/SFmpqapi
 LIBDIR				=
 
 ifeq ($(DEBUG),1)
@@ -53,7 +53,7 @@ OBJS_TMP				=$(SRCS:.c=.o)
 OBJS				=$(OBJS_TMP:.cpp=.o) 
 
 
-all:	lua $(TARGET1)
+all:	lua resources $(TARGET1)
 
 .SUFFIXES: .c .o
 .c.o:
@@ -71,13 +71,16 @@ $(TARGET1):     $(OBJS)
 
 lua:
 	make -C ./libs/lua linux
-
 luaclean:
 	make -C ./libs/lua clean
 
+resources:
+	make -C res_raw
+resclean:
+	make -C res_raw clean
+
 doc:
 	doxygen ./Doxyfile
-
 docclean:
 	rm -rf ./docs/html ./docs/latex
 
@@ -85,7 +88,7 @@ clean:
 	rm -f $(OBJS)
 	rm -f $(TARGET1)
 	
-distclean: luaclean clean docclean
+distclean: luaclean resclean clean docclean
 	rm -f .depend
 
 dep:    depend

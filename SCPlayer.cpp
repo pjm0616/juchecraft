@@ -49,8 +49,8 @@ Player::Player()
 	this->setVespeneGas(0);
 	for(int i = 0; i < RaceId::Size; i++)
 	{
-		this->setFoodMax(i, 0);
-		this->setFoodCrnt(i, 0);
+		this->setCurrentSupplies(i, 0);
+		this->setSuppliesInUse(i, 0);
 	}
 	
 	this->setPlayerArmorBonusA(0.0);

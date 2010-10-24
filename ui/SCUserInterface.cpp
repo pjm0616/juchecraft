@@ -9,11 +9,14 @@
 #include <map>
 
 #include "defs.h"
+#include "compat.h"
+#include "luacpp/luacpp.h"
 #include "SCException.h"
 #include "SCCoordinate.h"
 #include "SCPlayer.h"
 #include "SCObject.h"
 #include "SCObjectList.h"
+#include "SCObjectPrototypes.h"
 #include "SCGame.h"
 
 #include "ui/SCUserInterface.h"
@@ -24,17 +27,17 @@ using namespace SC;
 #ifdef DRAW_OBJECTS_WITH_VIRTUAL_FXNS
 void UserInterface::drawObjects()
 {
-	ObjectList &objs = this->m_game->getObjectList();
+	ObjectSList &objs = this->m_game->getObjectList();
 	
 	#if 0
-	for(ObjectList::const_iterator it = objs.begin(); it != objs.end(); it++)
+	for(ObjectSList::const_iterator it = objs.begin(); it != objs.end(); it++)
 	{
-		this->drawObject(*it->get());
+		this->drawObject(*it);
 	}
 	#else
-	for(ObjectList::const_reverse_iterator it = objs.rbegin(); it != objs.rend(); it++)
+	for(ObjectSList::const_reverse_iterator it = objs.rbegin(); it != objs.rend(); it++)
 	{
-		this->drawObject(*it->get());
+		this->drawObject(*it);
 	}
 	#endif
 }

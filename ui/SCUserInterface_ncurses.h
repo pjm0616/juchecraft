@@ -40,9 +40,9 @@ protected:
 	
 	const std::string *getObjectImg(ObjectId_t id) const;
 	#ifdef DRAW_OBJECTS_WITH_VIRTUAL_FXNS
-	virtual void drawObject(Object &obj);
+	virtual void drawObject(Object *obj);
 	#else
-	void drawObject(Object &obj);
+	void drawObject(const ObjectSPtr_t &obj);
 	void drawObjects();
 	#endif
 	

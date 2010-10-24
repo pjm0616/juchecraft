@@ -60,10 +60,16 @@ namespace ObjectId
 }
 using ObjectId::ObjectId_t;
 
-
+class Object;
+typedef SC::shared_ptr<Object> ObjectSPtr_t;
 class Game;
+class ObjectPrototypes;
+/** @brief Abstract object class
+ */
 class Object
 {
+	friend class ObjectPrototypes;
+	
 public:
 	/** @name Constructor/destructor */
 	//@{
@@ -141,7 +147,7 @@ public:
 	 *  
 	 *  @return The angle in degrees
 	 */
-	float calculateAngle(const Object *dest) const { return this->calculateAngle(dest->getPosition()); }
+	float calculateAngle(const ObjectSPtr_t &dest) const { return this->calculateAngle(dest->getPosition()); }
 	//@}
 	
 	/** @name Movement methods */
@@ -185,7 +191,7 @@ public:
 	 *  @return true if succeeded. false if there's an error.
 	 *  @sa MovementFlags
 	 */
-	bool move(Object *target, float minumum_distance = 0.0, MovementFlags_t flags = MovementFlags::None);
+	bool move(const ObjectSPtr_t &target, float minumum_distance = 0.0, MovementFlags_t flags = MovementFlags::None);
 	/** @brief Stops any other commands, and moves to coordinate.
 	 *
 	 *  @param[in] dest Coordinate to destination
@@ -210,7 +216,7 @@ public:
 	 *  @return true if succeeded. false if there's an error.
 	 *  @sa MovementFlags
 	 */
-	bool cmd_move(Object *target, float minumum_distance = 0.0, MovementFlags_t flags = MovementFlags::None);
+	bool cmd_move(const ObjectSPtr_t &target, float minumum_distance = 0.0, MovementFlags_t flags = MovementFlags::None);
 	
 	/** @brief 이동중인 시간을 구함.
 	 *  @return 이동중인 시간
@@ -226,16 +232,16 @@ public:
 	 *  @param[in] target The object to attack
 	 *  @return true if succeeded. false if there's an error.
 	 */
-	bool attack(Object *target);
+	bool attack(const ObjectSPtr_t &target);
 	/** @brief Stops any other commands, and attacks target object.
 	 *  @details If the distance to target is out of range, object moves to target.
 	 *
 	 *  @param[in] target The object to attack
 	 *  @return true if succeeded. false if there's an error.
 	 */
-	bool cmd_attack(Object *target);
+	bool cmd_attack(const ObjectSPtr_t &target);
 	
-	Object *getAttackTarget() const { return this->m_attack_target; }
+	const ObjectSPtr_t &getAttackTarget() const { return this->m_attack_target; }
 	float getAttackingSeconds() const { return this->m_attacking_secs; } /**< 공격중인 시간 */
 	float getLastAttackTime() const { return this->m_last_attack_time; } /**< 공격중인 시간을 기준으로 마지막 공격 시각 */
 	//@}
@@ -422,9 +428,10 @@ private:
 	void increaseMovingSeconds(float time) { this->m_moving_secs += time; }
 	void setMovement_MinimumDistanceToTarget(float distance) { this->m_movement_min_distance_to_target = distance; }
 	float getMovement_MinimumDistanceToTarget() const { return this->m_movement_min_distance_to_target; }
-	void setMovementTarget(Object *target, float minimum_distance = 0.0)
+	void setMovementTarget(const ObjectSPtr_t &target, float minimum_distance = 0.0)
 		{ this->m_movement_target = target; this->setMovement_MinimumDistanceToTarget(minimum_distance); }
-	Object *getMovementTarget() const { return this->m_movement_target; }
+	void clearMovementTarget() { this->m_movement_target.reset(); }
+	const ObjectSPtr_t &getMovementTarget() const { return this->m_movement_target; }
 	void setMovementStartPoint(const Coordinate &pos) { this->m_movement_start_point = pos; }
 	const Coordinate &getMovementStartPoint() const { return this->m_movement_start_point; }
 	
@@ -440,7 +447,8 @@ private:
 	
 	/** @name Attack related */
 	//@{
-	void setAttackTarget(Object *target) { this->m_attack_target = target; }
+	void setAttackTarget(const ObjectSPtr_t &target) { this->m_attack_target = target; }
+	void clearAttackTarget() { this->m_attack_target.reset(); }
 	void setAttackingSeconds(float time) { this->m_attacking_secs = time; }
 	void increaseAttackingSeconds(float time) { this->m_attacking_secs += time; }
 	void setLastAttackTime(float time) { this->m_last_attack_time = time; }
@@ -450,8 +458,8 @@ private:
 	bool getMovementFlag(MovementFlags_t type) const { return this->getMovementFlags() & type; }
 	// this와 dest간의 거리가 min_distance 이하일 경우 return true
 	// 그렇지 않을 경우 where_to_move에 이동해야할 위치를 저장한 후 return false
-	bool checkMinDistanceOld(Object *target, float min_distance, Coordinate *where_to_move);
-	bool checkMinDistance(Object *target, float min_distance, Coordinate *where_to_move);
+	bool checkMinDistanceOld(const ObjectSPtr_t &target, float min_distance, Coordinate *where_to_move);
+	bool checkMinDistance(const ObjectSPtr_t &target, float min_distance, Coordinate *where_to_move);
 	/** @brief Processes attack.
 	 *  @detail Called by game main loop.
 	 *  @param[in] time this->game->getFrameDelta()
@@ -491,7 +499,7 @@ private:
 	Coordinate m_movement_start_point, m_destination, m_final_destination;
 	MovementFlags_t m_movement_flags;
 	// if target is set, object moves to target. is target is not set, object moves to coordinate.
-	Object *m_movement_target;
+	ObjectSPtr_t m_movement_target;
 	// if movement_target is set and movement_min_distance_to_target is set, 
 	//		object moves to movement_target.getPosition(), but keeps distance `min. movement_min_distance_to_target' to target.
 	float m_movement_min_distance_to_target; // TODO: implement this
@@ -502,7 +510,7 @@ private:
 	float m_attacking_secs; /**< elapsed time since last attack() call */
 	float m_last_attack_time; /**< last attack time, measured in m_attacking_secs */
 	// if(this->m_isMoving() && this->getAttackTarget()) then this object is moving to attack target
-	Object *m_attack_target; // not null if attack target is set.
+	ObjectSPtr_t m_attack_target; // not null if attack target is set.
 	//@}
 	
 	/////////////////////////////////////////////////////////////////////////
@@ -515,8 +523,8 @@ public:
 	/** @sa ObjectId
 	 */
 	ObjectId_t getObjectId() const { return this->m_object_id; }
-	const char *getObjectIdName() const { return this->m_object_id_name; }
-	const char *getObjectName() const { return this->m_object_name; }
+	const char *getObjectIdName() const { return this->m_object_id_name.c_str(); }
+	const char *getObjectName() const { return this->m_object_name.c_str(); }
 	/** @sa RaceId
 	 */
 	RaceId_t getRaceId() const { return this->m_race_id; }
@@ -533,8 +541,8 @@ public:
 	int getMaxEnergy() const { return this->m_max_energy; }
 	int getInitialMinerals() const { return this->m_initial_minerals; }
 	int getInitialVespeneGas() const { return this->m_initial_vespene_gas; }
-	int getSuppliedFood() const { return this->m_supplied_food; }
-	int getSuppliesInUse() const { return this->m_supplies_in_use; }
+	int getProvidedSupplies() const { return this->m_provided_supplies; }
+	int getRequiredSupplies() const { return this->m_required_supplies; }
 	
 	/** @brief Get bare armor of the object.
 	 *  @detail DO NOT use this function unless you want the RAW unit attribute(without upgrades).
@@ -563,13 +571,16 @@ public:
 	float getAttackRange() const { return this->m_attack_range; }
 	//@}
 	
+public:
+	ObjectSPtr_t duplicate();
+	
 protected:
 	/** @name Constant object attributes */
 	//@{
 	ObjectType_t m_object_type; /**< Object type @sa ObjectType */
 	ObjectId_t m_object_id; /**< Object ID @sa ObjectId */
-	const char *m_object_id_name; /**< Name of ObjectId in string */
-	const char *m_object_name; /**< Object's name */
+	std::string m_object_id_name; /**< Name of ObjectId in string */
+	std::string m_object_name; /**< Object's name */
 	RaceId_t m_race_id; /**< Race of the object @sa RaceId */
 	
 	ObjectState_t m_initial_state; /**< Object's initial state @sa ObjectState */
@@ -579,8 +590,8 @@ protected:
 	int m_max_energy; /**< Object's max energy */
 	int m_initial_minerals; /**< The initial amount of minerals */
 	int m_initial_vespene_gas; /**< The initial amount of vespene gas */
-	int m_supplied_food; /**< The amount of food this object supplies */
-	int m_supplies_in_use; /**< The amount of food this object uses */
+	int m_provided_supplies; /**< The amount of supplies this object provide */
+	int m_required_supplies; /**< The amount of supplies this object uses */
 	
 	float m_armor; /**< Bare armor of the object. Bonuses can be applied. @sa getNetArmor() */
 	float m_damage; /**< Bare damage of the object @sa getNetDamage() */

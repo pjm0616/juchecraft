@@ -27,20 +27,22 @@ namespace SDL
 
 #include "defs.h"
 #include "compat.h"
+#include "luacpp/luacpp.h"
 #include "SCException.h"
 #include "SCCoordinate.h"
 #include "SCPlayer.h"
 #include "SCObject.h"
 #include "SCObjectList.h"
 #include "SCObjectIdList.h"
+#include "SCObjectPrototypes.h"
 #include "SCGame.h"
 
 #include "ui/SCUserInterface.h"
 #include "ui/SCUserInterface_SDL.h"
 
 #if 1
-#include "libs/libmpqgrp/grp.h"
-#include "libs/libmpq/SFmpqapi/SFmpqapi.h"
+#include "libmpqgrp/grp.h"
+#include "libmpq/SFmpqapi/SFmpqapi.h"
 #endif
 
 
@@ -462,7 +464,7 @@ void UserInterface_SDL::processFrame()
 				if(ev.button.button == 3)
 				{
 					//fprintf(stderr, "move: %d, %d\n", ev.button.x, ev.button.y);
-					SC::ObjectList::iterator it = this->m_game->getObjectList().begin();
+					SC::ObjectSList::iterator it = this->m_game->getObjectList().begin();
 					int x = this->m_gamescr_left_pos + ev.button.x;
 					int y = this->m_gamescr_top_pos + ev.button.y;
 				
@@ -471,24 +473,24 @@ void UserInterface_SDL::processFrame()
 					{
 						x -= 8;
 						y -= 12;
-						it->get()->move_notAligned(Coordinate(x, y));
+						(*it)->move_notAligned(Coordinate(x, y));
 					}
 					else
 					#endif
-					it->get()->cmd_move(Coordinate(x, y));
+					(*it)->cmd_move(Coordinate(x, y));
 				
-					//fprintf(stderr, "name:%s\n", it->get()->getObjectName());
+					//fprintf(stderr, "name:%s\n", (*it)->getObjectName());
 				}
 				else if(ev.button.button == 1)
 				{
 					//fprintf(stderr, "attack: %d, %d\n", ev.button.x, ev.button.y);
-					SC::ObjectList::iterator it = this->m_game->getObjectList().begin();
+					SC::ObjectSList::iterator it = this->m_game->getObjectList().begin();
 					//int x = this->m_gamescr_left_pos + ev.button.x;
 					//int y = this->m_gamescr_top_pos + ev.button.y;
-					SC::ObjectList::iterator it2 = this->m_game->getObjectList().begin(); ++it2;
+					SC::ObjectSList::iterator it2 = this->m_game->getObjectList().begin(); ++it2;
 					
-					it->get()->cmd_attack(it2->get());
-					//it->get()->cmd_move(it2->get());
+					(*it)->cmd_attack(*it2);
+					//(*it)->cmd_move(*it2);
 				}
 			}
 			break;
@@ -542,18 +544,18 @@ void UserInterface_SDL::drawUI()
 	// h: 14
 	//mineral 436, 3
 	//gas 504, 3
-	//food 572, 3
+	//supplies 572, 3
 	int y = 3;
 	int x = 640 - 68;
 	
-	// draw food statistics
+	// draw supply statistics
 	for(int i = RaceId::Size-1; i >= 0 ; i--)
 	{
-		int max = me->getFoodMax(i);
-		int crnt = me->getFoodCrnt(i);
+		int max = me->getCurrentSupplies(i);
+		int crnt = me->getSuppliesInUse(i);
 		if(max > 0 || crnt > 0)
 		{
-			//fprintf(stderr, "x:%d, y:%d, race:%d, food:%d/%d\n", x, y, i, crnt, max);
+			//fprintf(stderr, "x:%d, y:%d, race:%d, supplies:%d/%d\n", x, y, i, crnt, max);
 			
 			// draw icon
 			{
@@ -579,7 +581,7 @@ void UserInterface_SDL::drawUI()
 				color = 0x0000ff; // red
 			
 			// draw to screen
-			snprintf(buf, sizeof(buf), "%d/%d", me->getFoodCrnt(i), me->getFoodMax(i));
+			snprintf(buf, sizeof(buf), "%d/%d", me->getSuppliesInUse(i), me->getCurrentSupplies(i));
 			SDL_print(this->m_font, this->m_screen, x + 15, y - 2, 68-15, 16, color, buf);
 			x -= 68;
 		}
@@ -636,10 +638,10 @@ void UserInterface_SDL::drawUI_MinimapWnd()
 	
 	SDL_FillSurfaceP(this->m_minimap_wnd, 0, 0, minimap_w, minimap_h, MAP_COLOR);
 	
-	ObjectList &objs = this->m_game->getObjectList();
-	for(ObjectList::const_iterator it = objs.begin(); it != objs.end(); it++)
+	ObjectSList &objs = this->m_game->getObjectList();
+	for(ObjectSList::const_iterator it = objs.begin(); it != objs.end(); it++)
 	{
-		Object *obj = it->get();
+		const ObjectSPtr_t &obj = *it;
 		float unit_x = obj->getX(), unit_y = obj->getY();
 		int unit_w = obj->getWidth(), unit_h = obj->getHeight();
 		
@@ -652,8 +654,8 @@ void UserInterface_SDL::drawUI_MinimapWnd()
 
 void UserInterface_SDL::drawUI_UnitStatWnd()
 {
-	SC::ObjectList::iterator it = this->m_game->getObjectList().begin();
-	const char *name = it->get()->getObjectName();
+	SC::ObjectSList::iterator it = this->m_game->getObjectList().begin();
+	const char *name = (*it)->getObjectName();
 	
 	// left-top: 155, 390
 	// right-bottom: 390, 470
@@ -693,7 +695,7 @@ static int convertAngleToDirection(float angle)
 	return direction;
 }
 
-static int calculate_unit_framenum(Object *obj, int attack_start, int attack_end, int move_start, int move_end, 
+static int calculate_unit_framenum(const ObjectSPtr_t &obj, int attack_start, int attack_end, int move_start, int move_end, 
 		bool *do_hflip, bool *do_vflip
 	)
 {
@@ -734,13 +736,13 @@ static int calculate_unit_framenum(Object *obj, int attack_start, int attack_end
 	return framenum;
 }
 
-void UserInterface_SDL::drawObject(Object &obj)
+void UserInterface_SDL::drawObject(const ObjectSPtr_t &obj)
 {
 	int x, y, w, h;
-	ObjectId_t objid = obj.getObjectId();
-	Player *owner = obj.getOwner();
-	obj.getPosition(&x, &y);
-	obj.getSize(&w, &h);
+	ObjectId_t objid = obj->getObjectId();
+	Player *owner = obj->getOwner();
+	obj->getPosition(&x, &y);
+	obj->getSize(&w, &h);
 	
 	#if 0
 	#else
@@ -751,7 +753,7 @@ void UserInterface_SDL::drawObject(Object &obj)
 	{
 		SDL_FillSurfaceP(this->m_game_scr, x, y, w, h, owner->getPlayerColor());
 		//SDL_FillSurfaceP(this->m_game_scr, x, y, w, h, owner->getPlayerColor());
-		SDL_print(this->m_font, this->m_game_scr, x, y, w, h, 0xffffff, obj.getObjectName());
+		SDL_print(this->m_font, this->m_game_scr, x, y, w, h, 0xffffff, obj->getObjectName());
 	}
 	#endif
 	
@@ -783,20 +785,20 @@ void UserInterface_SDL::drawObject(Object &obj)
 			grpdata = g_grp_t_marine;
 			// 0~1: attack preparation images
 			// 13: dying image
-			framenum = calculate_unit_framenum(&obj, 2, 3, 4, 12, &do_hflip, &do_vflip);
+			framenum = calculate_unit_framenum(obj, 2, 3, 4, 12, &do_hflip, &do_vflip);
 			do_draw = true;
 		}
 		else if(objid == SC::ObjectId::Terran_Firebat)
 		{
 			grpdata = g_grp_t_firebat;
-			framenum = calculate_unit_framenum(&obj, 0, 1, 2, 9, &do_hflip, &do_vflip);
+			framenum = calculate_unit_framenum(obj, 0, 1, 2, 9, &do_hflip, &do_vflip);
 			do_draw = true;
 		}
 		else if(objid == SC::ObjectId::Zerg_Zergling)
 		{
 			grpdata = g_grp_z_zergling;
 			grpdata2 = g_grp_z_zergling_shad;
-			framenum = calculate_unit_framenum(&obj, 0, 3, 4, 11, &do_hflip, &do_vflip);
+			framenum = calculate_unit_framenum(obj, 0, 3, 4, 11, &do_hflip, &do_vflip);
 			do_draw = true;
 		}
 		else if(objid == SC::ObjectId::Resource_MineralField)
@@ -843,17 +845,17 @@ void UserInterface_SDL::drawObject(Object &obj)
 #ifndef DRAW_OBJECTS_WITH_VIRTUAL_FXNS
 void UserInterface_SDL::drawObjects()
 {
-	ObjectList &objs = this->m_game->getObjectList();
+	ObjectSList &objs = this->m_game->getObjectList();
 	
 	#if 0
-	for(ObjectList::const_iterator it = objs.begin(); it != objs.end(); it++)
+	for(ObjectSList::const_iterator it = objs.begin(); it != objs.end(); it++)
 	{
-		this->drawObject(*it->get());
+		this->drawObject(*it);
 	}
 	#else
-	for(ObjectList::const_reverse_iterator it = objs.rbegin(); it != objs.rend(); it++)
+	for(ObjectSList::const_reverse_iterator it = objs.rbegin(); it != objs.rend(); it++)
 	{
-		this->drawObject(*it->get());
+		this->drawObject(*it);
 	}
 	#endif
 }

@@ -5,7 +5,9 @@
 
 #include "smart_ptrs.h"
 #include <list>
+#include <string>
 #include <algorithm>
+#include <map>
 
 #include "defs.h"
 #include "SCCoordinate.h"
@@ -16,21 +18,21 @@
 using namespace SC;
 
 
-Object *ObjectList::addObject(Object *obj)
+const ObjectSPtr_t &ObjectSList::addObject(const ObjectSPtr_t &obj)
 {
-	this->getObjects().push_back(ObjectList::objptr_t(obj));
+	this->getObjects().push_back(obj);
 	this->setIteratorAsInvalidated();
 	return obj;
 }
 
-int ObjectList::removeObject(Object *obj)
+int ObjectSList::removeObject(const ObjectSPtr_t &obj)
 {
-	ObjectList::objlist_t &objs = this->getObjects();
+	ObjectSList::objlist_t &objs = this->getObjects();
 	int nremoved = 0;
-	for(ObjectList::iterator it = this->begin(); 
+	for(ObjectSList::iterator it = this->begin(); 
 		it != this->end(); )
 	{
-		if(it->get() == obj)
+		if(*it == obj)
 		{
 			objs.erase(it++);
 			nremoved++;
@@ -48,14 +50,14 @@ int ObjectList::removeObject(Object *obj)
 
 
 
-ObjectList::iterator ObjectList::find(Object *obj)
+ObjectSList::iterator ObjectSList::find(const ObjectSPtr_t &obj)
 {
-	return std::find(this->begin(), this->end(), ObjectList::objptr_t(obj));
+	return std::find(this->begin(), this->end(), obj);
 }
 
-ObjectList::const_iterator ObjectList::find(Object *obj) const
+ObjectSList::const_iterator ObjectSList::find(const ObjectSPtr_t &obj) const
 {
-	return std::find(this->begin(), this->end(), ObjectList::objptr_t(obj));
+	return std::find(this->begin(), this->end(), obj);
 }
 
 

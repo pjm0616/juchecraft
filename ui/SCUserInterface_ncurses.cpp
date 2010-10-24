@@ -27,12 +27,15 @@ namespace ncurses
 }
 
 #include "defs.h"
+#include "compat.h"
+#include "luacpp/luacpp.h"
 #include "SCException.h"
 #include "SCCoordinate.h"
 #include "SCPlayer.h"
 #include "SCObject.h"
 #include "SCObjectList.h"
 #include "SCObjectIdList.h"
+#include "SCObjectPrototypes.h"
 #include "SCGame.h"
 
 #include "ui/SCUserInterface.h"
@@ -270,15 +273,15 @@ void UserInterface_ncurses::processFrame()
 		case KEY_LEFT: this->m_cur_x--; break;
 		case KEY_RIGHT: this->m_cur_x++; break;
 		case '\n': {
-				SC::ObjectList::iterator it = this->m_game->getObjectList().begin();
-				it->get()->cmd_move(Coordinate(this->m_cur_x * 10, (this->m_cur_y-1) * 20));
+				SC::ObjectSList::iterator it = this->m_game->getObjectList().begin();
+				(*it)->cmd_move(Coordinate(this->m_cur_x * 10, (this->m_cur_y-1) * 20));
 			}
 			break;
 		case 'a': {
-				SC::ObjectList::iterator it = this->m_game->getObjectList().begin();
-				SC::ObjectList::iterator it2 = this->m_game->getObjectList().begin(); ++it2;
+				SC::ObjectSList::iterator it = this->m_game->getObjectList().begin();
+				SC::ObjectSList::iterator it2 = this->m_game->getObjectList().begin(); ++it2;
 				
-				it->get()->cmd_attack(it2->get());
+				(*it)->cmd_attack(*it2);
 			}
 			break;
 		}
@@ -315,10 +318,10 @@ void UserInterface_ncurses::drawUI()
 	
 	//ncurses::mvwprintw(this->m_wnd_stat, 0, 0, 
 	//	"Minerals: %d | Supplies: %d/%d", 
-	//	me->getMinerals(), me->getFoodCrnt(), me->getFoodMax());
+	//	me->getMinerals(), me->getSuppliesInUse(), me->getCurrentSupplies());
 	ncurses::mvwprintw(this->m_wnd_stat, 0, 0, "FPS: %f | Frame: %u | Minerals: %d | Supplies: %d/%d", 
 		game->getCurrentFPS(), game->getFrameNumber(), 
-		me->getMinerals(), me->getFoodCrnt(me->getRaceId()), me->getFoodMax(me->getRaceId()));
+		me->getMinerals(), me->getSuppliesInUse(me->getRaceId()), me->getCurrentSupplies(me->getRaceId()));
 	
 	
 	//box(this->m_wnd_ctl, 0 , 0);
@@ -363,16 +366,16 @@ const std::string *UserInterface_ncurses::getObjectImg(ObjectId_t id) const
 		return &it->second;
 }
 
-void UserInterface_ncurses::drawObject(Object &obj)
+void UserInterface_ncurses::drawObject(const ObjectSPtr_t &obj)
 {
 	int x, y, w, h;
-	int owner_id = obj.getOwner()->getPlayerId();
-	obj.getPosition(&x, &y);
-	obj.getSize(&w, &h);
+	int owner_id = obj->getOwner()->getPlayerId();
+	obj->getPosition(&x, &y);
+	obj->getSize(&w, &h);
 	x = roundf((float)x/10); w = roundf((float)w/10);
 	y = roundf((float)y/20); h = roundf((float)h/20);
 	
-	const std::string *img_ss = this->getObjectImg(obj.getObjectId());
+	const std::string *img_ss = this->getObjectImg(obj->getObjectId());
 	if(!img_ss)
 		throw new Exception("Object image resource has not been loaded");
 	const char *img = img_ss->c_str();
@@ -394,17 +397,17 @@ void UserInterface_ncurses::drawObject(Object &obj)
 #ifndef DRAW_OBJECTS_WITH_VIRTUAL_FXNS
 void UserInterface_ncurses::drawObjects()
 {
-	ObjectList &objs = this->m_game->getObjectList();
+	ObjectSList &objs = this->m_game->getObjectList();
 	
 	#if 0
-	for(ObjectList::const_iterator it = objs.begin(); it != objs.end(); it++)
+	for(ObjectSList::const_iterator it = objs.begin(); it != objs.end(); it++)
 	{
-		this->drawObject(*it->get());
+		this->drawObject(*it);
 	}
 	#else
-	for(ObjectList::const_reverse_iterator it = objs.rbegin(); it != objs.rend(); it++)
+	for(ObjectSList::const_reverse_iterator it = objs.rbegin(); it != objs.rend(); it++)
 	{
-		this->drawObject(*it->get());
+		this->drawObject(*it);
 	}
 	#endif
 }

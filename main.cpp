@@ -23,11 +23,13 @@
 
 #include "defs.h"
 #include "compat.h"
+#include "luacpp/luacpp.h"
 #include "SCException.h"
 #include "SCCoordinate.h"
 #include "SCPlayer.h"
 #include "SCObject.h"
 #include "SCObjectList.h"
+#include "SCObjectPrototypes.h"
 #include "SCGame.h"
 
 #include "ui/SCUserInterface.h"
@@ -58,6 +60,7 @@ int main(int argc, char *argv[])
 		
 		SC::Game game;
 		game.setMapSize(640*2, 480*2);
+		game.loadGameData(GAME_ROOT_DIR "./res/game/");
 		
 		fprintf(stderr, "Initializing UI...\n");
 		SC::UserInterface *ui;

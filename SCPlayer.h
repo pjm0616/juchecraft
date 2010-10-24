@@ -96,57 +96,57 @@ public:
 	//@}
 	
 	//@{
-	/** @brief Get the amount of currently supplied foods of all races
+	/** @brief Get the amount of currently provided supplies of all races
 	 *  @return An array of integers that contains values. Use RaceId_t as array index.
 	 */
-	const int *getFoodMax() const { return this->m_food_max; }
-	/** @brief Get the amount of currently supplied foods of a race
+	const int *getCurrentSupplies() const { return this->m_crnt_supplies; }
+	/** @brief Get the amount of currently provided supplies of a race
 	 *  @param[in] race The race to get value from
-	 *  @return The amount of supplied foods
+	 *  @return The amount of provided supplies
 	 */
-	int getFoodMax(RaceId_t race) const { return this->m_food_max[race]; }
-	/** @brief Set the amount of currently supplied foods of a race
+	int getCurrentSupplies(RaceId_t race) const { return this->m_crnt_supplies[race]; }
+	/** @brief Set the amount of currently provided supplies of a race
 	 *  @param[in] race The race to set value
-	 *  @param[in] val New amount of supplied foods
+	 *  @param[in] val New amount of provided supplies
 	 */
-	void setFoodMax(RaceId_t race, int val) { this->m_food_max[race] = val; }
-	/** @brief Increase the amount of currently supplied foods of a race
+	void setCurrentSupplies(RaceId_t race, int val) { this->m_crnt_supplies[race] = val; }
+	/** @brief Increase the amount of currently provided supplies of a race
 	 *  @param[in] race The race to set value
-	 *  @param[in] val The amount to increase supplied foods
+	 *  @param[in] val The amount to increase provided supplies
 	 */
-	void increaseFoodMax(RaceId_t race, int val) { this->m_food_max[race] += val; }
-	/** @brief Decrease the amount of currently supplied foods of a race
+	void increaseCurrentSupplies(RaceId_t race, int val) { this->m_crnt_supplies[race] += val; }
+	/** @brief Decrease the amount of currently provided supplies of a race
 	 *  @param[in] race The race to set value
-	 *  @param[in] val The amount to decrease supplied foods
+	 *  @param[in] val The amount to decrease provided supplies
 	 */
-	void decreaseFoodMax(RaceId_t race, int val) { this->m_food_max[race] -= val; }
+	void decreaseCurrentSupplies(RaceId_t race, int val) { this->m_crnt_supplies[race] -= val; }
 	//@}
 	
 	//@{
-	/** @brief Get the amount of currently used foods of all races
+	/** @brief Get the amount of currently being used supplies of all races
 	 *  @return An array of integers that contains values. Use RaceId_t as array index.
 	 */
-	const int *getFoodCrnt() const { return this->m_food_crnt; }
-	/** @brief Get the amount of currently used foods of a race
+	const int *getSuppliesInUse() const { return this->m_supplies_in_use; }
+	/** @brief Get the amount of currently being used supplies of a race
 	 *  @param[in] race The race to get value from
-	 *  @return The amount of currently used foods
+	 *  @return The amount of currently being used supplies
 	 */
-	int getFoodCrnt(RaceId_t race) const { return this->m_food_crnt[race]; }
-	/** @brief Set the amount of currently used foods of a race
+	int getSuppliesInUse(RaceId_t race) const { return this->m_supplies_in_use[race]; }
+	/** @brief Set the amount of currently being used supplies of a race
 	 *  @param[in] race The race to set value
-	 *  @param[in] val New amount of currently used foods
+	 *  @param[in] val New amount of currently being used supplies
 	 */
-	void setFoodCrnt(RaceId_t race, int val) { this->m_food_crnt[race] = val; }
-	/** @brief Increase the amount of currently supplied foods of a race
+	void setSuppliesInUse(RaceId_t race, int val) { this->m_supplies_in_use[race] = val; }
+	/** @brief Increase the amount of currently provided supplies of a race
 	 *  @param[in] race The race to set value
-	 *  @param[in] val The amount to increase supplied foods
+	 *  @param[in] val The amount to increase provided supplies
 	 */
-	void increaseFoodCrnt(RaceId_t race, int val) { this->m_food_crnt[race] += val; }
-	/** @brief Decrease the amount of currently supplied foods of a race
+	void increaseSuppliesInUse(RaceId_t race, int val) { this->m_supplies_in_use[race] += val; }
+	/** @brief Decrease the amount of currently provided supplies of a race
 	 *  @param[in] race The race to set value
-	 *  @param[in] val The amount to decrease supplied foods
+	 *  @param[in] val The amount to decrease provided supplies
 	 */
-	void decreaseFoodCrnt(RaceId_t race, int val) { this->m_food_crnt[race] -= val; }
+	void decreaseSuppliesInUse(RaceId_t race, int val) { this->m_supplies_in_use[race] -= val; }
 	//@}
 	
 	//@{
@@ -190,7 +190,7 @@ private:
 	RaceId_t m_race_id;
 	
 	int m_minerals, m_vespene_gas;
-	int m_food_max[RaceId::Size], m_food_crnt[RaceId::Size];
+	int m_crnt_supplies[RaceId::Size], m_supplies_in_use[RaceId::Size];
 	
 	float m_added_armor_bonus, m_added_damage_bonus, m_added_moving_speed_bonus, m_added_attack_speed_bonus;
 	

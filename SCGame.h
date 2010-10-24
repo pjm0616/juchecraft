@@ -20,6 +20,7 @@ public:
 	Game();
 	~Game();
 	
+	void loadGameData(const char *dir);
 	void setUI(UserInterface *ui) { this->m_ui = ui; }
 	
 	void run();
@@ -27,8 +28,8 @@ public:
 	
 	// adds/removes an object.
 	// DO NOT call this function while iterating ObjectList.
-	Object *addObject(Object *obj);
-	int removeObject(Object *obj);
+	const ObjectSPtr_t &addObject(const ObjectSPtr_t &obj);
+	int removeObject(const ObjectSPtr_t &obj);
 	void removeAllObjects();
 	
 	double getElapsedTime() const;
@@ -46,8 +47,8 @@ public:
 	void setMapSize(int width, int height) { this->m_map_width = width; this->m_map_height = height; }
 	
 	// should be protected
-	ObjectList &getObjectList() { return this->m_objects; }
-	const ObjectList &getObjectList() const { return this->m_objects; }
+	ObjectSList &getObjectList() { return this->m_objects; }
+	const ObjectSList &getObjectList() const { return this->m_objects; }
 	
 	// There's no point having an accessor for m_ui.
 	//UserInterface *getUI() { return this->m_ui; }
@@ -70,7 +71,8 @@ private:
 	void processObjects();
 	
 	UserInterface *m_ui;
-	ObjectList m_objects;
+	ObjectPrototypes m_obj_protos;
+	ObjectSList m_objects;
 	
 	time_t m_start_time;
 	float m_deltat;

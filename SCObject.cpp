@@ -17,12 +17,14 @@
 
 #include "defs.h"
 #include "compat.h"
+#include "luacpp/luacpp.h"
 #include "SCException.h"
 #include "SCCoordinate.h"
 #include "SCPlayer.h"
 #include "SCObject.h"
 #include "SCObjectList.h"
 #include "SCObjectIdList.h"
+#include "SCObjectPrototypes.h"
 #include "SCGame.h"
 
 using namespace SC;
@@ -45,8 +47,8 @@ Object::Object(Game *game)
 	m_max_energy(-1), 
 	m_initial_minerals(0), 
 	m_initial_vespene_gas(0), 
-	m_supplied_food(0), 
-	m_supplies_in_use(0), 
+	m_provided_supplies(0), 
+	m_required_supplies(0), 
 	m_armor(0.0), 
 	m_damage(0.0), 
 	m_moving_speed(0.0), 
@@ -71,8 +73,8 @@ Object::Object(Game *game)
 	
 	this->setAngle(lrand48() % 360);
 	
-	this->setMovementTarget(NULL);
-	this->setAttackTarget(NULL);
+	this->clearMovementTarget();
+	this->clearAttackTarget();
 	this->setMovementFlags(MovementFlags::None);
 }
 
@@ -103,14 +105,14 @@ void Object::cleanup()
 
 void Object::attachToOwner()
 {
-	this->getOwner()->increaseFoodMax(this->getRaceId(), this->getSuppliedFood());
-	this->getOwner()->increaseFoodCrnt(this->getRaceId(), this->getSuppliesInUse());
+	this->getOwner()->increaseCurrentSupplies(this->getRaceId(), this->getProvidedSupplies());
+	this->getOwner()->increaseSuppliesInUse(this->getRaceId(), this->getRequiredSupplies());
 }
 
 void Object::detachFromOwner()
 {
-	this->getOwner()->decreaseFoodMax(this->getRaceId(), this->getSuppliedFood());
-	this->getOwner()->decreaseFoodCrnt(this->getRaceId(), this->getSuppliesInUse());
+	this->getOwner()->decreaseCurrentSupplies(this->getRaceId(), this->getProvidedSupplies());
+	this->getOwner()->decreaseSuppliesInUse(this->getRaceId(), this->getRequiredSupplies());
 }
 
 void Object::changeOwner(Player *new_owner)
@@ -136,6 +138,43 @@ void Object::setMovementFlags(MovementFlags_t type, bool onoff)
 	else
 		this->m_movement_flags &= ~type;
 }
+
+
+
+ObjectSPtr_t Object::duplicate()
+{
+	Object *obj = new Object(this->m_game);
+	
+	#define COPY_MEMBER_VARIABLE(name_) obj->name_ = this->name_
+	
+	COPY_MEMBER_VARIABLE(m_object_type);
+	COPY_MEMBER_VARIABLE(m_object_id);
+	COPY_MEMBER_VARIABLE(m_object_id_name);
+	COPY_MEMBER_VARIABLE(m_object_name);
+	COPY_MEMBER_VARIABLE(m_race_id);
+	
+	COPY_MEMBER_VARIABLE(m_initial_state);
+	COPY_MEMBER_VARIABLE(m_width);
+	COPY_MEMBER_VARIABLE(m_height);
+	COPY_MEMBER_VARIABLE(m_max_hp);
+	COPY_MEMBER_VARIABLE(m_max_energy);
+	COPY_MEMBER_VARIABLE(m_initial_minerals);
+	COPY_MEMBER_VARIABLE(m_initial_vespene_gas);
+	COPY_MEMBER_VARIABLE(m_provided_supplies);
+	COPY_MEMBER_VARIABLE(m_required_supplies);
+	
+	COPY_MEMBER_VARIABLE(m_armor);
+	COPY_MEMBER_VARIABLE(m_damage);
+	COPY_MEMBER_VARIABLE(m_moving_speed);
+	COPY_MEMBER_VARIABLE(m_attack_speed);
+	COPY_MEMBER_VARIABLE(m_attack_range);
+	
+	#undef COPY_MEMBER_VARIABLE
+	
+	return ObjectSPtr_t(obj);
+}
+
+
 
 
 float Object::getNetDamage() const
@@ -219,7 +258,7 @@ bool Object::doMovement(float time)
 {
 	assert(this->isMoving() == true);
 	
-	Object *mvtarget = this->getMovementTarget();
+	const ObjectSPtr_t &mvtarget = this->getMovementTarget();
 	if(mvtarget)
 	{
 	#if 0
@@ -299,7 +338,7 @@ bool Object::move_notAligned(const Coordinate &dest, MovementFlags_t flags)
 	#endif
 	
 	this->setMovementFlags(flags);
-	this->setMovementTarget(NULL);
+	this->clearMovementTarget();
 	this->setFinalDestination(dest);
 	this->setDestination(next_pos);
 	this->setState(ObjectState::Moving, true);
@@ -309,7 +348,7 @@ bool Object::move_notAligned(const Coordinate &dest, MovementFlags_t flags)
 	return true;
 }
 
-bool Object::move(Object *target, float minimum_distance, MovementFlags_t flags)
+bool Object::move(const ObjectSPtr_t &target, float minimum_distance, MovementFlags_t flags)
 {
 	if(!this->canMove())
 	{
@@ -330,7 +369,7 @@ bool Object::move(Object *target, float minimum_distance, MovementFlags_t flags)
 void Object::stopMoving()
 {
 	this->setState(ObjectState::Moving, false);
-	this->setMovementTarget(NULL);
+	this->clearMovementTarget();
 	
 	this->setFinalDestination(Coordinate(0.0, 0.0)); // not necessary
 	this->setDestination(Coordinate(0.0, 0.0)); // not necessary
@@ -350,7 +389,7 @@ bool Object::move(const Coordinate &dest, MovementFlags_t flags)
 
 Coordinate Object::calculateDestination_TargetedMoving()
 {
-	Object *target = this->getMovementTarget();
+	const ObjectSPtr_t &target = this->getMovementTarget();
 	float min_dist = this->getMovement_MinimumDistanceToTarget();
 	
 	// TODO: implement this
@@ -369,7 +408,7 @@ static float calculate_distance(float x1, float y1, float x2, float y2)
 
 
 
-bool Object::checkMinDistanceOld(Object *target, float min_distance, Coordinate *where_to_move)
+bool Object::checkMinDistanceOld(const ObjectSPtr_t &target, float min_distance, Coordinate *where_to_move)
 {
 	float my_xarr[4], target_xarr[4]; // 0, 1 = left, right
 	float my_yarr[4], target_yarr[4]; // 0, 1 = top, bottom
@@ -442,7 +481,7 @@ bool Object::checkMinDistanceOld(Object *target, float min_distance, Coordinate 
 	}
 }
 
-bool Object::checkMinDistance(Object *target, float min_distance, Coordinate *where_to_move)
+bool Object::checkMinDistance(const ObjectSPtr_t &target, float min_distance, Coordinate *where_to_move)
 {
 	float x = this->getX(), w = this->getWidth(), target_x = target->getX(), target_w = target->getWidth();
 	float y = this->getY(), h = this->getHeight(), target_y = target->getY(), target_h = target->getHeight();
@@ -501,7 +540,7 @@ bool Object::doAttack(float time)
 	assert(this->isAttacking() == true);
 	assert(this->getAttackTarget() != NULL);
 	
-	Object *target = this->getAttackTarget();
+	const ObjectSPtr_t &target = this->getAttackTarget();
 	Coordinate where_to_move;
 	if(this->checkMinDistance(target, this->getNetAttackRange(), &where_to_move))
 	{
@@ -532,10 +571,10 @@ bool Object::doAttack(float time)
 			float hp = target->getHP();
 			if(hp <= 0)
 			{
-				this->stopAttacking();
+				this->m_game->removeObject(target);
 				// FIXME
 				//target->kill();
-				this->m_game->removeObject(target);
+				this->stopAttacking();
 				break;
 			}
 		}
@@ -558,14 +597,14 @@ bool Object::doAttack(float time)
 
 void Object::stopAttacking()
 {
-	this->setAttackTarget(NULL);
+	this->clearAttackTarget();
 	this->setState(ObjectState::Attacking, false);
 	
 	this->setAttackingSeconds(0.0); // not necessary
 	this->setLastAttackTime(0.0); // not necessary
 }
 
-bool Object::attack(Object *target)
+bool Object::attack(const ObjectSPtr_t &target)
 {
 	if(!this->canAttack() || target->isInvincible())
 	{
@@ -584,7 +623,7 @@ bool Object::attack(Object *target)
 		}
 		else
 		{
-			this->setAttackTarget(NULL);
+			this->clearAttackTarget();
 			return false;
 		}
 	} /* if(this->checkMinDistance(target, range, NULL) == false) */
@@ -599,7 +638,7 @@ bool Object::attack(Object *target)
 	return true;
 }
 
-bool Object::cmd_attack(Object *target)
+bool Object::cmd_attack(const ObjectSPtr_t &target)
 {
 	this->stopMoving();
 	return this->attack(target);
@@ -615,7 +654,7 @@ bool Object::cmd_move(const Coordinate &dest, MovementFlags_t flags)
 	this->stopAttacking();
 	return this->move(dest, flags);
 }
-bool Object::cmd_move(Object *target, float minimum_distance, MovementFlags_t flags)
+bool Object::cmd_move(const ObjectSPtr_t &target, float minimum_distance, MovementFlags_t flags)
 {
 	this->stopAttacking();
 	return this->move(target, minimum_distance, flags);

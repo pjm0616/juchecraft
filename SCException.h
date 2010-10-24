@@ -15,6 +15,7 @@ class Exception
 public:
 	Exception() {}
 	Exception(const std::string &msg) {this->m_errmsg = msg;}
+	Exception(const char *msg) {this->m_errmsg = msg;}
 	~Exception() {}
 	
 	const std::string &getErrorMsg() const { return this->m_errmsg; }

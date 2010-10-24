@@ -11,31 +11,39 @@
 
 namespace SC {
 
-class ObjectList
+
+
+
+//typedef std::list<ObjectSPtr> ObjectSList;
+typedef std::map<ObjectId_t, ObjectSPtr_t> ObjectSMap;
+
+typedef std::list<Object *> ObjectList;
+typedef std::map<ObjectId_t, Object *> ObjectMap;
+
+class ObjectSList
 {
 public:
-	typedef SC::shared_ptr<Object> objptr_t;
-	typedef std::list<ObjectList::objptr_t> objlist_t;
+	typedef std::list<ObjectSPtr_t> objlist_t;
 	typedef objlist_t::iterator iterator;
 	typedef objlist_t::const_iterator const_iterator;
 	typedef objlist_t::reverse_iterator reverse_iterator;
 	typedef objlist_t::const_reverse_iterator const_reverse_iterator;
 	
-	ObjectList()
+	ObjectSList()
 		:m_iterator_invalidated(false)
 	{
 	}
-	~ObjectList()
+	~ObjectSList()
 	{
 	}
 	
-	Object *addObject(Object *obj);
-	int removeObject(Object *obj);
+	const ObjectSPtr_t &addObject(const ObjectSPtr_t &obj);
+	int removeObject(const ObjectSPtr_t &obj);
 	
 	void clear() { this->getObjects().clear(); }
 	
-	iterator find(Object *obj);
-	const_iterator find(Object *obj) const;
+	iterator find(const ObjectSPtr_t &obj);
+	const_iterator find(const ObjectSPtr_t &obj) const;
 	
 	iterator begin() { return this->getObjects().begin(); }
 	const_iterator begin() const { return this->getObjects().begin(); }
@@ -60,6 +68,7 @@ private:
 	
 	bool m_iterator_invalidated;
 };
+
 
 
 

@@ -41,7 +41,7 @@ protected:
 	void setFPS(unsigned int fps) { this->m_fps = fps; }
 	
 	#ifdef DRAW_OBJECTS_WITH_VIRTUAL_FXNS
-	virtual void drawObject(Object &obj) = 0;
+	virtual void drawObject(const ObjectSPtr_t &obj) = 0;
 	void drawObjects();
 	#else
 	void drawObject(Object &obj) { throw SC::Exception("BUG!!! w8cmoaeyr8myncafo"); }
