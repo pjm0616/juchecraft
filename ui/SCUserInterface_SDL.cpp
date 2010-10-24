@@ -558,6 +558,15 @@ void UserInterface_SDL::processFrame()
 				this->m_selection_in_progress = false;
 				Coordinate selection_end(x, y);
 				this->m_game->findObjectByRect(this->m_selected_objs, this->m_selection_start_coordinate, selection_end);
+				if(this->m_selection_start_coordinate == selection_end)
+				{
+					ObjectList::iterator it = this->m_selected_objs.begin();
+					ObjectList::iterator end = this->m_selected_objs.end();
+					if(it != end)
+						++it;
+					while(it != end)
+						this->m_selected_objs.erase(it++);
+				}
 			}
 			break;
 		}
@@ -739,14 +748,18 @@ void UserInterface_SDL::drawUI_MinimapWnd()
 
 void UserInterface_SDL::drawUI_UnitStatWnd()
 {
-	SC::ObjectList::iterator it = this->m_game->getObjectList().begin();
-	const char *name = (*it)->getObjectName();
+	SC::ObjectList::iterator it = this->m_selected_objs.begin();
+	if(it != this->m_selected_objs.end())
+	{
+		const ObjectSPtr_t &obj = *it;
+		const char *name = obj->getObjectName();
 	
-	// left-top: 155, 390
-	// right-bottom: 390, 470
+		// left-top: 155, 390
+		// right-bottom: 390, 470
 	
-	// unit name coord: 255,390
-	SDL_print(this->m_font, this->m_screen, 260, 390, (470-390)-255, this->getFontSize(), 0xffffff, name);
+		// unit name coord: 255,390
+		SDL_print(this->m_font, this->m_screen, 235, 390, (470-390)-255, this->getFontSize(), 0xffffff, name);
+	}
 }
 
 void UserInterface_SDL::drawUI_ButtonsWnd()
@@ -833,7 +846,7 @@ void UserInterface_SDL::drawObject(const ObjectSPtr_t &obj)
 	#else
 	//printf("Drawing object: %d,%d,%d,%d\t%x\n",x,y,w,h, owner->getPlayerColor());
 	
-	#if 1
+	#if 0
 	if(owner->getPlayerId() == 1)
 	{
 		//SDL_FillSurfaceP(this->m_game_scr, x, y, w, h, convert_color_from_bgra_to_rgba(owner->getPlayerColor()));

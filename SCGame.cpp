@@ -214,12 +214,12 @@ void Game::test_tmp1()
 	for(int i = 0; i < 10; i++)
 	{
 		o = this->newObject(ObjectId::Resource_MineralField);
-		o->setPosition(10, 270 + i*54);
+		o->setPosition(10, 270 + i*44);
 	}
 	for(int i = 0; i < 10; i++)
 	{
 		o = this->newObject(ObjectId::Resource_MineralField);
-		o->setPosition(10 + i*64, 270 + 54*3);
+		o->setPosition(10 + i*64, 270 + 44*3);
 	}
 	#endif
 }

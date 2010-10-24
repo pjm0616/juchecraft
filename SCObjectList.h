@@ -36,6 +36,7 @@ public:
 	
 	const ObjectSPtr_t &addObject(const ObjectSPtr_t &obj);
 	int removeObject(const ObjectSPtr_t &obj);
+	void erase(iterator it);
 	
 	void clear() { this->getObjects().clear(); }
 	size_t size() const { return this->getObjects().size(); }

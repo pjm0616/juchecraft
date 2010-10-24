@@ -48,6 +48,11 @@ int ObjectList::removeObject(const ObjectSPtr_t &obj)
 	return nremoved;
 }
 
+void ObjectList::erase(iterator it)
+{
+	this->getObjects().erase(it);
+	this->setIteratorAsInvalidated();
+}
 
 
 ObjectList::iterator ObjectList::find(const ObjectSPtr_t &obj)
