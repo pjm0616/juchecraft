@@ -1,10 +1,6 @@
 // Copyright (C) 2010 Park Jeongmin <pjm0616@gmail.com>
 // See LICENSE.txt for details
 
-/** @file SCObjectList.h
- *  @brief Implements object list to be used in SC::Game
-**/
-
 
 #ifndef SC_SMART_PTRS_H_
 #define SC_SMART_PTRS_H_
