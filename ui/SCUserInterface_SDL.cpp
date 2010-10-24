@@ -177,6 +177,8 @@ static grp_pixel_funcs g_grp_pixelfuncs_wirefram_green={grp_setpix_wirefram_gree
 ////
 
 
+static SDL_Surface *g_juche_supplies_icon;
+static SDL_Surface *g_sf_juche_aojiworker, *g_sf_juche_rodongcorrectionalfacility;
 
 static grp_palette_t *g_palette_units;
 static grp_data_t *g_grp_icons;
@@ -360,6 +362,10 @@ bool UserInterface_SDL::initUI()
 	
 	// FIXME
 	
+	g_juche_supplies_icon = IMG_Load(GAME_ROOT_DIR "./res/ui/sdl/ingame/icons/juche_supplies_icon.jpg");
+	g_sf_juche_rodongcorrectionalfacility = IMG_Load(GAME_ROOT_DIR "./res/ui/sdl/objects/buildings/53002.Juche_RodongCorrectionalFacility.jpg");
+	g_sf_juche_aojiworker = IMG_Load(GAME_ROOT_DIR "./res/ui/sdl/objects/units/52001.Juche_AojiWorker.jpg");
+	
 	HANDLE mpq_handles[3];
 	SFileOpenArchive(GAME_DATA_DIR "./StarDat.mpq", 1000, 0, &mpq_handles[0]);
 	SFileOpenArchive(GAME_DATA_DIR "./BrooDat.mpq", 2000, 0, &mpq_handles[1]);
@@ -534,7 +540,7 @@ void UserInterface_SDL::drawUI()
 {
 	char buf[512];
 	Game *game = this->m_game;
-	Player *me = &Player::Players[2];
+	Player *me = &Player::Players[1];
 	RaceId_t my_raceid = me->getRaceId();
 	
 	// 640-572=68
@@ -569,7 +575,15 @@ void UserInterface_SDL::drawUI()
 				}
 				else
 				{
-					SDL_FillSurfaceP(this->m_screen, x, y, 14, 14, me->getPlayerColor());
+					if(i == RaceId::Juche)
+					{
+						SDL_Rect r = {x, y, 14, 14};
+						SDL_BlitSurface(g_juche_supplies_icon, NULL, this->m_screen, &r);
+					}
+					else
+					{
+						SDL_FillSurfaceP(this->m_screen, x, y, 14, 14, me->getPlayerColor());
+					}
 				}
 			}
 			
@@ -751,7 +765,6 @@ void UserInterface_SDL::drawObject(const ObjectSPtr_t &obj)
 	#if 1
 	if(owner->getPlayerId() == 1)
 	{
-		SDL_FillSurfaceP(this->m_game_scr, x, y, w, h, owner->getPlayerColor());
 		//SDL_FillSurfaceP(this->m_game_scr, x, y, w, h, owner->getPlayerColor());
 		SDL_print(this->m_font, this->m_game_scr, x, y, w, h, 0xffffff, obj->getObjectName());
 	}
@@ -769,7 +782,8 @@ void UserInterface_SDL::drawObject(const ObjectSPtr_t &obj)
 	
 		#if 1
 		bool do_draw = false;
-		grp_data_t *grpdata, *grpdata2 = NULL;
+		grp_data_t *grpdata = NULL, *grpdata2 = NULL;
+		SDL_Surface *sf1 = NULL;
 		short framenum;
 		bool do_hflip = false, do_vflip = false;
 		Uint32 unit_color = owner->getPlayerColor();
@@ -808,31 +822,38 @@ void UserInterface_SDL::drawObject(const ObjectSPtr_t &obj)
 			framenum = 0;
 			do_draw = true;
 		}
+		else if(objid == SC::ObjectId::Juche_AojiWorker)
+		{
+			sf1 = g_sf_juche_aojiworker;
+			do_draw = true;
+		}
+		else if(objid == SC::ObjectId::Juche_RodongCorrectionalFacility)
+		{
+			sf1 = g_sf_juche_rodongcorrectionalfacility;
+			do_draw = true;
+		}
 		
 		if(do_draw)
 		{
-			{ /* 이동시 마우스 포인터 중앙이 아래 점에 오도록 이동 */
-				grp_header_t *grphdr = get_grp_info(grpdata);
-				grp_frameheader_t *frame = grp_get_frame_info(grpdata, framenum);
-				int center_x = (grphdr->max_width/2 - 1) - frame->left;
-				int center_y = (grphdr->max_height/2 - 1) - frame->top;
+			if(grpdata)
+			{
+				{ /* 이동시 마우스 포인터 중앙이 아래 점에 오도록 이동 */
+					grp_header_t *grphdr = get_grp_info(grpdata);
+					grp_frameheader_t *frame = grp_get_frame_info(grpdata, framenum);
+					int center_x = (grphdr->max_width/2 - 1) - frame->left;
+					int center_y = (grphdr->max_height/2 - 1) - frame->top;
+				}
+			
+				if(grpdata2)
+					render_grp_frame_to_surface(grpdata2, framenum, this->m_game_scr, x, y, 0, h, do_hflip, false, 0xffffffff, SHADOW_COLOR|(SHADOW_MAGIC_COLOR<<8));
+				if(grpdata)
+					render_grp_frame_to_surface(grpdata, framenum, this->m_game_scr, x, y, 0, h, do_hflip, false, unit_color);
 			}
-			
-			if(grpdata2)
-				render_grp_frame_to_surface(grpdata2, framenum, this->m_game_scr, x, y, 0, h, do_hflip, false, 0xffffffff, SHADOW_COLOR|(SHADOW_MAGIC_COLOR<<8));
-			render_grp_frame_to_surface(grpdata, framenum, this->m_game_scr, x, y, 0, h, do_hflip, false, unit_color);
-			#if 0
-			grp_frameheader_t *frame = grp_get_frame_info(grpdata, framenum);
-			
-			SDL_Surface *rmodel = render_grp_frame_flipped(grpdata, framenum, do_hflip, false);
-			SDL_Rect rmodel_rect = {frame->left, frame->top, frame->width, frame->height};
-			SDL_Rect destrect = {x, y - (frame->height - h), frame->width, frame->height};
-			
-			SDL_LockSurfaceIfNeeded(this->m_game_scr);
-			SDL_BlitSurface(rmodel, &rmodel_rect, this->m_game_scr, &destrect);
-			//draw_grp(this->m_game_scr, x - frame->left, y - frame->top - (frame->height - h), &g_grp_pixelfuncs, grpdata, g_palette_units, framenum, 0, 0);
-			SDL_UnlockSurfaceIfNeeded(this->m_game_scr);
-			#endif
+			if(sf1)
+			{
+				SDL_Rect r = {x, y, w, h};
+				SDL_BlitSurface(sf1, NULL, this->m_game_scr, &r);
+			}
 		}
 		#endif
 	#endif

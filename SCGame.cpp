@@ -180,7 +180,7 @@ void Game::test_tmp1()
 	Player::Players[2].increaseMinerals(50);
 	
 	o = this->newObject(ObjectId::Juche_DaepodongLauncher);
-	o->changeOwner(&Player::Players[2]);
+	o->changeOwner(&Player::Players[1]);
 	o->setPosition(40, 40);
 	o->setObjectMovingSpeedBonusM(4.0);
 	o->setObjectAttackSpeedBonusM(4.0);
@@ -188,7 +188,7 @@ void Game::test_tmp1()
 	o->setObjectArmorBonusA(3.0);
 	
 	o = this->newObject(ObjectId::Zerg_Zergling);
-	o->changeOwner(&Player::Players[2]);
+	o->changeOwner(&Player::Players[1]);
 	o->setPosition(80, 50);
 	o->setObjectMovingSpeedBonusM(2.0);
 	o->setObjectAttackSpeedBonusM(8.0);
@@ -203,7 +203,7 @@ void Game::test_tmp1()
 	o->move(Coordinate(210, 300));
 	
 	o = this->newObject(ObjectId::Terran_CommandCenter);
-	o->changeOwner(&Player::Players[2]);
+	o->changeOwner(&Player::Players[1]);
 	o->setPosition(440, 180);
 	
 	o = this->newObject(ObjectId::Juche_RodongCorrectionalFacility);
