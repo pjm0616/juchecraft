@@ -183,37 +183,6 @@ void Game::test_tmp1()
 	Player::Players[1].increaseMinerals(50);
 	Player::Players[2].increaseMinerals(50);
 	
-	o = this->newObject(ObjectId::Juche_DaepodongLauncher);
-	o->changeOwner(&Player::Players[1]);
-	o->setPosition(40, 40);
-	o->setObjectMovingSpeedBonusM(4.0);
-	o->setObjectAttackSpeedBonusM(4.0);
-	o->setObjectDamageBonusM(2.0);
-	o->setObjectArmorBonusA(3.0);
-	
-	o = this->newObject(ObjectId::Zerg_Zergling);
-	o->changeOwner(&Player::Players[1]);
-	o->setPosition(80, 50);
-	o->setObjectMovingSpeedBonusM(2.0);
-	o->setObjectAttackSpeedBonusM(8.0);
-	o->setObjectDamageBonusM(2.0);
-	o->setObjectArmorBonusA(3.0);
-	o->move(Coordinate(410, 250));
-	
-	o = this->newObject(ObjectId::Juche_AojiWorker);
-	o->changeOwner(&Player::Players[1]);
-	o->setPosition(200, 100);
-	o->setObjectMovingSpeedBonusM(1.0);
-	o->move(Coordinate(210, 300));
-	
-	o = this->newObject(ObjectId::Terran_CommandCenter);
-	o->changeOwner(&Player::Players[1]);
-	o->setPosition(440, 180);
-	
-	o = this->newObject(ObjectId::Juche_RodongCorrectionalFacility);
-	o->changeOwner(&Player::Players[1]);
-	o->setPosition(80, 80);
-	
 	#if 1
 	for(int i = 0; i < 10; i++)
 	{
@@ -226,6 +195,41 @@ void Game::test_tmp1()
 		o->setPosition(10 + i*64, 270 + 44*3);
 	}
 	#endif
+	
+	o = this->newObject(ObjectId::Juche_RodongCorrectionalFacility);
+	o->changeOwner(&Player::Players[1]);
+	o->setPosition(80, 80);
+	
+	o = this->newObject(ObjectId::Terran_CommandCenter);
+	o->changeOwner(&Player::Players[1]);
+	o->setPosition(440, 180);
+	
+	o = this->newObject(ObjectId::Terran_CommandCenter);
+	o->changeOwner(&Player::Players[2]);
+	o->setPosition(260, 250);
+	
+	o = this->newObject(ObjectId::Juche_AojiWorker);
+	o->changeOwner(&Player::Players[1]);
+	o->setPosition(200, 100);
+	o->setObjectMovingSpeedBonusM(1.0);
+	o->move(Coordinate(210, 300));
+	
+	o = this->newObject(ObjectId::Zerg_Zergling);
+	o->changeOwner(&Player::Players[1]);
+	o->setPosition(80, 50);
+	o->setObjectMovingSpeedBonusM(2.0);
+	o->setObjectAttackSpeedBonusM(8.0);
+	o->setObjectDamageBonusM(2.0);
+	o->setObjectArmorBonusA(3.0);
+	o->move(Coordinate(410, 250));
+	
+	o = this->newObject(ObjectId::Juche_DaepodongLauncher);
+	o->changeOwner(&Player::Players[1]);
+	o->setPosition(40, 40);
+	o->setObjectMovingSpeedBonusM(4.0);
+	o->setObjectAttackSpeedBonusM(4.0);
+	o->setObjectDamageBonusM(2.0);
+	o->setObjectArmorBonusA(3.0);
 }
 
 

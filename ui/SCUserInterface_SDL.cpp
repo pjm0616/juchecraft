@@ -364,7 +364,12 @@ void render_grp_frame_to_surface(grp_data_t *grpdata, int framenum, SDL_Surface 
 UserInterface_SDL::UserInterface_SDL(Game *game)
 	:UserInterface(game)
 {
+	// FIXME: hack
+#ifdef __WIN32__
+	this->setFPS(30); // 30 fps
+#else
 	this->setFPS(100); // 30 fps
+#endif
 	
 	this->clearCommandToBeOrdered();
 }
@@ -921,6 +926,7 @@ static int calculate_unit_framenum(const ObjectSPtr_t &obj, int attack_start, in
 
 void UserInterface_SDL::drawObject(const ObjectSPtr_t &obj)
 {
+	Player *player = &Player::Players[1];
 	int x, y, w, h;
 	ObjectId_t objid = obj->getObjectId();
 	Player *owner = obj->getOwner();
@@ -943,7 +949,7 @@ void UserInterface_SDL::drawObject(const ObjectSPtr_t &obj)
 	//if(objid == SC::ObjectId::Juche_DaepodongLauncher)
 	if(this->m_selection_in_progress)
 	{
-		if(obj->insideRect(this->m_selection_start_coordinate, this->m_mouse_pos_in_gamescr))
+		if(owner == player && obj->insideRect(this->m_selection_start_coordinate, this->m_mouse_pos_in_gamescr))
 		{
 			ellipseRGBA(this->m_game_scr, x+w/2, y+h/2 +1, w/2 +1, h/2 +1, 0, 255, 0, 255);
 		}
@@ -952,8 +958,12 @@ void UserInterface_SDL::drawObject(const ObjectSPtr_t &obj)
 	{
 		if(this->isSelectedUnit(obj))
 		{
-			//ellipseRGBA(this->m_game_scr, x+w/2, y+h/2, w/2, h/2, 0, 255, 0, 255);
-			ellipseRGBA(this->m_game_scr, x+w/2, y+h/2 +1, w/2 +1, h/2 +1, 0, 255, 0, 255);
+			if(owner == player)
+				ellipseRGBA(this->m_game_scr, x+w/2, y+h/2 +1, w/2 +1, h/2 +1, 0, 255, 0, 255);
+			else if(owner == &Player::Players[Player::NeutralPlayer])
+				ellipseRGBA(this->m_game_scr, x+w/2, y+h/2 +1, w/2 +1, h/2 +1, 255, 255, 0, 255);
+			else
+				ellipseRGBA(this->m_game_scr, x+w/2, y+h/2 +1, w/2 +1, h/2 +1, 255, 0, 0, 255);
 		}
 	}
 	#endif
@@ -1046,17 +1056,10 @@ void UserInterface_SDL::drawObjects()
 {
 	ObjectList &objs = this->m_game->getObjectList();
 	
-	#if 0
 	for(ObjectList::const_iterator it = objs.begin(); it != objs.end(); it++)
 	{
 		this->drawObject(*it);
 	}
-	#else
-	for(ObjectList::const_reverse_iterator it = objs.rbegin(); it != objs.rend(); it++)
-	{
-		this->drawObject(*it);
-	}
-	#endif
 }
 #endif
 

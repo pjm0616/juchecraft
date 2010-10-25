@@ -399,17 +399,10 @@ void UserInterface_ncurses::drawObjects()
 {
 	ObjectList &objs = this->m_game->getObjectList();
 	
-	#if 0
 	for(ObjectList::const_iterator it = objs.begin(); it != objs.end(); it++)
 	{
 		this->drawObject(*it);
 	}
-	#else
-	for(ObjectList::const_reverse_iterator it = objs.rbegin(); it != objs.rend(); it++)
-	{
-		this->drawObject(*it);
-	}
-	#endif
 }
 #endif
 
