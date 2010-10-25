@@ -12,7 +12,7 @@ object_prototypes[#object_prototypes + 1] = setmetatable({
 	required_supplies = 1;
 	damage = 6.0;
 	moving_speed = 25.0;
-	attack_speed = 10.0;
+	attack_speed = 2.0;
 }, {__index = SCObjects.Unit})
 
 
