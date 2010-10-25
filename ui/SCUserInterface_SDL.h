@@ -44,11 +44,16 @@ protected:
 	
 private:
 	bool isSelectedUnit(const ObjectSPtr_t &obj);
+	void setCommandToBeOrdered(int cmd) { this->m_command_to_be_ordered = cmd; }
+	void clearCommandToBeOrdered() { this->m_command_to_be_ordered = 0; }
+	int getCommandToBeOrdered() const { return this->m_command_to_be_ordered; }
 	
 	// FIXME: use accessor, mutators
 	bool m_selection_in_progress;
 	Coordinate m_selection_start_coordinate;
 	ObjectList m_selected_objs;
+	
+	int m_command_to_be_ordered;
 	
 	Coordinate m_mouse_pos_in_gamescr;
 	

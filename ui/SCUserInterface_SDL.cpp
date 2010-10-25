@@ -344,6 +344,8 @@ UserInterface_SDL::UserInterface_SDL(Game *game)
 	:UserInterface(game)
 {
 	this->setFPS(30);
+	
+	this->clearCommandToBeOrdered();
 }
 
 UserInterface_SDL::~UserInterface_SDL()
@@ -489,6 +491,9 @@ void UserInterface_SDL::processFrame()
 			case SDLK_RIGHT:
 				this->m_gamescr_left_pos += 10;
 				break;
+			case 'a':
+				this->setCommandToBeOrdered(2);
+				break;
 			default:
 				break;
 			}
@@ -529,21 +534,25 @@ void UserInterface_SDL::processFrame()
 			}
 			else if(ev.button.button == 1)
 			{
-				this->m_selection_start_coordinate.set(x, y);
-				this->m_selection_in_progress = true;
-			}
-			else if(ev.button.button == 2)
-			{
-				ObjectList selected_objs;
-				ObjectSPtr_t first = this->m_game->findObjectByRect(selected_objs, x, y, x+10, y+10);
-				
-				if(first)
+				if(this->getCommandToBeOrdered() == 2)
 				{
-					for(ObjectList::const_iterator it = this->m_selected_objs.begin(); 
-						it != this->m_selected_objs.end(); ++it)
+					ObjectList selected_objs;
+					ObjectSPtr_t first = this->m_game->findObjectByRect(selected_objs, x, y, x+10, y+10);
+				
+					if(first)
 					{
-						(*it)->cmd_attack(first);
+						for(ObjectList::const_iterator it = this->m_selected_objs.begin(); 
+							it != this->m_selected_objs.end(); ++it)
+						{
+							(*it)->cmd_attack(first);
+						}
 					}
+					this->clearCommandToBeOrdered();
+				}
+				else
+				{
+					this->m_selection_start_coordinate.set(x, y);
+					this->m_selection_in_progress = true;
 				}
 			}
 			break;
@@ -555,40 +564,43 @@ void UserInterface_SDL::processFrame()
 			this->m_mouse_pos_in_gamescr.set(x, y);
 			if(ev.button.button == 1)
 			{
-				this->m_selection_in_progress = false;
-				Coordinate selection_end(x, y);
-				this->m_game->findObjectByRect(this->m_selected_objs, this->m_selection_start_coordinate, selection_end);
+				if(this->m_selection_in_progress)
 				{
-					int stats[ObjectType::SIZE] = {0, };
-					for(ObjectList::const_iterator it = this->m_selected_objs.begin(); 
-						it != this->m_selected_objs.end(); ++it)
+					this->m_selection_in_progress = false;
+					Coordinate selection_end(x, y);
+					this->m_game->findObjectByRect(this->m_selected_objs, this->m_selection_start_coordinate, selection_end);
 					{
-						const ObjectSPtr_t &obj = *it;
-						stats[obj->getObjectType()]++;
-					}
-					
-					/* 유닛이 하나 이상 있다면 유닛 빼고 다른 물체는 선택하지 않음 */
-					if(stats[ObjectType::Unit] > 0)
-					{
-						for(ObjectList::iterator it = this->m_selected_objs.begin(); 
-							it != this->m_selected_objs.end(); )
+						int stats[ObjectType::SIZE] = {0, };
+						for(ObjectList::const_iterator it = this->m_selected_objs.begin(); 
+							it != this->m_selected_objs.end(); ++it)
 						{
 							const ObjectSPtr_t &obj = *it;
-							if(obj->getObjectType() != ObjectType::Unit)
-								this->m_selected_objs.erase(it++);
-							else
-								++it;
+							stats[obj->getObjectType()]++;
+						}
+					
+						/* 유닛이 하나 이상 있다면 유닛 빼고 다른 물체는 선택하지 않음 */
+						if(stats[ObjectType::Unit] > 0)
+						{
+							for(ObjectList::iterator it = this->m_selected_objs.begin(); 
+								it != this->m_selected_objs.end(); )
+							{
+								const ObjectSPtr_t &obj = *it;
+								if(obj->getObjectType() != ObjectType::Unit)
+									this->m_selected_objs.erase(it++);
+								else
+									++it;
+							}
 						}
 					}
-				}
-				if(this->m_selection_start_coordinate == selection_end)
-				{
-					ObjectList::iterator end = this->m_selected_objs.end();
-					ObjectList::iterator it = this->m_selected_objs.begin();
-					if(it != end)
-						++it;
-					while(it != end)
-						this->m_selected_objs.erase(it++);
+					if(this->m_selection_start_coordinate == selection_end)
+					{
+						ObjectList::iterator end = this->m_selected_objs.end();
+						ObjectList::iterator it = this->m_selected_objs.begin();
+						if(it != end)
+							++it;
+						while(it != end)
+							this->m_selected_objs.erase(it++);
+					}
 				}
 			}
 			break;
@@ -693,9 +705,9 @@ void UserInterface_SDL::drawUI()
 			// select color
 			Uint32 color;
 			if(crnt <= max)
-				color = 0x00ff00; // green
+				color = 0xff00ff00; // green
 			else
-				color = 0x0000ff; // red
+				color = 0xff0000ff; // red
 			
 			// draw to screen
 			snprintf(buf, sizeof(buf), "%d/%d", me->getSuppliesInUse(i), me->getCurrentSupplies(i));
@@ -713,7 +725,7 @@ void UserInterface_SDL::drawUI()
 		render_grp_frame_to_surface(g_grp_icons, frn, this->m_screen, x, y, -1, -1, false, false);
 		
 		snprintf(buf, sizeof(buf), "%d", me->getVespeneGas());
-		SDL_print(this->m_font, this->m_screen, x + 15, y - 2, 68-15, 16, 0x00ff00, buf);
+		SDL_print(this->m_font, this->m_screen, x + 15, y - 2, 68-15, 16, 0xff00ff00, buf);
 		x -= 68;
 	}
 	// draw minerals
@@ -723,19 +735,26 @@ void UserInterface_SDL::drawUI()
 		render_grp_frame_to_surface(g_grp_icons, frn, this->m_screen, x, y, -1, -1, false, false);
 		
 		snprintf(buf, sizeof(buf), "%d", me->getMinerals());
-		SDL_print(this->m_font, this->m_screen, x + 15, y - 2, 68-15, 16, 0x00ff00, buf);
+		SDL_print(this->m_font, this->m_screen, x + 15, y - 2, 68-15, 16, 0xff00ff00, buf);
 		x -= 68;
 	}
 	
 	snprintf(buf, sizeof(buf), "Rate: %.02f |  FPS: %.02f |  Frame#: %u", 
 		game->getCurrentUpdateRate(), game->getCurrentFPS(), game->getFrameNumber());
-	SDL_print(this->m_font, this->m_screen, 0, 0, 640, 16, 0x00ff00, buf);
+	SDL_print(this->m_font, this->m_screen, 0, 0, 640, 16, 0xff00ff00, buf);
 	
 	// draw console area
-	SDL_BlitSurface(this->m_sf_console, NULL, this->m_screen, NULL); // this takes avg 0.006 secss
+	SDL_BlitSurface(this->m_sf_console, NULL, this->m_screen, NULL); // this takes avg 0.006 secs
 	this->drawUI_MinimapWnd();
 	this->drawUI_UnitStatWnd();
 	this->drawUI_ButtonsWnd();
+	
+	{	
+		if(this->getCommandToBeOrdered() == 2)
+		{
+			SDL_print(this->m_font, this->m_screen, 210+50, 330, 150, 16, 0xffffffff, "Select target");
+		}
+	}
 }
 
 
