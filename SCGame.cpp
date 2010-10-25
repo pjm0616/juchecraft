@@ -143,9 +143,12 @@ void Game::run()
 	this->setFrameNumber(0);
 	this->setFrameDelta(fixed_frame_deltat);
 	this->setLastDrawTime(0.0);
+	double start_time, end_time = this->getElapsedTime();
 	while(!this->isGameEnded())
 	{
-		double start_time = this->getElapsedTime();
+		//double start_time = this->getElapsedTime();
+		start_time = end_time;
+		this->setLastTicks(start_time * 1000);
 		
 		this->processObjects();
 		this->m_ui->processFrame();
@@ -164,7 +167,8 @@ void Game::run()
 		// limit update rate
 		usleep(sleep_time);
 		// calculate time
-		this->setDelta(this->getElapsedTime() - start_time);
+		end_time = this->getElapsedTime();
+		this->setDelta(end_time - start_time);
 	}
 }
 

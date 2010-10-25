@@ -98,8 +98,11 @@ void Object::init()
 
 void Object::cleanup()
 {
-	assert(this->m_cleanup_called == false); this->m_cleanup_called = true; // for debugging
-	this->detachFromOwner();
+	if(this->m_cleanup_called == false)
+	{
+		this->m_cleanup_called = true;
+		this->detachFromOwner();
+	}
 }
 
 

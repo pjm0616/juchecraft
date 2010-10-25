@@ -40,9 +40,10 @@ public:
 	inline float getDelta() const { return this->m_deltat; }
 	inline float getFrameDelta() const { return this->m_frame_deltat; }
 	unsigned int getFrameNumber() const { return this->m_frame_number; }
-	unsigned int getUpdateRate() const { return 60; } // limit to 60 updates per second
+	unsigned int getUpdateRate() const { return 200; } // limit to 60 updates per second
 	float getCurrentUpdateRate() const { return 1.0 / this->getDelta(); }
 	float getCurrentFPS() const { return 1.0 / this->getFrameDelta(); }
+	time_t getLastTicks() const { return this->m_last_ticks; }
 	
 	int getMapWidth() const { return this->m_map_width; }
 	int getMapHeight() const { return this->m_map_height; }
@@ -71,6 +72,7 @@ private:
 	inline void setFrameDelta(float val) { this->m_frame_deltat = val; }
 	void setLastDrawTime(double val) { this->m_last_draw = val; }
 	inline double getLastDrawTime() const { return this->m_last_draw; }
+	void setLastTicks(time_t ticks) { this->m_last_ticks = ticks; }
 	
 	void processObjects();
 	
@@ -83,6 +85,7 @@ private:
 	unsigned int m_frame_number;
 	float m_frame_deltat;
 	double m_last_draw;
+	time_t m_last_ticks;
 	
 	// almost constant; cannot be changed if game has started
 	int m_map_width, m_map_height;

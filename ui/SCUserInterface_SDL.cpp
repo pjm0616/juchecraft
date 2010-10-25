@@ -233,8 +233,6 @@ SDL_Surface *render_grp_frame_flipped(grp_data_t *grpdata, int framenum, bool do
 	SDL_Surface *sf = render_grp_frame(grpdata, framenum, grpflags);
 	int w = grpinfo->max_width;
 	int h = grpinfo->max_height;
-	int right = grpinfo->max_width-1 - frame->left;
-	int bottom = grpinfo->max_height-1 - frame->top;
 	
 	if(do_hflip)
 	{
@@ -310,7 +308,7 @@ void render_shadow_image(SDL_Surface *sf)
 	}
 }
 
-
+// this is VERY slow.
 void render_grp_frame_to_surface(grp_data_t *grpdata, int framenum, SDL_Surface *dest_sf, int x, int y, 
 	int opt_align_w = -1, int opt_align_h = -1, bool do_hflip = false, bool do_yflip = false, 
 	Uint32 new_unit_color = 0x00000000, unsigned int grpflags = 0)
@@ -318,8 +316,31 @@ void render_grp_frame_to_surface(grp_data_t *grpdata, int framenum, SDL_Surface 
 	grp_frameheader_t *frame = grp_get_frame_info(grpdata, framenum);
 	
 	SDL_Surface *rmodel = render_grp_frame_flipped(grpdata, framenum, do_hflip, do_yflip, grpflags);
-	SDL_Rect rmodel_rect = {frame->left, frame->top, frame->width, frame->height};
-	SDL_Rect dest_rect = {x, y, frame->width, frame->height};
+	
+	int new_x = x, new_y = y;
+	int frame_left = frame->left, frame_top = frame->top;
+	{
+		/* 뒤집었을 경우 x, y 값을 보정해줌 */
+		grp_header_t *grpinfo = get_grp_info(grpdata);
+		if(do_hflip)
+		{
+			int new_left = (grpinfo->max_width-1) - (frame->left+frame->width);
+			new_x -= (frame->left - new_left);
+			frame_left = new_left;
+		}
+		if(do_yflip)
+		{
+			int new_top = (grpinfo->max_height-1) - (frame->top+frame->height);
+			new_y -= (frame->top - new_top);
+			frame_top = new_top;
+		}
+	}
+	
+	SDL_Rect rmodel_rect = {frame_left, frame_top, frame->width, frame->height};
+	
+	
+	
+	SDL_Rect dest_rect = {new_x, new_y, frame->width, frame->height};
 	//if(opt_align_w > 0)
 	//	dest_rect.x -= (frame->width - opt_align_w);
 	if(opt_align_h > 0)
@@ -343,7 +364,7 @@ void render_grp_frame_to_surface(grp_data_t *grpdata, int framenum, SDL_Surface 
 UserInterface_SDL::UserInterface_SDL(Game *game)
 	:UserInterface(game)
 {
-	this->setFPS(30);
+	this->setFPS(100); // 30 fps
 	
 	this->clearCommandToBeOrdered();
 }
@@ -545,6 +566,14 @@ void UserInterface_SDL::processFrame()
 							it != this->m_selected_objs.end(); ++it)
 						{
 							(*it)->cmd_attack(first);
+						}
+					}
+					else
+					{
+						for(ObjectList::const_iterator it = this->m_selected_objs.begin(); 
+							it != this->m_selected_objs.end(); ++it)
+						{
+							(*it)->cmd_move(Coordinate(x, y), Object::MovementFlags::AutomaticallyAttack);
 						}
 					}
 					this->clearCommandToBeOrdered();
@@ -791,16 +820,30 @@ void UserInterface_SDL::drawUI_MinimapWnd()
 void UserInterface_SDL::drawUI_UnitStatWnd()
 {
 	SC::ObjectList::iterator it = this->m_selected_objs.begin();
-	if(it != this->m_selected_objs.end())
+	while(it != this->m_selected_objs.end())
 	{
-		const ObjectSPtr_t &obj = *it;
-		const char *name = obj->getObjectName();
-	
+		const ObjectSPtr_t &obj = *it++;
+		if(obj->isRemovedFromGame() == true) // warning: hack
+			continue;
+		
 		// left-top: 155, 390
 		// right-bottom: 390, 470
-	
+		
 		// unit name coord: 255,390
-		SDL_print(this->m_font, this->m_screen, 235, 390, (470-390)-255, this->getFontSize(), 0xffffff, name);
+		{
+			const char *name = obj->getObjectName();
+			SDL_print(this->m_font, this->m_screen, 235, 390, (470-390)-255, this->getFontSize(), 0xffffffff, name);
+		}
+		
+		// Unit HP
+		// 160,450
+		{
+			char buf[64];
+			snprintf(buf, sizeof(buf), "%.0f / %d", obj->getHP(), obj->getMaxHP());
+			SDL_print(this->m_font, this->m_screen, 160, 450, 100, this->getFontSize(), 0xff00ff00, buf);
+		}
+		
+		break;
 	}
 }
 
@@ -836,22 +879,22 @@ static int convertAngleToDirection(float angle)
 }
 
 static int calculate_unit_framenum(const ObjectSPtr_t &obj, int attack_start, int attack_end, int move_start, int move_end, 
-		bool *do_hflip, bool *do_vflip
-	)
+		bool *do_hflip, bool *do_vflip)
 {
 	int col, row;
 	*do_hflip = false;
 	*do_vflip = false;
 	
 	row = convertAngleToDirection(obj->getAngle());
+	time_t ticks = obj->getGame()->getLastTicks();
 	if(obj->isMoving())
 	{
-		col = (lrand48() % (move_end - move_start)) + move_start;
+		int t = (int)(ticks/50) % (move_end - move_start + 1);
+		col = t + move_start;
 	}
 	else if(obj->isAttacking())
 	{
-		float attacktime = obj->getAttackingSeconds();
-		int t = (int)(attacktime*10) % (attack_end - attack_start + 1);
+		int t = (int)(ticks/80) % (attack_end - attack_start + 1);
 		col = t + attack_start;
 	}
 	else

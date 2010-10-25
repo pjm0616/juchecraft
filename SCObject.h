@@ -110,6 +110,11 @@ public:
 	void cleanup();
 	//@}
 	
+	/** @brief checks if this object is removed from the game.
+	 *  @return true if this object is removed from game.
+	 */
+	bool isRemovedFromGame() const { return this->m_cleanup_called; }
+	
 	/** @brief processes current frame.
 	 *  @details This function is called from game main loop, in SC::Game.
 	 */
@@ -128,6 +133,9 @@ public:
 	 */
 	void changeOwner(Player *new_owner);
 	//@}
+	
+	// Actually there's no point having an accessor for m_game.
+	Game *getGame() { return this->m_game; }
 	
 	/** @name Unit position */
 	//@{
@@ -423,9 +431,6 @@ protected:
 	//@}
 	
 private:
-	// No point having an accessor for m_game.
-	//Game *getGame() { return this->m_game; }
-			
 	/** @name Unit owner related */
 	//@{
 	void setOwner(Player *new_owner) { this->m_owner = new_owner; }
