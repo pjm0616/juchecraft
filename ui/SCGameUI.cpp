@@ -7,25 +7,27 @@
 #include <string>
 #include <list>
 #include <map>
+#include <vector>
 
 #include "defs.h"
 #include "compat.h"
 #include "luacpp/luacpp.h"
+#include "SCTypes.h"
 #include "SCException.h"
 #include "SCCoordinate.h"
-#include "SCPlayer.h"
 #include "SCObject.h"
 #include "SCObjectList.h"
 #include "SCObjectPrototypes.h"
+#include "SCPlayer.h"
 #include "SCGame.h"
 
-#include "ui/SCUserInterface.h"
+#include "ui/SCGameUI.h"
 
 
 using namespace SC;
 
 #ifdef DRAW_OBJECTS_WITH_VIRTUAL_FXNS
-void UserInterface::drawObjects()
+void GameUI::drawObjects()
 {
 	ObjectList &objs = this->m_game->getObjectList();
 	

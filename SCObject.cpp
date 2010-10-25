@@ -7,6 +7,7 @@
 #include <string>
 #include <list>
 #include <map>
+#include <vector>
 #include <cmath>
 #include <cstdlib>
 #include <cassert>
@@ -18,13 +19,14 @@
 #include "defs.h"
 #include "compat.h"
 #include "luacpp/luacpp.h"
+#include "SCTypes.h"
 #include "SCException.h"
 #include "SCCoordinate.h"
-#include "SCPlayer.h"
 #include "SCObject.h"
 #include "SCObjectList.h"
 #include "SCObjectIdList.h"
 #include "SCObjectPrototypes.h"
+#include "SCPlayer.h"
 #include "SCGame.h"
 
 using namespace SC;
@@ -55,8 +57,6 @@ Object::Object(Game *game)
 	m_attack_speed(0.0), 
 	m_attack_range(0.0)
 {
-	this->setOwner(0); // meaningless
-	
 	this->setState(ObjectState::None);
 	
 	this->setPosition(0.0, 0.0);
@@ -76,6 +76,8 @@ Object::Object(Game *game)
 	this->clearMovementTarget();
 	this->clearAttackTarget();
 	this->setMovementFlags(MovementFlags::None);
+	
+	this->m_cleanup_called = false;
 }
 
 Object::~Object()
@@ -84,7 +86,7 @@ Object::~Object()
 
 void Object::init()
 {
-	this->setOwner(&Player::Players[Player::NeutralPlayer]);
+	this->setOwner(this->m_game->getPlayer(Player::NeutralPlayer));
 	this->attachToOwner();
 	
 	this->setState(this->getInitialState());
@@ -92,8 +94,6 @@ void Object::init()
 	this->setEnergy(this->getMaxEnergy());
 	this->setMinerals(this->getInitialMinerals());
 	this->setVespeneGas(this->getInitialVespeneGas());
-	
-	this->m_cleanup_called = false; // for debugging
 }
 
 void Object::cleanup()
@@ -118,7 +118,7 @@ void Object::detachFromOwner()
 	this->getOwner()->decreaseSuppliesInUse(this->getRaceId(), this->getRequiredSupplies());
 }
 
-void Object::changeOwner(Player *new_owner)
+void Object::changeOwner(const PlayerSPtr_t &new_owner)
 {
 	this->detachFromOwner();
 	this->setOwner(new_owner);
@@ -178,6 +178,10 @@ ObjectSPtr_t Object::duplicate()
 }
 
 
+float Object::getArmorBonusA() const { return this->m_owner->getPlayerArmorBonusA() + this->getObjectArmorBonusA();}
+float Object::getDamageBonusA() const { return this->m_owner->getPlayerDamageBonusA() + this->getObjectDamageBonusA();}
+float Object::getMovingSpeedBonusA() const { return this->m_owner->getPlayerMovingSpeedBonusA() + this->getObjectMovingSpeedBonusA();}
+float Object::getAttackSpeedBonusA() const { return this->m_owner->getPlayerAttackSpeedBonusA() + this->getObjectAttackSpeedBonusA();}
 
 
 float Object::getNetDamage() const

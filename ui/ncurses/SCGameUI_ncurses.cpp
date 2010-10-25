@@ -9,6 +9,7 @@
 #include <string>
 #include <list>
 #include <map>
+#include <vector>
 
 #include <cstdio>
 #include <cstring>
@@ -29,23 +30,24 @@ namespace ncurses
 #include "defs.h"
 #include "compat.h"
 #include "luacpp/luacpp.h"
+#include "SCTypes.h"
 #include "SCException.h"
 #include "SCCoordinate.h"
-#include "SCPlayer.h"
 #include "SCObject.h"
 #include "SCObjectList.h"
 #include "SCObjectIdList.h"
 #include "SCObjectPrototypes.h"
+#include "SCPlayer.h"
 #include "SCGame.h"
 
-#include "ui/SCUserInterface.h"
-#include "ui/SCUserInterface_ncurses.h"
+#include "ui/SCGameUI.h"
+#include "ui/ncurses/SCGameUI_ncurses.h"
 
 using namespace ncurses; // DAMN....  COLOR_PAIR macro requires this
 using namespace SC;
 
-std::map<ObjectId_t, std::string> UserInterface_ncurses::obj_images;
-bool UserInterface_ncurses::is_initialized = false;
+std::map<ObjectId_t, std::string> GameUI_ncurses::obj_images;
+bool GameUI_ncurses::is_initialized = false;
 
 
 // filename: "ID.comment.txt"
@@ -88,8 +90,7 @@ static void replace_char(std::string &str, char needle, char replacement)
 }
 
 
-/* static */
-void UserInterface_ncurses::load_resources(const char *dirpath)
+void GameUI_ncurses::load_resources(const char *dirpath)
 {
 	DIR *dp = opendir(dirpath);
 	if(!dp)
@@ -101,12 +102,12 @@ void UserInterface_ncurses::load_resources(const char *dirpath)
 		if(id >= 0)
 		{
 			std::string filepath(dirpath); filepath += entry->d_name;
-			readfile(filepath.c_str(), UserInterface_ncurses::obj_images[id]);
-			replace_char(UserInterface_ncurses::obj_images[id], '\n', '\0');
+			readfile(filepath.c_str(), GameUI_ncurses::obj_images[id]);
+			replace_char(GameUI_ncurses::obj_images[id], '\n', '\0');
 		}
 	}
 	closedir(dp);
-	UserInterface_ncurses::is_initialized = true;
+	GameUI_ncurses::is_initialized = true;
 }
 
 
@@ -155,19 +156,19 @@ void UserInterface_ncurses::load_resources(const char *dirpath)
 #define SC_NCURSES_UNIT_COLOR_PAIR_BASE 20
 
 
-UserInterface_ncurses::UserInterface_ncurses(Game *game)
-	:UserInterface(game)
+GameUI_ncurses::GameUI_ncurses(Game *game, const PlayerSPtr_t &player)
+	:GameUI(game, player)
 {
 	
 	this->setFPS(8);
 }
 
-UserInterface_ncurses::~UserInterface_ncurses()
+GameUI_ncurses::~GameUI_ncurses()
 {
 	//this->cleanupUI();
 }
 
-bool UserInterface_ncurses::initUI()
+bool GameUI_ncurses::initUI()
 {
 	int ret;
 	
@@ -207,7 +208,7 @@ bool UserInterface_ncurses::initUI()
 	// init colors
 	for(int i = 0; i < Player::MAX_PLAYER + 1; i++)
 	{
-		unsigned int color = Player::Players[i].getPlayerColor();
+		unsigned int color = this->m_game->getPlayer(i).getPlayerColor();
 		int r = (color & 0xff0000) >> 16;
 		int g = (color & 0x00ff00) >> 8;
 		int b = (color & 0x0000ff) >> 0;
@@ -242,7 +243,7 @@ bool UserInterface_ncurses::initUI()
 	return true;
 }
 
-bool UserInterface_ncurses::cleanupUI()
+bool GameUI_ncurses::cleanupUI()
 {
 	ncurses::delwin(this->m_wnd_stat);
 	ncurses::delwin(this->m_wnd_map);
@@ -261,7 +262,7 @@ bool UserInterface_ncurses::cleanupUI()
 	return true;
 }
 
-void UserInterface_ncurses::processFrame()
+void GameUI_ncurses::processFrame()
 {
 	int ch = ncurses::getch();
 	if(ch != ERR)
@@ -288,7 +289,7 @@ void UserInterface_ncurses::processFrame()
 	}
 }
 
-void UserInterface_ncurses::draw()
+void GameUI_ncurses::draw()
 {
 	ncurses::wclear(this->m_wnd_stat);
 	ncurses::wclear(this->m_wnd_map);
@@ -311,10 +312,10 @@ void UserInterface_ncurses::draw()
 }
 
 
-void UserInterface_ncurses::drawUI()
+void GameUI_ncurses::drawUI()
 {
 	Game *game = this->m_game;
-	Player *me = &Player::Players[1];
+	const PlayerSPtr_t &me = this->m_player;
 	
 	//ncurses::mvwprintw(this->m_wnd_stat, 0, 0, 
 	//	"Minerals: %d | Supplies: %d/%d", 
@@ -336,29 +337,29 @@ void UserInterface_ncurses::drawUI()
 
 
 
-void UserInterface_ncurses::drawUI_MinimapWnd()
+void GameUI_ncurses::drawUI_MinimapWnd()
 {
 	
 }
 
-void UserInterface_ncurses::drawUI_UnitStatWnd()
+void GameUI_ncurses::drawUI_UnitStatWnd()
 {
 	
 }
 
-void UserInterface_ncurses::drawUI_ButtonsWnd()
+void GameUI_ncurses::drawUI_ButtonsWnd()
 {
 	
 }
 
-void UserInterface_ncurses::drawMap()
+void GameUI_ncurses::drawMap()
 {
 	
 }
 
-const std::string *UserInterface_ncurses::getObjectImg(ObjectId_t id) const
+const std::string *GameUI_ncurses::getObjectImg(ObjectId_t id) const
 {
-	const std::map<ObjectId_t, std::string> &obj_imgs = UserInterface_ncurses::obj_images;
+	const std::map<ObjectId_t, std::string> &obj_imgs = GameUI_ncurses::obj_images;
 	std::map<ObjectId_t, std::string>::const_iterator it = obj_imgs.find(id);
 	if(it == obj_images.end())
 		return NULL;
@@ -366,7 +367,7 @@ const std::string *UserInterface_ncurses::getObjectImg(ObjectId_t id) const
 		return &it->second;
 }
 
-void UserInterface_ncurses::drawObject(const ObjectSPtr_t &obj)
+void GameUI_ncurses::drawObject(const ObjectSPtr_t &obj)
 {
 	int x, y, w, h;
 	int owner_id = obj->getOwner()->getPlayerId();
@@ -395,7 +396,7 @@ void UserInterface_ncurses::drawObject(const ObjectSPtr_t &obj)
 
 
 #ifndef DRAW_OBJECTS_WITH_VIRTUAL_FXNS
-void UserInterface_ncurses::drawObjects()
+void GameUI_ncurses::drawObjects()
 {
 	ObjectList &objs = this->m_game->getObjectList();
 	

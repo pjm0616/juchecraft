@@ -11,17 +11,17 @@
 namespace SC {
 
 
-class UserInterface;
+class GameUI;
 class Game
 {
-	friend class UserInterface;
+	friend class GameUI;
 	
 public:
 	Game();
 	~Game();
 	
 	void loadGameData(const char *dir);
-	void setUI(UserInterface *ui) { this->m_ui = ui; }
+	void setUI(GameUI *ui) { this->m_ui = ui; }
 	
 	void run();
 	void test_tmp1(); // for debugging & testing
@@ -55,11 +55,14 @@ public:
 	ObjectList &getObjectList() { return this->m_objects; }
 	const ObjectList &getObjectList() const { return this->m_objects; }
 	
-	// There's no point having an accessor for m_ui.
-	//UserInterface *getUI() { return this->m_ui; }
+	// Uncomment this if you need a public accessor for m_ui.
+	//GameUI *getUI() { return this->m_ui; }
 	
 	void endGame() { this->m_is_game_ended = true; }
 	inline bool isGameEnded() const { return this->m_is_game_ended; }
+	
+	const PlayerSPtr_t &getPlayer(PlayerId_t player_id) const;
+	const PlayerVector &getPlayers() const { return this->m_players; }
 	
 protected:
 	
@@ -76,7 +79,7 @@ private:
 	
 	void processObjects();
 	
-	UserInterface *m_ui;
+	GameUI *m_ui;
 	ObjectPrototypes m_obj_protos;
 	ObjectList m_objects;
 	
@@ -87,8 +90,17 @@ private:
 	double m_last_draw;
 	time_t m_last_ticks;
 	
+	// map related
+	//@{
 	// almost constant; cannot be changed if game has started
 	int m_map_width, m_map_height;
+	//@}
+	
+	// player related
+	//@{
+	void initPlayers();
+	PlayerVector m_players;
+	//@}
 	
 	bool m_is_game_ended;
 };

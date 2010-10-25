@@ -1,8 +1,8 @@
 // Copyright (C) 2010 Park Jeongmin <pjm0616@gmail.com>
 // See LICENSE.txt for details
 
-#ifndef SCUserInterface_ncurses_H_
-#define SCUserInterface_ncurses_H_
+#ifndef SCGameUI_ncurses_H_
+#define SCGameUI_ncurses_H_
 
 #ifndef SC_CONFIG_H_
 #error Include "config.h" first
@@ -19,14 +19,14 @@ namespace ncurses
 namespace SC {
 
 
-class UserInterface_ncurses: public UserInterface
+class GameUI_ncurses: public GameUI
 {
 public:
 	// dirpath: "./res/object/"
-	static void load_resources(const char *dirpath);
+	void load_resources(const char *dirpath);
 	
-	UserInterface_ncurses(Game *game);
-	virtual ~UserInterface_ncurses();
+	GameUI_ncurses(Game *game, const PlayerSPtr_t &player);
+	virtual ~GameUI_ncurses();
 	
 	virtual bool initUI();
 	virtual bool cleanupUI();

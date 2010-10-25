@@ -13,34 +13,11 @@
 namespace SC {
 
 
-/** @brief Defines race IDs.
- */
-namespace RaceId
-{
-	typedef unsigned int RaceId_t;
-	enum RaceId
-	{
-		None = 0, /**< Map objects, resources, bullets, etc. */
-		Neutral = 1, /**< Neutral units */
-
-		Terran = 2, 
-		Protoss = 3, 
-		Zerg = 4, 
-
-		Juche = 5, 
-		
-		Size /**< Number of RaceId entries */
-	};
-}
-using RaceId::RaceId_t;
-
-
 class Player
 {
 public:
+	// move these enums to somewhere else
 	enum { MAX_PLAYER = 8 };
-	static Player Players[Player::MAX_PLAYER + 1];
-	static void initialize();
 	enum
 	{
 		NeutralPlayer = 0, 
@@ -49,7 +26,6 @@ public:
 	};
 	
 	Player();
-	Player(int player_id) { this->setPlayerId(player_id); }
 	~Player() {}
 	
 	int getPlayerId() const { return this->m_player_id; }
@@ -168,22 +144,33 @@ public:
 	float getPlayerAttackSpeedBonusA() const { return this->m_added_attack_speed_bonus; }
 	//@}
 	
+	const ObjectList &getSelectedObjs() const { return this->m_selected_objs; }
+	ObjectList &getSelectedObjsForWriting() { return this->m_selected_objs; }
+	bool isSelectedObject(const ObjectSPtr_t &obj) const;
+	void clearSelectedObjectList() { this->m_selected_objs.clear(); }
+	
+	
 //protected:
 	/** @brief Set player's race
 	 *  @param[in] race Player's new race
 	 */
 	void setRace(RaceId_t race) { this->m_race_id = race; }
 	
-private:
+public:
+	/** @brief set player id/color
+	 *  @details these functions are ONLY used by SC::Game
+	 */
+	//@{
 	void setPlayerId(int player_id) { this->m_player_id = player_id; }
 	void setPlayerColor(unsigned int player_color) { this->m_player_color = player_color; }
+	//@}
 	
 	void setPlayerArmorBonusA(float v) { this->m_added_armor_bonus = v; }
 	void setPlayerDamageBonusA(float v) { this->m_added_damage_bonus = v; }
 	void setPlayerMovingSpeedBonusA(float v) { this->m_added_moving_speed_bonus = v; }
 	void setPlayerAttackSpeedBonusA(float v) { this->m_added_attack_speed_bonus = v; }
 	
-	static bool ms_is_initialized;
+private:
 	
 	int m_player_id;
 	unsigned int m_player_color;
@@ -194,6 +181,8 @@ private:
 	
 	float m_added_armor_bonus, m_added_damage_bonus, m_added_moving_speed_bonus, m_added_attack_speed_bonus;
 	
+private:
+	ObjectList m_selected_objs;
 };
 
 

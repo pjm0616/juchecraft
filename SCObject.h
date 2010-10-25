@@ -12,76 +12,7 @@
 namespace SC {
 
 
-/** @brief Defines object types
- */
-namespace ObjectType
-{
-	typedef unsigned int ObjectType_t;
-	
-	enum ObjectType
-	{
-		None = 0, 
-		Resource = 1, 
-		Unit = 2, 
-		Building = 3, 
-		SIZE
-	};
-}
-using ObjectType::ObjectType_t;
 
-
-/** @brief Defines current object state
- */
-namespace ObjectState
-{
-	typedef unsigned int ObjectState_t;
-	
-	enum ObjectState
-	{
-		None = 0, /**< In most cases, this is default */
-		
-		Burrowed = 1, /**< Unit is burrowed */
-		InTransit = 2, /**< Building is in transit */
-		Cloaked = 4, /**< Object is cloaked */
-		Invincible = 8, /**< Object is invincible */
-		Hallucinated = 16, /**< Object is hallucinated */
-		
-		Moving = 64, /**< Object is moving */
-		Attacking = 128, /**< Object is attacking @detail does not include pending attack */
-	};
-	
-	// FIXME, move to elsewhere
-	static struct
-	{
-		ObjectState_t state;
-		const char *str;
-	} gs_objectstate_stringified[] = {
-		{ObjectState::None, "None"}, 
-		{ObjectState::Burrowed, "Burrowed"}, 
-		{ObjectState::InTransit, "InTransit"}, 
-		{ObjectState::Cloaked, "Cloaked"}, 
-		{ObjectState::Invincible, "Invincible"}, 
-		{ObjectState::Hallucinated, "Hallucinated"}, 
-		{ObjectState::Moving, "Moving"}, 
-		{ObjectState::Attacking, "Attacking"}, 
-		{ObjectState::None, NULL}
-	};
-}
-using ObjectState::ObjectState_t;
-
-/** @brief Defines the list of object IDs
- */
-namespace ObjectId
-{
-	typedef unsigned int ObjectId_t;
-	// enum ObjectId: see SCObjectIdList.h
-}
-using ObjectId::ObjectId_t;
-
-class Object;
-typedef SC::shared_ptr<Object> ObjectSPtr_t;
-class Game;
-class ObjectPrototypes;
 /** @brief Abstract object class
  */
 class Object
@@ -102,6 +33,7 @@ public:
 	
 	/** @brief initializes the object after ctor.
 	 *  @details init() performs some initialization that uses virtual functions or variables that initialized at derived classes.
+	 *  @details this->m_game must be fully initialized before calling this function.
 	 */
 	void init();
 	/** @brief initializes the object after ctor.
@@ -126,15 +58,15 @@ public:
 	 *
 	 *  @return A pointer to SC::Player that owns this object
 	 */
-	Player *getOwner() { return this->m_owner; }
+	const PlayerSPtr_t &getOwner() { return this->m_owner; }
 	/** @brief Changes owner of the object.
 	 *
 	 *  @param[in] new_owner A pointer to SC::Player
 	 */
-	void changeOwner(Player *new_owner);
+	void changeOwner(const PlayerSPtr_t &new_owner);
 	//@}
 	
-	// Actually there's no point having an accessor for m_game.
+	// Uncomment this if you need a public accessor for m_game.
 	Game *getGame() { return this->m_game; }
 	
 	/** @name Unit position */
@@ -367,19 +299,19 @@ public:
 	/** @brief Calculate total 'added armor bonuses'.
 	 *  @sa getNetArmor()
 	 */
-	float getArmorBonusA() const { return this->m_owner->getPlayerArmorBonusA() + this->getObjectArmorBonusA();}
+	float getArmorBonusA() const;
 	/** @brief Calculate total 'added damage bonuses'.
 	 *  @sa getNetArmor()
 	 */
-	float getDamageBonusA() const { return this->m_owner->getPlayerDamageBonusA() + this->getObjectDamageBonusA();}
+	float getDamageBonusA() const;
 	/** @brief Calculate total 'added moving speed bonuses'.
 	 *  @sa getNetArmor()
 	 */
-	float getMovingSpeedBonusA() const { return this->m_owner->getPlayerMovingSpeedBonusA() + this->getObjectMovingSpeedBonusA();}
+	float getMovingSpeedBonusA() const;
 	/** @brief Calculate total 'added attack speed bonuses'.
 	 *  @sa getNetArmor()
 	 */
-	float getAttackSpeedBonusA() const { return this->m_owner->getPlayerAttackSpeedBonusA() + this->getObjectAttackSpeedBonusA();}
+	float getAttackSpeedBonusA() const;
 	
 	/** @brief Calculate total 'multiplied armor bonuses'.
 	 *  @sa getNetArmor()
@@ -433,7 +365,7 @@ protected:
 private:
 	/** @name Unit owner related */
 	//@{
-	void setOwner(Player *new_owner) { this->m_owner = new_owner; }
+	void setOwner(const PlayerSPtr_t &new_owner) { this->m_owner = new_owner; }
 	/** @brief Attaches to current owner.
 	 *  @detail updates owner's suppliy statistics, etc.
 	 */
@@ -504,8 +436,7 @@ private:
 	/** @name Object owner/state/position etc. */
 	//@{
 	Game *m_game;
-	Player *m_owner;
-	ObjectType_t m_type;
+	PlayerSPtr_t m_owner;
 	ObjectState_t m_state;
 	Coordinate m_pos;
 	float m_angle;

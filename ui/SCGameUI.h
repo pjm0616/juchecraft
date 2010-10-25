@@ -1,27 +1,28 @@
 // Copyright (C) 2010 Park Jeongmin <pjm0616@gmail.com>
 // See LICENSE.txt for details
 
-/** @file ui/SCUserInterface.h
+/** @file ui/SCGameUI.h
  *  @brief Abstract user interface class
 **/
 
 
-#ifndef SCUserInterface_H_
-#define SCUserInterface_H_
+#ifndef SCGameUI_H_
+#define SCGameUI_H_
 
 namespace SC {
 
 //#define DRAW_OBJECTS_WITH_VIRTUAL_FXNS
 
-class UserInterface
+class GameUI
 {
 public:
-	UserInterface(Game *game)
-		:m_game(game)
+	GameUI(Game *game, const PlayerSPtr_t &player)
+		:m_game(game), 
+		m_player(player)
 	{
 		this->setFPS(20);
 	}
-	virtual ~UserInterface() {}
+	virtual ~GameUI() {}
 	
 	virtual bool initUI() = 0;
 	virtual bool cleanupUI() = 0;
@@ -34,8 +35,10 @@ public:
 	virtual void processFrame() = 0;
 	virtual void draw() = 0;
 	
-	// There's no point having an accessor for m_game.
+	// Uncomment this if you need a public accessor for m_game.
 	//Game *getGame() { return this->m_game; }
+	// Uncomment this if you need a public accessor for m_player.
+	//const PlayerSPtr_t &getPlayer() const { return this->m_player; }
 	
 protected:
 	void setFPS(unsigned int fps) { this->m_fps = fps; }
@@ -49,6 +52,7 @@ protected:
 	#endif
 	
 	Game *m_game;
+	PlayerSPtr_t m_player;
 	unsigned m_fps;
 };
 

@@ -12,11 +12,6 @@
 namespace SC {
 
 
-
-
-//typedef std::list<ObjectSPtr> ObjectList;
-typedef std::map<ObjectId_t, ObjectSPtr_t> ObjectMap;
-
 class ObjectList
 {
 public:

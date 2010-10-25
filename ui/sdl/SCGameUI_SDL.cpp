@@ -9,6 +9,7 @@
 #include <string>
 #include <list>
 #include <map>
+#include <vector>
 
 #include <cstdio>
 #include <cstring>
@@ -28,17 +29,18 @@ namespace SDL
 #include "defs.h"
 #include "compat.h"
 #include "luacpp/luacpp.h"
+#include "SCTypes.h"
 #include "SCException.h"
 #include "SCCoordinate.h"
-#include "SCPlayer.h"
 #include "SCObject.h"
 #include "SCObjectList.h"
 #include "SCObjectIdList.h"
 #include "SCObjectPrototypes.h"
+#include "SCPlayer.h"
 #include "SCGame.h"
 
-#include "ui/SCUserInterface.h"
-#include "ui/SCUserInterface_SDL.h"
+#include "ui/SCGameUI.h"
+#include "ui/sdl/SCGameUI_SDL.h"
 
 #if 1
 #include "libmpqgrp/grp.h"
@@ -64,16 +66,16 @@ static inline Uint32 convert_color_from_bgra_to_rgba(Uint32 color_in_bgra)
 	return (bswap32(color_in_bgra) >> 8) | (color_in_bgra & 0xff000000);
 }
 
-std::map<ObjectId_t, std::string> UserInterface_SDL::obj_images;
-bool UserInterface_SDL::is_initialized = false;
+std::map<ObjectId_t, std::string> GameUI_SDL::obj_images;
+bool GameUI_SDL::is_initialized = false;
 
 
 
 /* static */
-void UserInterface_SDL::load_resources(const char *dirpath)
+void GameUI_SDL::load_resources(const char *dirpath)
 {
 	(void)dirpath;
-	UserInterface_SDL::is_initialized = true;
+	GameUI_SDL::is_initialized = true;
 }
 
 
@@ -361,8 +363,8 @@ void render_grp_frame_to_surface(grp_data_t *grpdata, int framenum, SDL_Surface 
 ///////
 
 
-UserInterface_SDL::UserInterface_SDL(Game *game)
-	:UserInterface(game)
+GameUI_SDL::GameUI_SDL(Game *game, const PlayerSPtr_t &player)
+	:GameUI(game, player)
 {
 	// FIXME: hack
 #ifdef __WIN32__
@@ -372,14 +374,15 @@ UserInterface_SDL::UserInterface_SDL(Game *game)
 #endif
 	
 	this->clearCommandToBeOrdered();
+	this->m_selection_in_progress = false;
 }
 
-UserInterface_SDL::~UserInterface_SDL()
+GameUI_SDL::~GameUI_SDL()
 {
 	//this->cleanupUI();
 }
 
-bool UserInterface_SDL::initUI()
+bool GameUI_SDL::initUI()
 {
 	int ret;
 	
@@ -455,9 +458,8 @@ bool UserInterface_SDL::initUI()
 	return true;
 }
 
-bool UserInterface_SDL::cleanupUI()
+bool GameUI_SDL::cleanupUI()
 {
-	this->m_selected_objs.clear();
 	
 	// do SFileCloseArchive
 	// do free(g_grp_*)
@@ -482,18 +484,7 @@ bool UserInterface_SDL::cleanupUI()
 }
 
 
-bool UserInterface_SDL::isSelectedUnit(const ObjectSPtr_t &obj)
-{
-	for(ObjectList::const_iterator it = this->m_selected_objs.begin(); 
-		it != this->m_selected_objs.end(); ++it)
-	{
-		if(*it == obj)
-			return true;
-	}
-	return false;
-}
-
-void UserInterface_SDL::processFrame()
+void GameUI_SDL::processFrame()
 {
 	SDL_Event ev;
 	
@@ -543,8 +534,9 @@ void UserInterface_SDL::processFrame()
 			{
 				//fprintf(stderr, "move: %d, %d\n", ev.button.x, ev.button.y);
 				
-				for(ObjectList::const_iterator it = this->m_selected_objs.begin(); 
-					it != this->m_selected_objs.end(); ++it)
+				const ObjectList &selected_objs = this->m_player->getSelectedObjs();
+				for(ObjectList::const_iterator it = selected_objs.begin(); 
+					it != selected_objs.end(); ++it)
 				{
 					#if 0
 					if(0)
@@ -562,21 +554,22 @@ void UserInterface_SDL::processFrame()
 			{
 				if(this->getCommandToBeOrdered() == 2)
 				{
-					ObjectList selected_objs;
-					ObjectSPtr_t first = this->m_game->findObjectByRect(selected_objs, x, y, x+10, y+10);
+					ObjectList dummy;
+					ObjectSPtr_t first = this->m_game->findObjectByRect(dummy, x, y, x+10, y+10);
+					const ObjectList &selected_objs = this->m_player->getSelectedObjs();
 				
 					if(first)
 					{
-						for(ObjectList::const_iterator it = this->m_selected_objs.begin(); 
-							it != this->m_selected_objs.end(); ++it)
+						for(ObjectList::const_iterator it = selected_objs.begin(); 
+							it != selected_objs.end(); ++it)
 						{
 							(*it)->cmd_attack(first);
 						}
 					}
 					else
 					{
-						for(ObjectList::const_iterator it = this->m_selected_objs.begin(); 
-							it != this->m_selected_objs.end(); ++it)
+						for(ObjectList::const_iterator it = selected_objs.begin(); 
+							it != selected_objs.end(); ++it)
 						{
 							(*it)->cmd_move(Coordinate(x, y), Object::MovementFlags::AutomaticallyAttack);
 						}
@@ -602,11 +595,14 @@ void UserInterface_SDL::processFrame()
 				{
 					this->m_selection_in_progress = false;
 					Coordinate selection_end(x, y);
-					this->m_game->findObjectByRect(this->m_selected_objs, this->m_selection_start_coordinate, selection_end);
+					
+					ObjectList &selected_objs = this->m_player->getSelectedObjsForWriting();
+					this->m_game->findObjectByRect(selected_objs, this->m_selection_start_coordinate, selection_end);
+					
 					{
 						int stats[ObjectType::SIZE] = {0, };
-						for(ObjectList::const_iterator it = this->m_selected_objs.begin(); 
-							it != this->m_selected_objs.end(); ++it)
+						for(ObjectList::const_iterator it = selected_objs.begin(); 
+							it != selected_objs.end(); ++it)
 						{
 							const ObjectSPtr_t &obj = *it;
 							stats[obj->getObjectType()]++;
@@ -615,12 +611,12 @@ void UserInterface_SDL::processFrame()
 						/* 유닛이 하나 이상 있다면 유닛 빼고 다른 물체는 선택하지 않음 */
 						if(stats[ObjectType::Unit] > 0)
 						{
-							for(ObjectList::iterator it = this->m_selected_objs.begin(); 
-								it != this->m_selected_objs.end(); )
+							for(ObjectList::iterator it = selected_objs.begin(); 
+								it != selected_objs.end(); )
 							{
 								const ObjectSPtr_t &obj = *it;
 								if(obj->getObjectType() != ObjectType::Unit)
-									this->m_selected_objs.erase(it++);
+									selected_objs.erase(it++);
 								else
 									++it;
 							}
@@ -628,12 +624,12 @@ void UserInterface_SDL::processFrame()
 					}
 					if(this->m_selection_start_coordinate == selection_end)
 					{
-						ObjectList::iterator end = this->m_selected_objs.end();
-						ObjectList::iterator it = this->m_selected_objs.begin();
+						ObjectList::iterator end = selected_objs.end();
+						ObjectList::iterator it = selected_objs.begin();
 						if(it != end)
 							++it;
 						while(it != end)
-							this->m_selected_objs.erase(it++);
+							selected_objs.erase(it++);
 					}
 				}
 			}
@@ -650,7 +646,7 @@ void UserInterface_SDL::processFrame()
 }
 
 #define MAP_COLOR 0xff808080
-void UserInterface_SDL::draw()
+void GameUI_SDL::draw()
 {
 	SDL_FillSurfaceP(this->m_screen, 0, 0, 640, 480, 0x00000000); // 0xffffff
 	
@@ -685,11 +681,11 @@ void UserInterface_SDL::draw()
 }
 
 
-void UserInterface_SDL::drawUI()
+void GameUI_SDL::drawUI()
 {
 	char buf[512];
 	Game *game = this->m_game;
-	Player *me = &Player::Players[1];
+	const PlayerSPtr_t &me = this->m_player;
 	RaceId_t my_raceid = me->getRaceId();
 	
 	// 640-572=68
@@ -793,7 +789,7 @@ void UserInterface_SDL::drawUI()
 
 
 
-void UserInterface_SDL::drawUI_MinimapWnd()
+void GameUI_SDL::drawUI_MinimapWnd()
 {
 	// t-l: 6, 348
 	// t-r: 133 348
@@ -822,10 +818,11 @@ void UserInterface_SDL::drawUI_MinimapWnd()
 	}
 }
 
-void UserInterface_SDL::drawUI_UnitStatWnd()
+void GameUI_SDL::drawUI_UnitStatWnd()
 {
-	SC::ObjectList::iterator it = this->m_selected_objs.begin();
-	while(it != this->m_selected_objs.end())
+	const ObjectList &selected_objs = this->m_player->getSelectedObjs();
+	SC::ObjectList::const_iterator it = selected_objs.begin();
+	while(it != selected_objs.end())
 	{
 		const ObjectSPtr_t &obj = *it++;
 		if(obj->isRemovedFromGame() == true) // warning: hack
@@ -852,19 +849,19 @@ void UserInterface_SDL::drawUI_UnitStatWnd()
 	}
 }
 
-void UserInterface_SDL::drawUI_ButtonsWnd()
+void GameUI_SDL::drawUI_ButtonsWnd()
 {
 	
 }
 
-void UserInterface_SDL::drawMap()
+void GameUI_SDL::drawMap()
 {
 	
 }
 
-const std::string *UserInterface_SDL::getObjectImg(ObjectId_t id) const
+const std::string *GameUI_SDL::getObjectImg(ObjectId_t id) const
 {
-	const std::map<ObjectId_t, std::string> &obj_imgs = UserInterface_SDL::obj_images;
+	const std::map<ObjectId_t, std::string> &obj_imgs = GameUI_SDL::obj_images;
 	std::map<ObjectId_t, std::string>::const_iterator it = obj_imgs.find(id);
 	if(it == obj_images.end())
 		return NULL;
@@ -924,12 +921,12 @@ static int calculate_unit_framenum(const ObjectSPtr_t &obj, int attack_start, in
 	return framenum;
 }
 
-void UserInterface_SDL::drawObject(const ObjectSPtr_t &obj)
+void GameUI_SDL::drawObject(const ObjectSPtr_t &obj)
 {
-	Player *player = &Player::Players[1];
+	const PlayerSPtr_t &player = this->m_player;
 	int x, y, w, h;
 	ObjectId_t objid = obj->getObjectId();
-	Player *owner = obj->getOwner();
+	const PlayerSPtr_t &owner = obj->getOwner();
 	obj->getPosition(&x, &y);
 	obj->getSize(&w, &h);
 	
@@ -956,11 +953,11 @@ void UserInterface_SDL::drawObject(const ObjectSPtr_t &obj)
 	}
 	else
 	{
-		if(this->isSelectedUnit(obj))
+		if(this->m_player->isSelectedObject(obj))
 		{
 			if(owner == player)
 				ellipseRGBA(this->m_game_scr, x+w/2, y+h/2 +1, w/2 +1, h/2 +1, 0, 255, 0, 255);
-			else if(owner == &Player::Players[Player::NeutralPlayer])
+			else if(owner->getRaceId() == RaceId::Neutral)
 				ellipseRGBA(this->m_game_scr, x+w/2, y+h/2 +1, w/2 +1, h/2 +1, 255, 255, 0, 255);
 			else
 				ellipseRGBA(this->m_game_scr, x+w/2, y+h/2 +1, w/2 +1, h/2 +1, 255, 0, 0, 255);
@@ -1052,7 +1049,7 @@ void UserInterface_SDL::drawObject(const ObjectSPtr_t &obj)
 
 
 #ifndef DRAW_OBJECTS_WITH_VIRTUAL_FXNS
-void UserInterface_SDL::drawObjects()
+void GameUI_SDL::drawObjects()
 {
 	ObjectList &objs = this->m_game->getObjectList();
 	

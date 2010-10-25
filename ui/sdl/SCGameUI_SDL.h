@@ -1,8 +1,8 @@
 // Copyright (C) 2010 Park Jeongmin <pjm0616@gmail.com>
 // See LICENSE.txt for details
 
-#ifndef SCUserInterface_SDL_H_
-#define SCUserInterface_SDL_H_
+#ifndef SCGameUI_SDL_H_
+#define SCGameUI_SDL_H_
 
 namespace SDL
 {
@@ -15,14 +15,14 @@ namespace SDL
 namespace SC {
 
 
-class UserInterface_SDL: public UserInterface
+class GameUI_SDL: public GameUI
 {
 public:
 	// dirpath: "./res/ui/sdl/object/"
 	static void load_resources(const char *dirpath);
 	
-	UserInterface_SDL(Game *game);
-	virtual ~UserInterface_SDL();
+	GameUI_SDL(Game *game, const PlayerSPtr_t &player);
+	virtual ~GameUI_SDL();
 	
 	virtual bool initUI();
 	virtual bool cleanupUI();
@@ -43,7 +43,6 @@ protected:
 	#endif
 	
 private:
-	bool isSelectedUnit(const ObjectSPtr_t &obj);
 	void setCommandToBeOrdered(int cmd) { this->m_command_to_be_ordered = cmd; }
 	void clearCommandToBeOrdered() { this->m_command_to_be_ordered = 0; }
 	int getCommandToBeOrdered() const { return this->m_command_to_be_ordered; }
@@ -51,7 +50,6 @@ private:
 	// FIXME: use accessor, mutators
 	bool m_selection_in_progress;
 	Coordinate m_selection_start_coordinate;
-	ObjectList m_selected_objs;
 	
 	int m_command_to_be_ordered;
 	

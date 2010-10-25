@@ -7,19 +7,20 @@
 #include <string>
 #include <list>
 #include <map>
-
+#include <vector>
 #include <cstdio>
 #include <cstring>
 
 #include "defs.h"
 #include "luacpp/luacpp_lua.h"
 #include "luacpp/luacpp.h"
+#include "SCTypes.h"
 #include "SCException.h"
 #include "SCCoordinate.h"
-#include "SCPlayer.h"
 #include "SCObject.h"
 #include "SCObjectList.h"
 #include "SCObjectPrototypes.h"
+#include "SCPlayer.h"
 
 using namespace SC;
 
@@ -147,6 +148,29 @@ void ObjectPrototypes::parseObjectData(Object *obj, int stack_idx)
 	#undef SET_OBJ_PROPERTY_NUMBER
 	#undef SET_OBJ_PROPERTY_STRING
 }
+
+
+
+ObjectSPtr_t ObjectPrototypes::newObjectById(ObjectId_t id)
+{
+	const ObjectSPtr_t &proto = this->findObjectById(id);
+	if(!proto)
+		throw new Exception("Cannot find object prototype");
+	return ObjectSPtr_t(proto->duplicate());
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

@@ -5,7 +5,7 @@ DEBUG				?= 1
 CROSSC				=
 
 SRCS_LIBMPQ			= libs/libmpq/SComp/SComp.cpp libs/libmpq/SComp/SErr.cpp libs/libmpq/SComp/SMem.cpp libs/libmpq/SComp/crc32.c libs/libmpq/SComp/explode.c libs/libmpq/SComp/huffman.cpp libs/libmpq/SComp/implode.c libs/libmpq/SComp/wave.cpp libs/libmpq/SFmpqapi/MpqBlockTable.cpp libs/libmpq/SFmpqapi/MpqCrypt.cpp libs/libmpq/SFmpqapi/MpqHashTable.cpp libs/libmpq/SFmpqapi/SFUtil.cpp libs/libmpq/SFmpqapi/SFmpqapi.cpp libs/libmpq/SFmpqapi/windows.cpp
-SRCS_UI				= ui/SCUserInterface.cpp ui/SCUserInterface_ncurses.cpp ui/SCUserInterface_SDL.cpp
+SRCS_UI				= ui/SCGameUI.cpp ui/sdl/SCGameUI_SDL.cpp ui/ncurses/SCGameUI_ncurses.cpp
 SRCS				= libs/libmpqgrp/grp.cpp libs/luacpp/luacpp.cpp $(SRCS_UI) $(SRCS_LIBMPQ) SCCoordinate.cpp SCObject.cpp SCPlayer.cpp SCObjectList.cpp SCObjectPrototypes.cpp SCGame.cpp main.cpp
 TARGET1				= mini_sc
 

@@ -8,12 +8,14 @@
 #include <string>
 #include <algorithm>
 #include <map>
+#include <vector>
 
 #include "defs.h"
+#include "SCTypes.h"
 #include "SCCoordinate.h"
-#include "SCPlayer.h"
 #include "SCObject.h"
 #include "SCObjectList.h"
+#include "SCPlayer.h"
 
 using namespace SC;
 

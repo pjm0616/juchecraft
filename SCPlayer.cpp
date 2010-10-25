@@ -1,43 +1,42 @@
 // Copyright (C) 2010 Park Jeongmin <pjm0616@gmail.com>
 // See LICENSE.txt for details
 
+#include "config.h"
+
+#ifdef __WIN32__
+#include <windows.h>
+#endif
+
+#include "smart_ptrs.h"
+#include <string>
+#include <list>
+#include <map>
+#include <vector>
+#include <cassert>
+
+#ifdef DEBUG
+#include <cstdio>
+#include <cstdlib>
+#endif
+
+#ifndef __WIN32__
+#include <sys/time.h>
+#endif
+
+#include "defs.h"
+#include "compat.h"
+#include "luacpp/luacpp.h"
+#include "SCTypes.h"
+#include "SCException.h"
+#include "SCCoordinate.h"
+#include "SCObject.h"
+#include "SCObjectList.h"
+#include "SCObjectIdList.h"
+#include "SCObjectPrototypes.h"
 #include "SCPlayer.h"
+#include "SCGame.h"
 
 using namespace SC;
-
-
-bool Player::ms_is_initialized = false;
-Player Player::Players[Player::MAX_PLAYER + 1];
-
-void Player::initialize()
-{
-	// 0xRRGGBB
-	static unsigned int player_colors[] = {
-		0x000000, // Black, Neutral
-		0xff0000, // Red
-		0x0000ff, // Blue
-		0x008080, // Teal
-		0x800080, // Purple
-		0xffa500, // Orange
-		0xa52a2a, // Brown
-		0xffffff, // White
-		0xffff00, // Yellow
-	};
-	
-	for(int i = 0; i < Player::MAX_PLAYER + 1; i++)
-	{
-		Player &player = Player::Players[i];
-		
-		player.setPlayerId(i);
-		player.setPlayerColor(player_colors[i]);
-		
-		if(i == Player::NeutralPlayer)
-			player.setRace(RaceId::Neutral);
-		else
-			player.setRace(RaceId::Terran);
-	}
-	Player::ms_is_initialized = true;
-}
 
 
 
@@ -45,6 +44,10 @@ void Player::initialize()
 
 Player::Player()
 {
+	this->setPlayerId(-1);
+	this->setPlayerColor(0x000000);
+	this->setRace(RaceId::None);
+	
 	this->setMinerals(0);
 	this->setVespeneGas(0);
 	for(int i = 0; i < RaceId::Size; i++)
@@ -55,10 +58,21 @@ Player::Player()
 	
 	this->setPlayerArmorBonusA(0.0);
 	this->setPlayerDamageBonusA(0.0);
+	this->setPlayerMovingSpeedBonusA(0.0);
+	this->setPlayerAttackSpeedBonusA(0.0);
 }
 
 
-
+bool Player::isSelectedObject(const ObjectSPtr_t &obj) const
+{
+	for(ObjectList::const_iterator it = this->m_selected_objs.begin(); 
+		it != this->m_selected_objs.end(); ++it)
+	{
+		if(*it == obj)
+			return true;
+	}
+	return false;
+}
 
 
 

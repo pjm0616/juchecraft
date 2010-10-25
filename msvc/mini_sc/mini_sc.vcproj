@@ -206,17 +206,17 @@
 				Name="ui"
 				>
 				<File
-					RelativePath="..\..\ui\SCUserInterface.cpp"
+					RelativePath="..\..\ui\SCGameUI.cpp"
 					>
 				</File>
-				<File
-					RelativePath="..\..\ui\SCUserInterface_ncurses.cpp"
+				<Filter
+					Name="sdl"
 					>
-				</File>
-				<File
-					RelativePath="..\..\ui\SCUserInterface_SDL.cpp"
-					>
-				</File>
+					<File
+						RelativePath="..\..\ui\sdl\SCGameUI_SDL.cpp"
+						>
+					</File>
+				</Filter>
 			</Filter>
 			<Filter
 				Name="libs"
@@ -496,21 +496,29 @@
 				RelativePath="..\..\SCPlayer.h"
 				>
 			</File>
+			<File
+				RelativePath="..\..\SCTypes.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\smart_ptrs.h"
+				>
+			</File>
 			<Filter
 				Name="ui"
 				>
 				<File
-					RelativePath="..\..\ui\SCUserInterface.h"
+					RelativePath="..\..\ui\SCGameUI.h"
 					>
 				</File>
-				<File
-					RelativePath="..\..\ui\SCUserInterface_ncurses.h"
+				<Filter
+					Name="sdl"
 					>
-				</File>
-				<File
-					RelativePath="..\..\ui\SCUserInterface_SDL.h"
-					>
-				</File>
+					<File
+						RelativePath="..\..\ui\sdl\SCGameUI_SDL.h"
+						>
+					</File>
+				</Filter>
 			</Filter>
 			<Filter
 				Name="objects"
