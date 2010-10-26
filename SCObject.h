@@ -399,7 +399,7 @@ private:
 	Coordinate calculateMovementSpeed(float time);
 	/** @brief Processes movement.
 	 *  @detail Called by game main loop.
-	 *  @param[in] time this->game->getFrameDelta()
+	 *  @param[in] time this->game->getDelta()
 	 */
 	bool doMovement(float time);
 	void stopMoving();
@@ -422,7 +422,7 @@ private:
 	bool checkMinDistance(const ObjectSPtr_t &target, float min_distance, Coordinate *where_to_move);
 	/** @brief Processes attack.
 	 *  @detail Called by game main loop.
-	 *  @param[in] time this->game->getFrameDelta()
+	 *  @param[in] time this->game->getDelta()
 	 */
 	bool doAttack(float time);
 	void stopAttacking();
