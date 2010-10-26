@@ -327,12 +327,7 @@ void render_grp_frame_to_surface(grp_data_t *grpdata, int framenum, SDL_Surface 
 GameUI_SDL::GameUI_SDL(Game *game, const PlayerSPtr_t &player)
 	:GameUI(game, player)
 {
-	// FIXME: hack
-#ifdef __WIN32__
-	this->setFPS(30); // 30 fps
-#else
-	this->setFPS(100); // 30 fps
-#endif
+	this->setFPS(100); // i want to set to 30 fps, but..
 	
 	this->clearCommandToBeOrdered();
 	this->m_selection_in_progress = false;
