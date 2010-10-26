@@ -145,10 +145,20 @@ public:
 	//@}
 	
 	const ObjectList &getSelectedObjs() const { return this->m_selected_objs; }
-	ObjectList &getSelectedObjsForWriting() { return this->m_selected_objs; }
+	//ObjectList &getSelectedObjsForWriting() { return this->m_selected_objs; }
 	bool isSelectedObject(const ObjectSPtr_t &obj) const;
 	void clearSelectedObjectList() { this->m_selected_objs.clear(); }
-	
+	struct SelectFlags
+	{
+		enum
+		{
+			SET, 
+			ADD, 
+			DEL
+		};
+	};
+	typedef unsigned int SelectFlags_t;
+	size_t selectObjects(const Coordinate &coord1, const Coordinate &coord2, SelectFlags_t flags = SelectFlags::SET);
 	
 //protected:
 	/** @brief Set player's race
