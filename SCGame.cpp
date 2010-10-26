@@ -156,13 +156,13 @@ void Game::run()
 		this->processObjects();
 		this->m_ui->processFrame();
 		
-		double process_finished_time = this->getElapsedTime();
+		double process_finished_time = start_time; // this->getElapsedTime();
 		if(process_finished_time - this->getLastDrawTime() > fixed_frame_deltat)
 		{
 			this->m_ui->draw();
 			
 			this->increaseFrameNumber();
-			double draw_finished_time = this->getElapsedTime();
+			double draw_finished_time = start_time; // this->getElapsedTime();
 			this->setFrameDelta(draw_finished_time - this->getLastDrawTime());
 			this->setLastDrawTime(draw_finished_time);
 		}
