@@ -162,7 +162,11 @@ void Game::run()
 			this->m_ui->draw();
 			
 			this->increaseFrameNumber();
-			double draw_finished_time = start_time; // this->getElapsedTime();
+			#if 0
+			double draw_finished_time = start_time;
+			#else
+			double draw_finished_time = this->getElapsedTime();
+			#endif
 			this->setFrameDelta(draw_finished_time - this->getLastDrawTime());
 			this->setLastDrawTime(draw_finished_time);
 		}
