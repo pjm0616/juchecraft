@@ -9,8 +9,8 @@ SRCS_UI				= ui/SCGameUI.cpp ui/sdl/SCGameUI_SDL.cpp ui/ncurses/SCGameUI_ncurses
 SRCS				= libs/libmpqgrp/grp.cpp libs/luacpp/luacpp.cpp $(SRCS_UI) $(SRCS_LIBMPQ) SCCoordinate.cpp SCObject.cpp SCPlayer.cpp SCObjectList.cpp SCObjectPrototypes.cpp SCGame.cpp main.cpp
 TARGET1				= mini_sc
 
-DEFS				= -D_FILE_OFFSET_BITS=64
-LIBS				= ./libs/lua/src/liblua.a -lSDL -lSDL_ttf -lSDL_image -lSDL_gfx -lz -lbz2 -lncursesw
+DEFS				= -D_REENTRANT -fopenmp -D_FILE_OFFSET_BITS=64
+LIBS				= -fopenmp ./libs/lua/src/liblua.a -lSDL -lSDL_ttf -lSDL_image -lSDL_gfx -lz -lbz2 -lncursesw
 INCLUDEDIR			= -I. -Ilibs/lua/src -Ilibs -Ilibs/libmpq/SFmpqapi
 LIBDIR				=
 
@@ -45,7 +45,7 @@ UNZIP				=unzip
 
 CFLAGS				= $(DEFS) $(CFLAGS_DBG) $(INCLUDEDIR) \
 						-std=gnu99 -finline-functions -Wall -Wextra -Wno-unused -Wno-unused-function #-Wextra -Wshadow
-CXXFLAGS			= $(CXXFLAGS_DBG) $(INCLUDEDIR) \
+CXXFLAGS			= $(DEFS) $(CXXFLAGS_DBG) $(INCLUDEDIR) \
 						-std=gnu++98 -finline-functions -Wall -Wextra -Wno-unused -Wno-unused-function #-Wextra -Wshadow
 LDFLAGS				= $(LDFLAGS_DBG) $(LIBDIR)
 #OBJS				=$(SRCS:.cpp=.o) 
@@ -58,7 +58,7 @@ all:	lua resources $(TARGET1)
 .SUFFIXES: .c .o
 .c.o:
 	@echo CC $<
-	@$(CC) -c $(CFLAGS) -o $@ $<
+	@@$(CC) -c $(CFLAGS) -o $@ $<
 
 .SUFFIXES: .cpp .o
 .cpp.o:
@@ -67,7 +67,7 @@ all:	lua resources $(TARGET1)
 
 $(TARGET1):     $(OBJS)
 	@echo LD $@
-	$(LD) -o $@ $(LDFLAGS) $(OBJS) $(LIBS)
+	@$(LD) -o $@ $(LDFLAGS) $(OBJS) $(LIBS)
 
 lua:
 	make -C ./libs/lua/src linux

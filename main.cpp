@@ -22,6 +22,10 @@
 # include <windows.h>
 #endif
 
+#ifdef _OPENMP
+# include <omp.h>
+#endif
+
 #include "defs.h"
 #include "compat.h"
 #include "luacpp/luacpp.h"
@@ -44,6 +48,10 @@ int main(int argc, char *argv[])
 {
 	//std::setlocale(LC_ALL, "");
 	std::setlocale(LC_ALL, "en_US.utf8");
+	
+	#ifdef _OPENMP
+	omp_set_num_threads(omp_get_max_threads());
+	#endif
 	
 	srand48(time(NULL) ^ getpid());
 	

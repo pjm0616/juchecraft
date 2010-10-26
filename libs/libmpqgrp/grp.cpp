@@ -144,16 +144,17 @@ static void grp_set_pixel(grp_pixel_funcs_t *pixelfuncs, void *dest, int x, int 
 		uint32_t u32;
 		uint8_t u8[4];
 	} color, alpha, backcolor;
-	
 	alpha.u32 = alphaval;
 	
+#if 0
 	if(!(flags & USE_INDEX))
+#endif
 	{
 		if(flags & SHADOW_COLOR)
 			color.u32 = (flags >> 8) & 0x00FFFFFF;
 		else
 			color.u32 = palette_data[pal_color];
-		
+#if 0
 		if(flags & ALPHA_BLEND)
 		{
 			assert(!"Alpha blending in libgrp is disabled");
@@ -165,6 +166,7 @@ static void grp_set_pixel(grp_pixel_funcs_t *pixelfuncs, void *dest, int x, int 
 								+ ((backcolor.u8[i] * (256 - alpha.u8[i])) >> 8);
 			}
 		}
+#endif
 	}
 	
 	pixelfuncs->set_pixel(dest, x, y, color.u32);

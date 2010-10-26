@@ -17,6 +17,10 @@
 #include <inttypes.h>
 #include <cassert>
 
+#ifdef _OPENMP
+#include <omp.h>
+#endif
+
 namespace SDL
 {
 #include <SDL/SDL.h>
@@ -95,62 +99,26 @@ static inline void SDL_UnlockSurfaceIfNeeded(SDL_Surface *sf)
 		SDL_UnlockSurface(sf);
 }
 
-inline Uint32 *SDL_GetPixelPtr32(SDL_Surface *sf, int x, int y)
+static inline Uint32 *SDL_GetPixelPtr32(SDL_Surface *sf, int x, int y)
 {
 	return (Uint32 *)sf->pixels + y*sf->pitch/4 + x;
 }
-
-void DrawPixel(SDL_Surface *screen, int x, int y, Uint8 R, Uint8 G, Uint8 B)
+static inline void SDL_SetPixel32(SDL_Surface *sf, int x, int y, Uint32 color)
 {
-	Uint32 color = SDL_MapRGB(screen->format, R, G, B);
-	
-	//if(SDL_LockSurfaceIfNeeded(screen) < 0)
-	//	return;
-	
-	#if 0
-	switch (screen->format->BytesPerPixel)
-	{
-	case 1: { /* Assuming 8-bpp */
-		Uint8 *bufp;
-
-		bufp = (Uint8 *)screen->pixels + y*screen->pitch + x;
-		*bufp = color;
-		break;
-	}
-
-	case 2: { /* Probably 15-bpp or 16-bpp */
-		Uint16 *bufp;
-
-		bufp = (Uint16 *)screen->pixels + y*screen->pitch/2 + x;
-		*bufp = color;
-		break;
-	}
-
-	case 3: { /* Slow 24-bpp mode, usually not used */
-		Uint8 *bufp;
-
-		bufp = (Uint8 *)screen->pixels + y*screen->pitch + x;
-		*(bufp+screen->format->Rshift/8) = R;
-		*(bufp+screen->format->Gshift/8) = G;
-		*(bufp+screen->format->Bshift/8) = B;
-		break;
-	}
-
-	case 4: { /* Probably 32-bpp */
-	#endif
-		Uint32 *bufp;
-
-		bufp = (Uint32 *)screen->pixels + y*screen->pitch/4 + x;
-		*bufp = color;
-	#if 0
-		break;
-	}}
-	#endif
-	
-	//SDL_UnLockSurfaceIfNeeded(screen);
-	//SDL_UpdateRect(screen, x, y, 1, 1);
+	Uint32 *pixel = SDL_GetPixelPtr32(sf, x, y);
+	*pixel = color;
 }
-
+static inline Uint32 SDL_MapRGBA32(Uint8 r, Uint8 g, Uint8 b, Uint8 a)
+{
+	return (a << 24) | (b << 16) | (g << 8) | (r);
+}
+static inline void SDL_GetRGBA32(Uint32 color, Uint8 *r, Uint8 *g, Uint8 *b, Uint8 *a)
+{
+	*r = (color & 0x000000ff) >> 0;
+	*g = (color & 0x0000ff00) >> 8;
+	*b = (color & 0x00ff0000) >> 16;
+	*a = (color & 0xff000000) >> 24;
+}
 
 static void SDL_FillSurfaceP(SDL_Surface *sf, int x, int y, int w, int h, unsigned int color)
 {
@@ -180,23 +148,14 @@ static void SDL_print(TTF_Font *font, SDL_Surface *sf, int x, int y, int w, int 
 
 static void grp_setpix(void *surface, int x, int y, Uint32 color)
 {
-	Uint8 r = color&0xFF, g = (color&0xFF00)>>8, b = (color&0xFF0000)>>16;
-	
-	//printf("%d\t%d\t\t%d\t%d\t%d\n", x, y, r, g, b);
-	//if(r==0xff && g==0x00 && b==0xff){
-	//	r=0x00;b=0xff;g=0x00;
-	//}else if(r==0xde && g==0x00 && b==0xde){
-	//	r=0x00;b=0xff;g=0x00;
-	//}
-	
-	return DrawPixel((SDL_Surface *)surface, x, y, r, g, b);
+	SDL_SetPixel32((SDL_Surface *)surface, x, y, (color | 0xff000000));
 }
 static grp_pixel_funcs g_grp_pixelfuncs={grp_setpix, NULL};
 
 
 static void grp_setpix_wirefram_green(void *surface, int x, int y, Uint32 color)
 {
-	return DrawPixel((SDL_Surface *)surface, x, y, 0, 255, 0);
+	SDL_SetPixel32((SDL_Surface *)surface, x, y, 0xff00ff00);
 }
 static grp_pixel_funcs g_grp_pixelfuncs_wirefram_green={grp_setpix_wirefram_green, NULL};
 ////
@@ -238,6 +197,7 @@ SDL_Surface *render_grp_frame_flipped(grp_data_t *grpdata, int framenum, bool do
 	
 	if(do_hflip)
 	{
+		#pragma omp parallel for if(h > 300) shared(sf, w, h)
 		for(int y = 0; y < h; y++)
 		{
 			Uint32 *line = SDL_GetPixelPtr32(sf, 0, y);
@@ -252,9 +212,11 @@ SDL_Surface *render_grp_frame_flipped(grp_data_t *grpdata, int framenum, bool do
 	if(do_vflip)
 	{
 		int ymod = sf->pitch/4;
+		#pragma omp parallel for if(w > 300) shared(sf, w, h)
 		for(int x = 0; x < w; x++)
 		{
 			Uint32 *col = (Uint32 *)sf->pixels + x;
+			// todo: optimize this
 			for(int y = 0; y < h/2; y++)
 			{
 				Uint32 tmp = col[y*ymod];
@@ -268,6 +230,7 @@ SDL_Surface *render_grp_frame_flipped(grp_data_t *grpdata, int framenum, bool do
 }
 
 /* 유닛 색상을 비율에 따라 바꿔줌 */
+// This is slow :(
 void replace_unit_colors(SDL_Surface *sf, Uint32 newcolor)
 {
 	//static const Uint32 orig_unit_colors[] = {0xde00de, 0x5b005b, 0xbd00bd, 0x9c009c, 0x7c007c, 0x190019, 0xff00ff, 0x3a003a};
@@ -275,42 +238,43 @@ void replace_unit_colors(SDL_Surface *sf, Uint32 newcolor)
 	Uint8 nc_g = (newcolor & 0x00ff00) >> 8;
 	Uint8 nc_b = (newcolor & 0xff0000) >> 16;
 	
+	#pragma omp parallel for if(sf->h > 200) shared(sf)
 	for(int y = 0; y < sf->h; y++)
 	{
 		Uint32 *line = SDL_GetPixelPtr32(sf, 0, y);
 		for(int x = 0; x < sf->w; x++)
 		{
 			Uint8 r, g, b, a;
-			SDL_GetRGBA(line[x], sf->format, &r, &g, &b, &a);
+			SDL_GetRGBA32(line[x], &r, &g, &b, &a);
 			if(r != 0 && g == 0 && r == b)
 			{
 				// 0xff:orig_r = player_[rgb]:rendered_[rgb]
 				Uint8 r2 = r * nc_r / 0xff;
 				Uint8 g2 = r * nc_g / 0xff;
 				Uint8 b2 = r * nc_b / 0xff;
-				line[x] = SDL_MapRGBA(sf->format, r2, g2, b2, a);
+				line[x] = SDL_MapRGBA32(r2, g2, b2, a);
 			}
 		}
 	}
 }
 
-#define SHADOW_MAGIC_COLOR 0x00ef00ef
+#define SHADOW_MAGIC_COLOR 0xef00ef
+#define SHADOW_MAGIC_COLOR_RGBA 0xffef00ef
 void render_shadow_image(SDL_Surface *sf)
 {
+	#pragma omp parallel for if(sf->h > 300) shared(sf)
 	for(int y = 0; y < sf->h; y++)
 	{
 		Uint32 *line = SDL_GetPixelPtr32(sf, 0, y);
 		for(int x = 0; x < sf->w; x++)
 		{
-			Uint8 r, g, b, a;
-			SDL_GetRGBA(line[x], sf->format, &r, &g, &b, &a);
-			if((b<<16 | g<<8 | r) == SHADOW_MAGIC_COLOR)
-				line[x] = SDL_MapRGBA(sf->format, 0x00, 0x00, 0x00, 0xe0);
+			if(line[x] == SHADOW_MAGIC_COLOR_RGBA)
+				line[x] = 0xe0000000; // black with alpha 0xe0
 		}
 	}
 }
 
-// this is VERY slow.
+// this is VERY slow
 void render_grp_frame_to_surface(grp_data_t *grpdata, int framenum, SDL_Surface *dest_sf, int x, int y, 
 	int opt_align_w = -1, int opt_align_h = -1, bool do_hflip = false, bool do_yflip = false, 
 	Uint32 new_unit_color = 0x00000000, unsigned int grpflags = 0)
@@ -339,9 +303,6 @@ void render_grp_frame_to_surface(grp_data_t *grpdata, int framenum, SDL_Surface 
 	}
 	
 	SDL_Rect rmodel_rect = {frame_left, frame_top, frame->width, frame->height};
-	
-	
-	
 	SDL_Rect dest_rect = {new_x, new_y, frame->width, frame->height};
 	//if(opt_align_w > 0)
 	//	dest_rect.x -= (frame->width - opt_align_w);
@@ -386,9 +347,9 @@ bool GameUI_SDL::initUI()
 {
 	int ret;
 	
-	if(SDL_Init(SDL_INIT_VIDEO | SDL_INIT_NOPARACHUTE) < 0)
+	if(unlikely(SDL_Init(SDL_INIT_VIDEO | SDL_INIT_NOPARACHUTE) < 0))
 		throw new Exception("SDL_Init() failed");
-	if(TTF_Init() < 0)
+	if(unlikely(TTF_Init() < 0))
 		throw new Exception("TTF_Init() failed");
 	
 	SDL_Surface *screen;

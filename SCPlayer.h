@@ -145,7 +145,7 @@ public:
 	//@}
 	
 	const ObjectList &getSelectedObjs() const { return this->m_selected_objs; }
-	//ObjectList &getSelectedObjsForWriting() { return this->m_selected_objs; }
+	ObjectList &getSelectedObjsForWriting() { return this->m_selected_objs; }
 	bool isSelectedObject(const ObjectSPtr_t &obj) const;
 	void clearSelectedObjectList() { this->m_selected_objs.clear(); }
 	struct SelectFlags
