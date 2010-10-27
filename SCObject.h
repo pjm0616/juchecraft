@@ -36,7 +36,7 @@ public:
 	 *  @details this->m_game must be fully initialized before calling this function.
 	 */
 	void init();
-	/** @brief initializes the object after ctor.
+	/** @brief cleans up the object before dtor.
 	 *  @details cleanup() performs some initialization that uses virtual functions.
 	 */
 	void cleanup();

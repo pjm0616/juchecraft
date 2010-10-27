@@ -1,3 +1,6 @@
+// Copyright (C) 2010 Park Jeongmin <pjm0616@gmail.com>
+// See LICENSE.txt for details
+
 #ifndef SCTypes_H_
 #define SCTypes_H_
 

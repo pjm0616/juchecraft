@@ -1,3 +1,6 @@
+// Copyright (C) 2010 Park Jeongmin <pjm0616@gmail.com>
+// See LICENSE.txt for details
+
 #ifndef SCObjectPrototypes_H_
 #define SCObjectPrototypes_H_
 
