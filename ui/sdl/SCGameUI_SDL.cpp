@@ -276,12 +276,12 @@ void render_shadow_image(SDL_Surface *sf)
 
 // this is VERY slow
 void render_grp_frame_to_surface(grp_data_t *grpdata, int framenum, SDL_Surface *dest_sf, int x, int y, 
-	int opt_align_w = -1, int opt_align_h = -1, bool do_hflip = false, bool do_yflip = false, 
+	int opt_align_w = -1, int opt_align_h = -1, bool do_hflip = false, bool do_vflip = false, 
 	Uint32 new_unit_color = 0x00000000, unsigned int grpflags = 0)
 {
 	grp_frameheader_t *frame = grp_get_frame_info(grpdata, framenum);
 	
-	SDL_Surface *rmodel = render_grp_frame_flipped(grpdata, framenum, do_hflip, do_yflip, grpflags);
+	SDL_Surface *rmodel = render_grp_frame_flipped(grpdata, framenum, do_hflip, do_vflip, grpflags);
 	
 	int new_x = x, new_y = y;
 	int frame_left = frame->left, frame_top = frame->top;
@@ -294,7 +294,7 @@ void render_grp_frame_to_surface(grp_data_t *grpdata, int framenum, SDL_Surface 
 			new_x -= (frame->left - new_left);
 			frame_left = new_left;
 		}
-		if(do_yflip)
+		if(do_vflip)
 		{
 			int new_top = (grpinfo->max_height-1) - (frame->top+frame->height);
 			new_y -= (frame->top - new_top);
