@@ -57,11 +57,10 @@ int main(int argc, char *argv[])
 	
 	try
 	{
-		// TODO: 지금의 SC::UserInterface 는 게임 UI 전용.
-		// 따라서 게임 시작 전 메뉴/맵 선택 등의 화면을 만들 수 없음. 그러니까 
-		// SC::GameUserInterface 로 분리하던지
-		// SC::UserInterface 를 개편하던지
-		// 택 1
+		/* TODO: SC::GameUI is dedicated to Game UI. 
+		 * In order to implement game main screen, menus, game lobby, etc we need to change current design.
+		 * Create a base class for all UIs, and implement game main screen class etc.
+		 */
 		
 		SC::Game game;
 		game.setMapSize(640*2, 480*2);

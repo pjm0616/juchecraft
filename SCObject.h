@@ -197,7 +197,7 @@ public:
 	bool cmd_attack(const ObjectSPtr_t &target);
 	
 	const ObjectSPtr_t &getAttackTarget() const { return this->m_attack_target; }
-	double getLastAttackTime() const { return this->m_last_attack_time; } /**< 공격중인 시간을 기준으로 마지막 공격 시각 */
+	double getLastAttackTime() const { return this->m_last_attack_time; }
 	//@}
 	
 	/** @name Unit states */
@@ -397,9 +397,12 @@ private:
 	void setMovementFlags(MovementFlags_t type, bool onoff);
 	MovementFlags_t getMovementFlags() const { return this->m_movement_flags; }
 	bool getMovementFlag(MovementFlags_t type) const { return this->getMovementFlags() & type; }
-	// this와 dest간의 거리가 min_distance 이하일 경우 return true
-	// 그렇지 않을 경우 where_to_move에 이동해야할 위치를 저장한 후 return false
 	bool checkMinDistanceOld(const ObjectSPtr_t &target, float min_distance, Coordinate *where_to_move);
+	/** @brief checks the distance between `this' and `dest'
+	 *  @detail Checks if the distance if less(or equal) than `min_distance'.
+	 *  @detail if not, stores the coordinate to move in order to attack target in `where_to_move'.
+	 *  @return true if the distance if less(or equal) than `min_distance'. Otherwise false.
+	 */
 	bool checkMinDistance(const ObjectSPtr_t &target, float min_distance, Coordinate *where_to_move);
 	/** @brief Processes attack.
 	 *  @detail Called by game main loop.

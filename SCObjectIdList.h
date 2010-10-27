@@ -59,21 +59,21 @@ namespace ObjectId
 		Zerg_CreepColony = 43003, 
 		Zerg_HydraliskDen = 43004, 
 	
-		Juche_AojiWorker = 52001, /* 아오지 탄광 노동자 */
-		Juche_DaepodongLauncher = 52002, /* 대포동 발사병 */
-		Juche_RodongdangPartisan = 52003, /* 로동당원 */
-		Juche_SecretAgent = 52004, /* 간첩 */
+		Juche_AojiWorker = 52001, 
+		Juche_DaepodongLauncher = 52002, 
+		Juche_RodongdangPartisan = 52003, 
+		Juche_SecretAgent = 52004, 
 	
 		Juche_Hero_KimIlseong = 52101, 
 		Juche_Hero_KimJeongil = 52102, 
 
-		Juche_JoseonRodongdang = 53001, /* 조선로동당 */
-		Juche_RodongCorrectionalFacility = 53002,  /* 로동교화소 - 자원채취 */
-		Juche_JeongilStatue = 53003, /* 김정일 동상 - 영웅 생산 */
-		Juche_JucheTower = 53004, /* 주체사상탑 - 유닛 업그레이드 */
-		Juche_NuclearReactor = 53005, /* 원자로 */
-		Juche_DeactivatedNuclearReactor = 53006, /* 냉각탑 폭파된 원자로 - 하나 지을때마다 서플라이 8 증가 */
-		Juche_School = 53007, /* 강제 소집 학교 */
+		Juche_JoseonRodongdang = 53001, 
+		Juche_RodongCorrectionalFacility = 53002, 
+		Juche_JeongilStatue = 53003, 
+		Juche_JucheTower = 53004, 
+		Juche_NuclearReactor = 53005, 
+		Juche_DeactivatedNuclearReactor = 53006, 
+		Juche_School = 53007, 
 
 
 	}; /* END OF enum ObjectId */

@@ -222,10 +222,8 @@ Coordinate Object::calculateMovementSpeed(float time)
 	float desty = this->getDestination().getY();
 	float x = this->getX();
 	float y = this->getY();
-	// 시작점 ~ 목적지
 	float tdx = destx - startx;
 	float tdy = desty - starty;
-	// 현재위치 ~ 목적지
 	float dx = destx - x;
 	float dy = desty - y;
 	
