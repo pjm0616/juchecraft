@@ -37,6 +37,7 @@ public:
 	ObjectSPtr_t findObjectByRect(ObjectList &matched_objs, const Coordinate &top_left, const Coordinate &bottom_right);
 	
 	double getElapsedTime() const;
+	double getCachedElapsedTime() const { return this->m_cached_elapsed_time; }
 	inline float getDelta() const { return this->m_deltat; }
 	inline float getFrameDelta() const { return this->m_frame_deltat; }
 	unsigned int getFrameNumber() const { return this->m_frame_number; }
@@ -69,6 +70,7 @@ protected:
 private:
 	void setStartTime(time_t t) { this->m_start_time = t; }
 	inline time_t getStartTime() const { return this->m_start_time; }
+	inline void setCachedElapsedTime(double time) { this->m_cached_elapsed_time = time; }
 	void setFrameNumber(unsigned int n) { this->m_frame_number = n; }
 	inline void increaseFrameNumber(unsigned int n = 1) { this->m_frame_number += n; }
 	inline void setDelta(float val) { this->m_deltat = val; }
@@ -84,6 +86,7 @@ private:
 	ObjectList m_objects;
 	
 	time_t m_start_time;
+	double m_cached_elapsed_time; /**< Elapsed time */
 	float m_deltat;
 	unsigned int m_frame_number;
 	float m_frame_deltat;

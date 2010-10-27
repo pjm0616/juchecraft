@@ -91,18 +91,15 @@ public:
 	//@}
 	
 	/** @brief Get object's current angle.
-	 *
 	 *  @return The angle in degrees
 	 */
 	float getAngle() const { return this->m_angle; }
 	//@{
 	/** @brief Calculates angle from object to destination coordinate.
-	 *
 	 *  @return The angle in degrees
 	 */
 	float calculateAngle(const Coordinate &dest) const { return this->getPosition().calculateAngle(dest); }
 	/** @brief Calculates angle from object to destination object.
-	 *  
 	 *  @return The angle in degrees
 	 */
 	float calculateAngle(const ObjectSPtr_t &dest) const { return this->calculateAngle(dest->getPosition()); }
@@ -180,11 +177,6 @@ public:
 	 *  @sa MovementFlags
 	 */
 	bool cmd_move(const ObjectSPtr_t &target, float minumum_distance = 0.0, MovementFlags_t flags = MovementFlags::None);
-	
-	/** @brief 이동중인 시간을 구함.
-	 *  @return 이동중인 시간
-	 */
-	float getMovingSeconds() const { return this->m_moving_secs; } // 이동중인 시간
 	//@}
 	
 	/** @name Attack methods */
@@ -205,8 +197,7 @@ public:
 	bool cmd_attack(const ObjectSPtr_t &target);
 	
 	const ObjectSPtr_t &getAttackTarget() const { return this->m_attack_target; }
-	float getAttackingSeconds() const { return this->m_attacking_secs; } /**< 공격중인 시간 */
-	float getLastAttackTime() const { return this->m_last_attack_time; } /**< 공격중인 시간을 기준으로 마지막 공격 시각 */
+	double getLastAttackTime() const { return this->m_last_attack_time; } /**< 공격중인 시간을 기준으로 마지막 공격 시각 */
 	//@}
 	
 	/** @name Unit states */
@@ -378,14 +369,6 @@ private:
 	
 	/** @name Movement related */
 	//@{
-	/** @brief 이 오브젝트가 움직인 시간 설정.
-	 *  @detail only called my setMovementTarget()
-	 */
-	void setMovingSeconds(float time) { this->m_moving_secs = time; }
-	/** @brief 이 오브젝트가 움직인 시간 증가.
-	 *  @detail only called my setMovementTarget()
-	 */
-	void increaseMovingSeconds(float time) { this->m_moving_secs += time; }
 	void setMovement_MinimumDistanceToTarget(float distance) { this->m_movement_min_distance_to_target = distance; }
 	float getMovement_MinimumDistanceToTarget() const { return this->m_movement_min_distance_to_target; }
 	void setMovementTarget(const ObjectSPtr_t &target, float minimum_distance = 0.0)
@@ -409,9 +392,7 @@ private:
 	//@{
 	void setAttackTarget(const ObjectSPtr_t &target) { this->m_attack_target = target; }
 	void clearAttackTarget() { this->m_attack_target.reset(); }
-	void setAttackingSeconds(float time) { this->m_attacking_secs = time; }
-	void increaseAttackingSeconds(float time) { this->m_attacking_secs += time; }
-	void setLastAttackTime(float time) { this->m_last_attack_time = time; }
+	void setLastAttackTime(double time) { this->m_last_attack_time = time; }
 	void setMovementFlags(MovementFlags_t val) { this->m_movement_flags = val; }
 	void setMovementFlags(MovementFlags_t type, bool onoff);
 	MovementFlags_t getMovementFlags() const { return this->m_movement_flags; }
@@ -454,7 +435,6 @@ private:
 	
 	/** @name Movement related */
 	//@{
-	float m_moving_secs; /**< elapsed time since last move() call */
 	Coordinate m_movement_start_point, m_destination, m_final_destination;
 	MovementFlags_t m_movement_flags;
 	// if target is set, object moves to target. is target is not set, object moves to coordinate.
@@ -466,8 +446,7 @@ private:
 	
 	/** @name Attack related */
 	//@{
-	float m_attacking_secs; /**< elapsed time since last attack() call */
-	float m_last_attack_time; /**< last attack time, measured in m_attacking_secs */
+	double m_last_attack_time; /**< last attack time */
 	// if(this->m_isMoving() && this->getAttackTarget()) then this object is moving to attack target
 	ObjectSPtr_t m_attack_target; // not null if attack target is set.
 	//@}
@@ -531,6 +510,10 @@ public:
 	//@}
 	
 public:
+	/** @brief Creates a new object based on this object.
+	 *  @return Pointer to newly created object.
+	 *  @sa SC::ObjectPrototypes
+	 */
 	ObjectSPtr_t duplicate();
 	
 protected:

@@ -176,6 +176,7 @@ void Game::run()
 		// calculate time
 		end_time = this->getElapsedTime();
 		this->setDelta(end_time - start_time);
+		this->setCachedElapsedTime(end_time);
 	}
 }
 

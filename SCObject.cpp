@@ -349,7 +349,6 @@ bool Object::move_notAligned(const Coordinate &dest, MovementFlags_t flags)
 	this->setFinalDestination(dest);
 	this->setDestination(next_pos);
 	this->setState(ObjectState::Moving, true);
-	this->setMovingSeconds(0.0);
 	this->setAngle(this->getMovementStartPoint().calculateAngle(this->getDestination()));
 	
 	return true;
@@ -367,7 +366,6 @@ bool Object::move(const ObjectSPtr_t &target, float minimum_distance, MovementFl
 	this->setFinalDestination(Coordinate(-1.0, -1.0)); // not necessary; our final destination is `target'
 	this->setDestination(this->calculateDestination_TargetedMoving());
 	this->setState(ObjectState::Moving, true);
-	this->setMovingSeconds(0.0);
 	this->setAngle(this->getMovementStartPoint().calculateAngle(this->getDestination()));
 	
 	return true;
@@ -381,7 +379,6 @@ void Object::stopMoving()
 	this->setFinalDestination(Coordinate(0.0, 0.0)); // not necessary
 	this->setDestination(Coordinate(0.0, 0.0)); // not necessary
 	this->setMovementStartPoint(Coordinate(0.0, 0.0)); // not necessary
-	this->setMovingSeconds(0.0); // not necessary
 }
 
 bool Object::move(const Coordinate &dest, MovementFlags_t flags)
@@ -553,13 +550,13 @@ bool Object::doAttack(float time)
 	{
 		this->setAngle(this->getPosition().calculateAngle(target->getPosition()));
 		
+		double elapsed_time = this->m_game->getCachedElapsedTime();
 		float attack_speed = this->getNetAttackSpeed(); // num_of_attacks per second
-		float attacking_secs = this->getAttackingSeconds();
 		float last_attack = this->getLastAttackTime();
 		
-		int nattacks = (attacking_secs - last_attack) / (1.0 / attack_speed);
+		int nattacks = (elapsed_time - last_attack) / (1.0 / attack_speed);
 		if(nattacks > 0)
-			this->setLastAttackTime(attacking_secs);
+			this->setLastAttackTime(elapsed_time);
 		
 		for(; nattacks > 0; nattacks--)
 		{
@@ -607,8 +604,7 @@ void Object::stopAttacking()
 	this->clearAttackTarget();
 	this->setState(ObjectState::Attacking, false);
 	
-	this->setAttackingSeconds(0.0); // not necessary
-	this->setLastAttackTime(0.0); // not necessary
+	//this->setLastAttackTime(this->m_game->getCachedElapsedTime()); // not necessary
 }
 
 bool Object::attack(const ObjectSPtr_t &target)
@@ -637,8 +633,7 @@ bool Object::attack(const ObjectSPtr_t &target)
 	else
 	{
 		this->setState(ObjectState::Attacking, true);
-		this->setAttackingSeconds(0.0);
-		this->setLastAttackTime(0.0);
+		this->setLastAttackTime(this->m_game->getCachedElapsedTime());
 		//this->setAngle(this->getPosition().calculateAngle(target->getPosition()));
 	}
 	
@@ -699,16 +694,13 @@ void Object::processFrame()
 			{
 				//this->attack(this->getAttackTarget());
 				this->setState(ObjectState::Attacking, true);
-				this->setAttackingSeconds(0.0);
-				this->setLastAttackTime(0.0);
+				this->setLastAttackTime(this->m_game->getCachedElapsedTime());
 			}
 		}
-		this->increaseMovingSeconds(deltat);
 	}
 	if(this->isAttacking())
 	{
 		this->doAttack(deltat);
-		this->increaseAttackingSeconds(deltat);
 	}
 	
 	// TODO
