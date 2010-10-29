@@ -144,27 +144,57 @@ public:
 	float getPlayerAttackSpeedBonusA() const { return this->m_added_attack_speed_bonus; }
 	//@}
 	
+	/** @brief Get selected objects.
+	 *  @return A constant reference to ObjectList.
+	 */
 	const ObjectList &getSelectedObjs() const { return this->m_selected_objs; }
-	ObjectList &getSelectedObjsForWriting() { return this->m_selected_objs; }
+	//ObjectList &getSelectedObjsForWriting() { return this->m_selected_objs; }
+	/** @brief Checks if the object is selecetd.
+	 *  @param[in] obj The object to check if selected
+	 *  @return true if selected, otherwise false
+	 */
 	bool isSelectedObject(const ObjectSPtr_t &obj) const;
+	/** @brief clears selected object list
+	 */
 	void clearSelectedObjectList() { this->m_selected_objs.clear(); }
 	
-	struct SelectFlags
+	struct SelectionFlags
 	{
 		enum
 		{
-			SET, 
-			ADD, 
-			DEL
+			SET, /**< Clears selected object list and set newly selected objects. */
+			ADD, /**< Adds newly selected objects to selected objects list */
+			REMOVE, /**< Removes newly selected objects from selected objects list */
 		};
 	};
-	typedef unsigned int SelectFlags_t;
-	size_t selectObjects(const Coordinate &coord1, const Coordinate &coord2, SelectFlags_t flags = SelectFlags::SET);
+	typedef unsigned int SelectionFlags_t;
+	/** @brief Starts object selection
+	 */
 	void startObjectSelection(const Coordinate &start_coord);
-	size_t finishObjectSelection(const Coordinate &end_coord, SelectFlags_t flags = SelectFlags::SET);
-	size_t getCurrentlySelectedObjects(ObjectList &buf, const Coordinate &crnt_coord, SelectFlags_t flags);
+	/** @brief Finished object selection, and updates selected object list.
+	 *  @return The number of selected objects
+	 */
+	size_t finishObjectSelection(const Coordinate &end_coord, SelectionFlags_t flags = SelectionFlags::SET);
+	/** @brief Get Currently selected objects
+	 *  @detail Don't call this function if isSelectionInProgress() == false
+	 *  @detail results are stored in `buf'
+	 *  @param[out] buf A referece to ObjectList to store the results in.
+	 *  @return The number of selected objects.
+	 *  @sa SelectionFlags
+	 */
+	size_t getCurrentlySelectedObjects(ObjectList &buf, const Coordinate &crnt_coord, SelectionFlags_t flags);
+	/** @brief Selects object that are inside the rect[`coord' ~ `coord2']
+	 *  @detail internally this function calls startObjectSelection, finishObjectSelection continuously
+	 *  @return The number of selected objects.
+	 *  @sa SelectionFlags
+	 */
+	size_t selectObjects(const Coordinate &coord1, const Coordinate &coord2, SelectionFlags_t flags = SelectionFlags::SET);
 	
+	/** @brief Checks if object selection is in progress
+	 */
 	bool isSelectionInProgress() const { return this->m_selection_in_progress; }
+	/** @brief Get the coordinate where the selection was started.
+	 */
 	const Coordinate &getSelectionStartCoordinate() const { return this->m_selection_start_coordinate; }
 	
 //protected:
@@ -200,12 +230,21 @@ private:
 	float m_added_armor_bonus, m_added_damage_bonus, m_added_moving_speed_bonus, m_added_attack_speed_bonus;
 	
 private:
+	/** @brief filters objects in the list according to internal rules
+	 *  @param[in] select_cnt_limit Maximum number of object to select.
+	 */
 	void filterCurSelectedObjects(ObjectList &selected_objs, int select_cnt_limit);
-	void mergeObjectList(ObjectList &orig, const ObjectList &newobjs, SelectFlags_t flags);
+	/** @brief Merges two object list
+	 *  @param[in,out] orig The ObjectList to merge in
+	 *  @param[in] newobjs A constant referenct to ObjectList to merge
+	 *  @param[in] flags merge options
+	 *  @sa SelectionFlags
+	 */
+	void mergeObjectList(ObjectList &orig, const ObjectList &newobjs, SelectionFlags_t flags);
 	
-	bool m_selection_in_progress;
-	Coordinate m_selection_start_coordinate;
-	ObjectList m_selected_objs;
+	bool m_selection_in_progress; /**< true if object selection is in progress */
+	Coordinate m_selection_start_coordinate; /**< The coordinate where the selection was started. Only set if m_selection_in_progress is true */
+	ObjectList m_selected_objs; /**< The list of selected objects */
 };
 
 

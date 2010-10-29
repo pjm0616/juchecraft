@@ -131,13 +131,13 @@ void Player::filterCurSelectedObjects(ObjectList &selected_objs, int select_cnt_
 	}
 }
 
-void Player::mergeObjectList(ObjectList &orig, const ObjectList &newobjs, SelectFlags_t flags)
+void Player::mergeObjectList(ObjectList &orig, const ObjectList &newobjs, SelectionFlags_t flags)
 {
-	if(flags == SelectFlags::SET)
+	if(flags == SelectionFlags::SET)
 	{
 		orig = newobjs;
 	}
-	else if(flags == SelectFlags::ADD)
+	else if(flags == SelectionFlags::ADD)
 	{
 		for(ObjectList::const_iterator it = newobjs.begin(); it != newobjs.end(); ++it)
 		{
@@ -145,8 +145,8 @@ void Player::mergeObjectList(ObjectList &orig, const ObjectList &newobjs, Select
 			if(it2 == orig.end())
 				this->m_selected_objs.addObject(*it);
 		}
-	} /* else if(flags == SelectFlags::ADD) */
-	else if(flags == SelectFlags::DEL)
+	} /* else if(flags == SelectionFlags::ADD) */
+	else if(flags == SelectionFlags::REMOVE)
 	{
 		for(ObjectList::const_iterator it = newobjs.begin(); it != newobjs.end(); ++it)
 		{
@@ -154,13 +154,7 @@ void Player::mergeObjectList(ObjectList &orig, const ObjectList &newobjs, Select
 			if(it2 != orig.end())
 				orig.erase(it2);
 		}
-	} /* else if(flags == SelectFlags::DEL) */
-}
-
-size_t Player::selectObjects(const Coordinate &coord1, const Coordinate &coord2, SelectFlags_t flags)
-{
-	this->startObjectSelection(coord1);
-	return this->finishObjectSelection(coord2, flags);
+	} /* else if(flags == SelectionFlags::REMOVE) */
 }
 
 void Player::startObjectSelection(const Coordinate &start_coord)
@@ -169,7 +163,7 @@ void Player::startObjectSelection(const Coordinate &start_coord)
 	this->m_selection_start_coordinate = start_coord;
 }
 
-size_t Player::finishObjectSelection(const Coordinate &end_coord, SelectFlags_t flags)
+size_t Player::finishObjectSelection(const Coordinate &end_coord, SelectionFlags_t flags)
 {
 	ObjectList cur_selected_objs;
 	int max_objs = 16;
@@ -184,14 +178,14 @@ size_t Player::finishObjectSelection(const Coordinate &end_coord, SelectFlags_t 
 	return this->m_selected_objs.size();
 }
 
-size_t Player::getCurrentlySelectedObjects(ObjectList &buf, const Coordinate &crnt_coord, SelectFlags_t flags)
+size_t Player::getCurrentlySelectedObjects(ObjectList &buf, const Coordinate &crnt_coord, SelectionFlags_t flags)
 {
 	ObjectList cur_selected_objs;
 	int max_objs = 16;
 	if(this->m_selection_start_coordinate == crnt_coord)
 		max_objs = 1;
 	
-	if(flags != SelectFlags::SET)
+	if(flags != SelectionFlags::SET)
 		buf = this->m_selected_objs;
 	
 	this->m_game->findObjectByRect(cur_selected_objs, this->m_selection_start_coordinate, crnt_coord);
@@ -202,7 +196,11 @@ size_t Player::getCurrentlySelectedObjects(ObjectList &buf, const Coordinate &cr
 	return buf.size();
 }
 
-
+size_t Player::selectObjects(const Coordinate &coord1, const Coordinate &coord2, SelectionFlags_t flags)
+{
+	this->startObjectSelection(coord1);
+	return this->finishObjectSelection(coord2, flags);
+}
 
 
 
