@@ -330,7 +330,6 @@ GameUI_SDL::GameUI_SDL(Game *game, const PlayerSPtr_t &player)
 	this->setFPS(100); // i want to set to 30 fps, but..
 	
 	this->clearCommandToBeOrdered();
-	this->m_selection_in_progress = false;
 }
 
 GameUI_SDL::~GameUI_SDL()
@@ -534,8 +533,7 @@ void GameUI_SDL::processFrame()
 				}
 				else
 				{
-					this->m_selection_start_coordinate.set(x, y);
-					this->m_selection_in_progress = true;
+					this->m_player->startObjectSelection(Coordinate(x, y));
 				}
 			}
 			break;
@@ -547,46 +545,9 @@ void GameUI_SDL::processFrame()
 			this->m_mouse_pos_in_gamescr.set(x, y);
 			if(ev.button.button == 1)
 			{
-				if(this->m_selection_in_progress)
+				if(this->m_player->isSelectionInProgress())
 				{
-					this->m_selection_in_progress = false;
-					Coordinate selection_end(x, y);
-					
-					ObjectList &selected_objs = this->m_player->getSelectedObjsForWriting();
-					this->m_game->findObjectByRect(selected_objs, this->m_selection_start_coordinate, selection_end);
-					
-					{
-						int stats[ObjectType::SIZE] = {0, };
-						for(ObjectList::const_iterator it = selected_objs.begin(); 
-							it != selected_objs.end(); ++it)
-						{
-							const ObjectSPtr_t &obj = *it;
-							stats[obj->getObjectType()]++;
-						}
-					
-						/* 유닛이 하나 이상 있다면 유닛 빼고 다른 물체는 선택하지 않음 */
-						if(stats[ObjectType::Unit] > 0)
-						{
-							for(ObjectList::iterator it = selected_objs.begin(); 
-								it != selected_objs.end(); )
-							{
-								const ObjectSPtr_t &obj = *it;
-								if(obj->getObjectType() != ObjectType::Unit)
-									selected_objs.erase(it++);
-								else
-									++it;
-							}
-						}
-					}
-					if(this->m_selection_start_coordinate == selection_end)
-					{
-						ObjectList::iterator end = selected_objs.end();
-						ObjectList::iterator it = selected_objs.begin();
-						if(it != end)
-							++it;
-						while(it != end)
-							selected_objs.erase(it++);
-					}
+					this->m_player->finishObjectSelection(Coordinate(x, y));
 				}
 			}
 			break;
@@ -613,9 +574,9 @@ void GameUI_SDL::draw()
 		this->drawObjects(); // THIS IS VERY SLOW. avg. 0.02secs
 		// etc..
 		{
-			if(this->m_selection_in_progress)
+			if(this->m_player->isSelectionInProgress())
 			{
-				Coordinate tl(this->m_selection_start_coordinate), br(this->m_mouse_pos_in_gamescr);
+				Coordinate tl(this->m_player->getSelectionStartCoordinate()), br(this->m_mouse_pos_in_gamescr);
 				Coordinate::normalizeTopLeftCoordinate(tl, br);
 				
 				int w = br.getX() - tl.getX(), h = br.getY() - tl.getY();
@@ -899,25 +860,16 @@ void GameUI_SDL::drawObject(const ObjectSPtr_t &obj)
 	#endif
 	
 	#if 1
-	//if(objid == SC::ObjectId::Juche_DaepodongLauncher)
-	if(this->m_selection_in_progress)
+	if(this->m_player->isSelectedObject(obj) || 
+		(this->m_player->isSelectionInProgress() && obj->insideRect(this->m_player->getSelectionStartCoordinate(), this->m_mouse_pos_in_gamescr))
+		)
 	{
-		if(owner == player && obj->insideRect(this->m_selection_start_coordinate, this->m_mouse_pos_in_gamescr))
-		{
+		if(owner == player)
 			ellipseRGBA(this->m_game_scr, x+w/2, y+h/2 +1, w/2 +1, h/2 +1, 0, 255, 0, 255);
-		}
-	}
-	else
-	{
-		if(this->m_player->isSelectedObject(obj))
-		{
-			if(owner == player)
-				ellipseRGBA(this->m_game_scr, x+w/2, y+h/2 +1, w/2 +1, h/2 +1, 0, 255, 0, 255);
-			else if(owner->getRaceId() == RaceId::Neutral)
-				ellipseRGBA(this->m_game_scr, x+w/2, y+h/2 +1, w/2 +1, h/2 +1, 255, 255, 0, 255);
-			else
-				ellipseRGBA(this->m_game_scr, x+w/2, y+h/2 +1, w/2 +1, h/2 +1, 255, 0, 0, 255);
-		}
+		else if(owner->getRaceId() == RaceId::Neutral)
+			ellipseRGBA(this->m_game_scr, x+w/2, y+h/2 +1, w/2 +1, h/2 +1, 255, 255, 0, 255);
+		else
+			ellipseRGBA(this->m_game_scr, x+w/2, y+h/2 +1, w/2 +1, h/2 +1, 255, 0, 0, 255);
 	}
 	#endif
 	

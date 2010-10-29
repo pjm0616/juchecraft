@@ -297,7 +297,7 @@ void Game::initPlayers()
 	this->m_players.clear();
 	for(int i = 0; i < Player::MAX_PLAYER + 1; i++)
 	{
-		PlayerSPtr_t player(new Player);
+		PlayerSPtr_t player(new Player(this));
 		
 		player->setPlayerId(i);
 		player->setPlayerColor(player_colors[i]);

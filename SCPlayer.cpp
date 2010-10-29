@@ -12,6 +12,7 @@
 #include <list>
 #include <map>
 #include <vector>
+#include <algorithm>
 #include <cassert>
 
 #ifdef DEBUG
@@ -42,7 +43,8 @@ using namespace SC;
 
 
 
-Player::Player()
+Player::Player(Game *game)
+	:m_game(game)
 {
 	this->setPlayerId(-1);
 	this->setPlayerColor(0x000000);
@@ -60,19 +62,147 @@ Player::Player()
 	this->setPlayerDamageBonusA(0.0);
 	this->setPlayerMovingSpeedBonusA(0.0);
 	this->setPlayerAttackSpeedBonusA(0.0);
+	
+	this->m_selection_in_progress = false;
 }
 
 
 bool Player::isSelectedObject(const ObjectSPtr_t &obj) const
 {
-	for(ObjectList::const_iterator it = this->m_selected_objs.begin(); 
-		it != this->m_selected_objs.end(); ++it)
-	{
-		if(*it == obj)
-			return true;
-	}
-	return false;
+	ObjectList::const_iterator it = std::find(this->m_selected_objs.begin(), 
+		this->m_selected_objs.end(), obj);
+	if(it != this->m_selected_objs.end())
+		return true;
+	else
+		return false;
 }
+
+void Player::filterCurSelectedObjects(ObjectList &selected_objs, int select_cnt_limit)
+{
+	int stats[ObjectType::SIZE] = {0, };
+	int my_unit_cnt = 0;
+	for(ObjectList::const_iterator it = selected_objs.begin(); 
+		it != selected_objs.end(); ++it)
+	{
+		const ObjectSPtr_t &obj = *it;
+		stats[obj->getObjectType()]++;
+		if(obj->getOwner().get() == this)
+			my_unit_cnt++;
+	}
+
+	for(ObjectList::iterator it = selected_objs.begin(); 
+		it != selected_objs.end(); )
+	{
+		const ObjectSPtr_t &obj = *it;
+		
+		/* 유닛이 하나 이상 있다면 유닛 빼고 다른 물체는 선택하지 않음 */
+		if(stats[ObjectType::Unit] > 0)
+		{
+			if(obj->getObjectType() != ObjectType::Unit)
+				selected_objs.erase(it++);
+			else
+				++it;
+		}
+		else if(my_unit_cnt != 0)
+		{
+			if(obj->getOwner().get() != this)
+				selected_objs.erase(it++);
+			else
+				++it;
+		}
+		else
+		{
+			++it;
+		}
+	} /* for(ObjectList::iterator it = selected_objs.begin(); */
+	
+	if(select_cnt_limit > 0)
+	{
+		ObjectList::iterator end = selected_objs.end();
+		ObjectList::iterator it = selected_objs.begin();
+		
+		// skip first nth object
+		for(int i = 0; i < select_cnt_limit && it != end; i++)
+			++it;
+		
+		// erase everything else
+		while(it != end)
+			selected_objs.erase(it++);
+	}
+}
+
+void Player::mergeObjectList(ObjectList &orig, const ObjectList &newobjs, SelectFlags_t flags)
+{
+	if(flags == SelectFlags::SET)
+	{
+		orig = newobjs;
+	}
+	else if(flags == SelectFlags::ADD)
+	{
+		for(ObjectList::const_iterator it = newobjs.begin(); it != newobjs.end(); ++it)
+		{
+			ObjectList::const_iterator it2 = std::find(orig.begin(), orig.end(), *it);
+			if(it2 == orig.end())
+				this->m_selected_objs.addObject(*it);
+		}
+	} /* else if(flags == SelectFlags::ADD) */
+	else if(flags == SelectFlags::DEL)
+	{
+		for(ObjectList::const_iterator it = newobjs.begin(); it != newobjs.end(); ++it)
+		{
+			ObjectList::iterator it2 = std::find(orig.begin(), orig.end(), *it);
+			if(it2 != orig.end())
+				orig.erase(it2);
+		}
+	} /* else if(flags == SelectFlags::DEL) */
+}
+
+size_t Player::selectObjects(const Coordinate &coord1, const Coordinate &coord2, SelectFlags_t flags)
+{
+	this->startObjectSelection(coord1);
+	return this->finishObjectSelection(coord2, flags);
+}
+
+void Player::startObjectSelection(const Coordinate &start_coord)
+{
+	this->m_selection_in_progress = true;
+	this->m_selection_start_coordinate = start_coord;
+}
+
+size_t Player::finishObjectSelection(const Coordinate &end_coord, SelectFlags_t flags)
+{
+	ObjectList cur_selected_objs;
+	int max_objs = 16;
+	if(this->m_selection_start_coordinate == end_coord)
+		max_objs = 1;
+	
+	this->m_game->findObjectByRect(cur_selected_objs, this->m_selection_start_coordinate, end_coord);
+	this->filterCurSelectedObjects(cur_selected_objs, max_objs);
+	this->mergeObjectList(this->m_selected_objs, cur_selected_objs, flags);
+	
+	this->m_selection_in_progress = false;
+	return this->m_selected_objs.size();
+}
+
+size_t Player::getCurrentlySelectedObjects(ObjectList &buf, const Coordinate &crnt_coord, SelectFlags_t flags)
+{
+	ObjectList cur_selected_objs;
+	int max_objs = 16;
+	if(this->m_selection_start_coordinate == crnt_coord)
+		max_objs = 1;
+	
+	if(flags != SelectFlags::SET)
+		buf = this->m_selected_objs;
+	
+	this->m_game->findObjectByRect(cur_selected_objs, this->m_selection_start_coordinate, crnt_coord);
+	this->filterCurSelectedObjects(cur_selected_objs, max_objs);
+	this->mergeObjectList(buf, cur_selected_objs, flags);
+	
+	this->m_selection_in_progress = false;
+	return buf.size();
+}
+
+
 
 
 

@@ -25,7 +25,7 @@ public:
 		Player5, Player6, Player7, Player8
 	};
 	
-	Player();
+	Player(Game *game);
 	~Player() {}
 	
 	int getPlayerId() const { return this->m_player_id; }
@@ -148,6 +148,7 @@ public:
 	ObjectList &getSelectedObjsForWriting() { return this->m_selected_objs; }
 	bool isSelectedObject(const ObjectSPtr_t &obj) const;
 	void clearSelectedObjectList() { this->m_selected_objs.clear(); }
+	
 	struct SelectFlags
 	{
 		enum
@@ -159,6 +160,12 @@ public:
 	};
 	typedef unsigned int SelectFlags_t;
 	size_t selectObjects(const Coordinate &coord1, const Coordinate &coord2, SelectFlags_t flags = SelectFlags::SET);
+	void startObjectSelection(const Coordinate &start_coord);
+	size_t finishObjectSelection(const Coordinate &end_coord, SelectFlags_t flags = SelectFlags::SET);
+	size_t getCurrentlySelectedObjects(ObjectList &buf, const Coordinate &crnt_coord, SelectFlags_t flags);
+	
+	bool isSelectionInProgress() const { return this->m_selection_in_progress; }
+	const Coordinate &getSelectionStartCoordinate() const { return this->m_selection_start_coordinate; }
 	
 //protected:
 	/** @brief Set player's race
@@ -182,6 +189,7 @@ public:
 	
 private:
 	
+	Game *m_game;
 	int m_player_id;
 	unsigned int m_player_color;
 	RaceId_t m_race_id;
@@ -192,6 +200,11 @@ private:
 	float m_added_armor_bonus, m_added_damage_bonus, m_added_moving_speed_bonus, m_added_attack_speed_bonus;
 	
 private:
+	void filterCurSelectedObjects(ObjectList &selected_objs, int select_cnt_limit);
+	void mergeObjectList(ObjectList &orig, const ObjectList &newobjs, SelectFlags_t flags);
+	
+	bool m_selection_in_progress;
+	Coordinate m_selection_start_coordinate;
 	ObjectList m_selected_objs;
 };
 
