@@ -860,9 +860,8 @@ void GameUI_SDL::drawObject(const ObjectSPtr_t &obj)
 	#endif
 	
 	#if 1
-	if(this->m_player->isSelectedObject(obj) || 
-		(this->m_player->isSelectionInProgress() && obj->insideRect(this->m_player->getSelectionStartCoordinate(), this->m_mouse_pos_in_gamescr))
-		)
+	//(this->m_player->isSelectionInProgress() && obj->insideRect(this->m_player->getSelectionStartCoordinate(), this->m_mouse_pos_in_gamescr))
+	if(this->m_player->isSelectedObject(obj))
 	{
 		if(owner == player)
 			ellipseRGBA(this->m_game_scr, x+w/2, y+h/2 +1, w/2 +1, h/2 +1, 0, 255, 0, 255);
