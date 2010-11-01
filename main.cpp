@@ -11,6 +11,7 @@
 #include <list>
 #include <map>
 #include <vector>
+#include <deque>
 #include <clocale>
 
 #include <cstring>
@@ -35,6 +36,7 @@
 #include "SCObject.h"
 #include "SCObjectList.h"
 #include "SCObjectPrototypes.h"
+#include "SCUnitCommand.h"
 #include "SCPlayer.h"
 #include "SCGame.h"
 

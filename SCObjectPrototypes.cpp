@@ -10,6 +10,7 @@
 #include <vector>
 #include <cstdio>
 #include <cstring>
+#include <deque>
 
 #include "defs.h"
 #include "luacpp/luacpp_lua.h"
@@ -20,6 +21,7 @@
 #include "SCObject.h"
 #include "SCObjectList.h"
 #include "SCObjectPrototypes.h"
+#include "SCUnitCommand.h"
 #include "SCPlayer.h"
 
 using namespace SC;

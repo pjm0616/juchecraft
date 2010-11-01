@@ -10,6 +10,7 @@
 #include <list>
 #include <map>
 #include <vector>
+#include <deque>
 
 #include <cstdio>
 #include <cstring>
@@ -40,6 +41,7 @@ namespace SDL
 #include "SCObjectList.h"
 #include "SCObjectIdList.h"
 #include "SCObjectPrototypes.h"
+#include "SCUnitCommand.h"
 #include "SCPlayer.h"
 #include "SCGame.h"
 
@@ -328,8 +330,6 @@ GameUI_SDL::GameUI_SDL(Game *game, const PlayerSPtr_t &player)
 	:GameUI(game, player)
 {
 	this->setFPS(100); // i want to set to 30 fps, but..
-	
-	this->clearCommandToBeOrdered();
 }
 
 GameUI_SDL::~GameUI_SDL()
@@ -464,7 +464,7 @@ void GameUI_SDL::processFrame()
 				this->m_gamescr_left_pos += 10;
 				break;
 			case 'a':
-				this->setCommandToBeOrdered(2);
+				this->m_player->addToCommandQueue(UnitCommand(UnitCommandId::Attack));
 				break;
 			default:
 				break;
@@ -507,7 +507,7 @@ void GameUI_SDL::processFrame()
 			}
 			else if(ev.button.button == 1)
 			{
-				if(this->getCommandToBeOrdered() == 2)
+				if(this->m_player->getFirstCommandInQueue().getCommandID() == UnitCommandId::Attack)
 				{
 					ObjectList dummy;
 					ObjectSPtr_t first = this->m_game->findObjectByRect(dummy, x, y, x+10, y+10);
@@ -529,7 +529,7 @@ void GameUI_SDL::processFrame()
 							(*it)->cmd_move(Coordinate(x, y), Object::MovementFlags::AutomaticallyAttack);
 						}
 					}
-					this->clearCommandToBeOrdered();
+					this->m_player->clearCommandQueue();
 				}
 				else
 				{
@@ -697,7 +697,7 @@ void GameUI_SDL::drawUI()
 	this->drawUI_ButtonsWnd();
 	
 	{	
-		if(this->getCommandToBeOrdered() == 2)
+		if(this->m_player->getFirstCommandInQueue().getCommandID() == UnitCommandId::Attack)
 		{
 			SDL_print(this->m_font, this->m_screen, 210+50, 330, 150, 16, 0xffffffff, "Select target");
 		}

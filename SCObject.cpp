@@ -8,6 +8,7 @@
 #include <list>
 #include <map>
 #include <vector>
+#include <deque>
 #include <cmath>
 #include <cstdlib>
 #include <cassert>
@@ -26,6 +27,7 @@
 #include "SCObjectList.h"
 #include "SCObjectIdList.h"
 #include "SCObjectPrototypes.h"
+#include "SCUnitCommand.h"
 #include "SCPlayer.h"
 #include "SCGame.h"
 

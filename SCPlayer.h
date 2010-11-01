@@ -33,6 +33,11 @@ public:
 	
 	RaceId_t getRaceId() const { return this->m_race_id; }
 	
+	/** @brief Set player's race
+	 *  @param[in] race Player's new race
+	 */
+	void setRace(RaceId_t race) { this->m_race_id = race; }
+	
 	//@{
 	/** @brief Get the amount of player's minerals
 	 *  @return The amount of player's minerals
@@ -197,11 +202,12 @@ public:
 	 */
 	const Coordinate &getSelectionStartCoordinate() const { return this->m_selection_start_coordinate; }
 	
-//protected:
-	/** @brief Set player's race
-	 *  @param[in] race Player's new race
-	 */
-	void setRace(RaceId_t race) { this->m_race_id = race; }
+	// command queue related
+	void addToCommandQueue(const UnitCommand &cmd) { this->m_cmdqueue.push_back(cmd); }
+	void clearCommandQueue() { this->m_cmdqueue.clear(); }
+	const UnitCommand &getFirstCommandInQueue() const;
+	void popFirstCommandInQueue() { this->m_cmdqueue.pop_front(); }
+	bool isCommandQueueEmpty() const { return this->m_cmdqueue.empty(); }
 	
 public:
 	/** @brief set player id/color
@@ -245,6 +251,9 @@ private:
 	bool m_selection_in_progress; /**< true if object selection is in progress */
 	Coordinate m_selection_start_coordinate; /**< The coordinate where the selection was started. Only set if m_selection_in_progress is true */
 	ObjectList m_selected_objs; /**< The list of selected objects */
+	
+private:
+	std::deque<UnitCommand> m_cmdqueue;
 };
 
 

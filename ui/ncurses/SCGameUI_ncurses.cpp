@@ -10,6 +10,7 @@
 #include <list>
 #include <map>
 #include <vector>
+#include <deque>
 
 #include <cstdio>
 #include <cstring>
@@ -37,6 +38,7 @@ namespace ncurses
 #include "SCObjectList.h"
 #include "SCObjectIdList.h"
 #include "SCObjectPrototypes.h"
+#include "SCUnitCommand.h"
 #include "SCPlayer.h"
 #include "SCGame.h"
 

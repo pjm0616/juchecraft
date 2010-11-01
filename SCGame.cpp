@@ -12,6 +12,7 @@
 #include <list>
 #include <map>
 #include <vector>
+#include <deque>
 #include <cassert>
 
 #ifdef DEBUG
@@ -33,6 +34,7 @@
 #include "SCObjectList.h"
 #include "SCObjectIdList.h"
 #include "SCObjectPrototypes.h"
+#include "SCUnitCommand.h"
 #include "SCPlayer.h"
 #include "SCGame.h"
 #include "ui/SCGameUI.h"

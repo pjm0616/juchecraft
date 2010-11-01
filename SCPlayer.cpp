@@ -12,6 +12,7 @@
 #include <list>
 #include <map>
 #include <vector>
+#include <deque>
 #include <algorithm>
 #include <cassert>
 
@@ -34,6 +35,7 @@
 #include "SCObjectList.h"
 #include "SCObjectIdList.h"
 #include "SCObjectPrototypes.h"
+#include "SCUnitCommand.h"
 #include "SCPlayer.h"
 #include "SCGame.h"
 
@@ -205,6 +207,16 @@ size_t Player::selectObjects(const Coordinate &coord1, const Coordinate &coord2,
 
 
 
+const UnitCommand &Player::getFirstCommandInQueue() const
+{
+	static UnitCommand no_command(UnitCommandId::None);
+	if(!this->m_cmdqueue.empty())
+		return this->m_cmdqueue.front();
+	else
+	{
+		return no_command;
+	}
+}
 
 
 

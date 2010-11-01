@@ -9,12 +9,14 @@
 #include <algorithm>
 #include <map>
 #include <vector>
+#include <deque>
 
 #include "defs.h"
 #include "SCTypes.h"
 #include "SCCoordinate.h"
 #include "SCObject.h"
 #include "SCObjectList.h"
+#include "SCUnitCommand.h"
 #include "SCPlayer.h"
 
 using namespace SC;

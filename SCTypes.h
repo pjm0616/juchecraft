@@ -122,7 +122,27 @@ typedef std::map<ObjectId_t, ObjectSPtr_t> ObjectTable;
 
 
 
+
+
+
+////// 
+
+namespace SpecialAbilityId
+{
+	typedef unsigned int SpecialAbility_t;
 }
+using SpecialAbilityId::SpecialAbility_t;
+
+namespace UnitCommandId
+{
+	typedef unsigned int UnitCommandId_t;
+	// enum UnitCommandId: see SCUnitCommandIdList.h
+}
+using UnitCommandId::UnitCommandId_t;
+
+
+
+} /* END OF namespace SC */
 
 #endif
 

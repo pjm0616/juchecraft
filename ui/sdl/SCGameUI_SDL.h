@@ -43,12 +43,6 @@ protected:
 	#endif
 	
 private:
-	void setCommandToBeOrdered(int cmd) { this->m_command_to_be_ordered = cmd; }
-	void clearCommandToBeOrdered() { this->m_command_to_be_ordered = 0; }
-	int getCommandToBeOrdered() const { return this->m_command_to_be_ordered; }
-	
-	int m_command_to_be_ordered;
-	
 	Coordinate m_mouse_pos_in_gamescr;
 	
 private:
