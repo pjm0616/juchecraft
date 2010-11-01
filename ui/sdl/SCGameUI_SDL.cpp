@@ -347,7 +347,7 @@ bool GameUI_SDL::initUI()
 		throw new Exception("TTF_Init() failed");
 	
 	SDL_Surface *screen;
-	this->m_screen = SDL_SetVideoMode(640, 480, 32, SDL_HWSURFACE);
+	this->m_screen = SDL_SetVideoMode(640, 480, 32, SDL_HWSURFACE | SDL_DOUBLEBUF);
 	SDL_WM_SetCaption("JucheCraft", NULL);
 	SDL_ShowCursor(SDL_ENABLE);
 	
