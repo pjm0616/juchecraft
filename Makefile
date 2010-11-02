@@ -1,6 +1,7 @@
 #!/usr/bin/make
 
 DEBUG				?= 1
+ENABLE_PROFILING 	?= 0
 
 CROSSC				=
 
@@ -18,10 +19,16 @@ ifeq ($(DEBUG),1)
 DEFS_DBG			= -DDEBUG 
 CFLAGS_DBG			= $(DEFS_DBG) -g -O0 
 CXXFLAGS_DBG		= $(CFLAGS_DBG) 
+LDFLAGS_DBG			=
+ifeq ($(ENABLE_PROFILING),1)
+C_CXX_LD_FLAGS_PROF	= -pg
+endif
+
 else
 DEFS_DBG			= -DNDEBUG
 CFLAGS_DBG			= $(DEFS_DBG) -O3
 CXXFLAGS_DBG		= $(CFLAGS_DBG) 
+LDFLAGS_DBG			=
 endif
 
 
@@ -43,11 +50,11 @@ TAR					=tar
 ZIP					=zip
 UNZIP				=unzip
 
-CFLAGS				= $(DEFS) $(CFLAGS_DBG) $(INCLUDEDIR) \
+CFLAGS				= $(DEFS) $(CFLAGS_DBG) $(C_CXX_LD_FLAGS_PROF) $(INCLUDEDIR) \
 						-std=gnu99 -finline-functions -Wall -Wextra -Wno-unused -Wno-unused-function #-Wextra -Wshadow
-CXXFLAGS			= $(DEFS) $(CXXFLAGS_DBG) $(INCLUDEDIR) \
+CXXFLAGS			= $(DEFS) $(CXXFLAGS_DBG) $(C_CXX_LD_FLAGS_PROF) $(INCLUDEDIR) \
 						-std=gnu++98 -finline-functions -Wall -Wextra -Wno-unused -Wno-unused-function #-Wextra -Wshadow
-LDFLAGS				= $(LDFLAGS_DBG) $(LIBDIR)
+LDFLAGS				= $(LDFLAGS_DBG) $(C_CXX_LD_FLAGS_PROF) $(LIBDIR)
 #OBJS				=$(SRCS:.cpp=.o) 
 OBJS_TMP				=$(SRCS:.c=.o) 
 OBJS				=$(OBJS_TMP:.cpp=.o) 
