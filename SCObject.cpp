@@ -23,9 +23,9 @@
 #include "SCTypes.h"
 #include "SCException.h"
 #include "SCCoordinate.h"
+#include "SCObjectIdList.h"
 #include "SCObject.h"
 #include "SCObjectList.h"
-#include "SCObjectIdList.h"
 #include "SCObjectPrototypes.h"
 #include "SCUnitCommand.h"
 #include "SCPlayer.h"
@@ -139,9 +139,9 @@ void Object::setState(ObjectState_t state, bool onoff)
 void Object::setMovementFlags(MovementFlags_t type, bool onoff)
 {
 	if(onoff)
-		this->m_movement_flags |= type;
+		this->m_movement.flags |= type;
 	else
-		this->m_movement_flags &= ~type;
+		this->m_movement.flags &= ~type;
 }
 
 
@@ -212,7 +212,7 @@ float Object::getNetMovingSpeed() const
 void Object::setDestination(const Coordinate &pos)
 {
 	this->setMovementStartPoint(this->getPosition());
-	this->m_destination = pos;
+	this->m_movement.destination = pos;
 }
 
 Coordinate Object::calculateMovementSpeed(float time)

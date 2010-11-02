@@ -14,6 +14,7 @@
 #include "defs.h"
 #include "SCTypes.h"
 #include "SCCoordinate.h"
+#include "SCObjectIdList.h"
 #include "SCObject.h"
 #include "SCObjectList.h"
 #include "SCUnitCommand.h"

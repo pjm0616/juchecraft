@@ -33,6 +33,7 @@
 #include "SCTypes.h"
 #include "SCException.h"
 #include "SCCoordinate.h"
+#include "SCObjectIdList.h"
 #include "SCObject.h"
 #include "SCObjectList.h"
 #include "SCObjectPrototypes.h"

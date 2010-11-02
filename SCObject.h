@@ -196,8 +196,8 @@ public:
 	 */
 	bool cmd_attack(const ObjectSPtr_t &target);
 	
-	const ObjectSPtr_t &getAttackTarget() const { return this->m_attack_target; }
-	double getLastAttackTime() const { return this->m_last_attack_time; }
+	const ObjectSPtr_t &getAttackTarget() const { return this->m_attack.target; }
+	double getLastAttackTime() const { return this->m_attack.last_attack_time; }
 	//@}
 	
 	/** @name Unit states */
@@ -345,12 +345,12 @@ protected:
 	
 	/** @name Movement related */
 	//@{
-	void setFinalDestination(const Coordinate &pos) { this->m_final_destination = pos; }
-	Coordinate &getFinalDestination() { return this->m_final_destination; }
-	const Coordinate &getFinalDestination() const { return this->m_final_destination; }
+	void setFinalDestination(const Coordinate &pos) { this->m_movement.final_destination = pos; }
+	Coordinate &getFinalDestination() { return this->m_movement.final_destination; }
+	const Coordinate &getFinalDestination() const { return this->m_movement.final_destination; }
 	void setDestination(const Coordinate &pos);
-	Coordinate &getDestination() { return this->m_destination; }
-	const Coordinate &getDestination() const { return this->m_destination; }
+	Coordinate &getDestination() { return this->m_movement.destination; }
+	const Coordinate &getDestination() const { return this->m_movement.destination; }
 	//@}
 	
 private:
@@ -369,14 +369,14 @@ private:
 	
 	/** @name Movement related */
 	//@{
-	void setMovement_MinimumDistanceToTarget(float distance) { this->m_movement_min_distance_to_target = distance; }
-	float getMovement_MinimumDistanceToTarget() const { return this->m_movement_min_distance_to_target; }
+	void setMovement_MinimumDistanceToTarget(float distance) { this->m_movement.min_distance_to_target = distance; }
+	float getMovement_MinimumDistanceToTarget() const { return this->m_movement.min_distance_to_target; }
 	void setMovementTarget(const ObjectSPtr_t &target, float minimum_distance = 0.0)
-		{ this->m_movement_target = target; this->setMovement_MinimumDistanceToTarget(minimum_distance); }
-	void clearMovementTarget() { this->m_movement_target.reset(); }
-	const ObjectSPtr_t &getMovementTarget() const { return this->m_movement_target; }
-	void setMovementStartPoint(const Coordinate &pos) { this->m_movement_start_point = pos; }
-	const Coordinate &getMovementStartPoint() const { return this->m_movement_start_point; }
+		{ this->m_movement.target = target; this->setMovement_MinimumDistanceToTarget(minimum_distance); }
+	void clearMovementTarget() { this->m_movement.target.reset(); }
+	const ObjectSPtr_t &getMovementTarget() const { return this->m_movement.target; }
+	void setMovementStartPoint(const Coordinate &pos) { this->m_movement.start_point = pos; }
+	const Coordinate &getMovementStartPoint() const { return this->m_movement.start_point; }
 	
 	Coordinate calculateDestination_TargetedMoving();
 	Coordinate calculateMovementSpeed(float time);
@@ -390,12 +390,12 @@ private:
 	
 	/** @name Attack related */
 	//@{
-	void setAttackTarget(const ObjectSPtr_t &target) { this->m_attack_target = target; }
-	void clearAttackTarget() { this->m_attack_target.reset(); }
-	void setLastAttackTime(double time) { this->m_last_attack_time = time; }
-	void setMovementFlags(MovementFlags_t val) { this->m_movement_flags = val; }
+	void setAttackTarget(const ObjectSPtr_t &target) { this->m_attack.target = target; }
+	void clearAttackTarget() { this->m_attack.target.reset(); }
+	void setLastAttackTime(double time) { this->m_attack.last_attack_time = time; }
+	void setMovementFlags(MovementFlags_t val) { this->m_movement.flags = val; }
 	void setMovementFlags(MovementFlags_t type, bool onoff);
-	MovementFlags_t getMovementFlags() const { return this->m_movement_flags; }
+	MovementFlags_t getMovementFlags() const { return this->m_movement.flags; }
 	bool getMovementFlag(MovementFlags_t type) const { return this->getMovementFlags() & type; }
 	bool checkMinDistanceOld(const ObjectSPtr_t &target, float min_distance, Coordinate *where_to_move);
 	/** @brief checks the distance between `this' and `dest'
@@ -411,6 +411,22 @@ private:
 	bool doAttack(float time);
 	void stopAttacking();
 	//@}
+	
+	/** @name production related */
+	//@{
+	void clearProductionQueue() { this->m_production.queue.clear(); }
+	void addToProductionQueue(ObjectId_t what) { this->m_production.queue.push_back(what); }
+	ObjectId_t firstSlotInProductionQueue()
+	{
+		if(this->m_production.queue.empty())
+			return ObjectId::None;
+		else
+			return this->m_production.queue.front();
+	}
+	void popFirstSlotInProductionQueue() { this->m_production.queue.pop_front(); }
+	//@}
+	
+	//////// Now it's data part
 	
 	/** @name Object owner/state/position etc. */
 	//@{
@@ -436,23 +452,38 @@ private:
 	float m_mul_armor_bonus, m_mul_damage_bonus, m_mul_moving_speed_bonus, m_mul_attack_speed_bonus;
 	//@}
 	
-	/** @name Movement related */
-	//@{
-	Coordinate m_movement_start_point, m_destination, m_final_destination;
-	MovementFlags_t m_movement_flags;
-	// if target is set, object moves to target. is target is not set, object moves to coordinate.
-	ObjectSPtr_t m_movement_target;
-	// if movement_target is set and movement_min_distance_to_target is set, 
-	//		object moves to movement_target.getPosition(), but keeps distance `min. movement_min_distance_to_target' to target.
-	float m_movement_min_distance_to_target; // TODO: implement this
-	//@}
+	/** Movement related data */
+	struct ms_movement
+	{
+		Coordinate start_point, destination, final_destination;
+		MovementFlags_t flags;
+		
+		// if target is set, object moves to target. is target is not set, object moves to coordinate.
+		ObjectSPtr_t target;
+		
+		// if movement_target is set and movement_min_distance_to_target is set, 
+		//		object moves to movement_target.getPosition(), but keeps distance `min. movement_min_distance_to_target' to target.
+		float min_distance_to_target; // TODO: implement this
+	} m_movement;
 	
-	/** @name Attack related */
-	//@{
-	double m_last_attack_time; /**< last attack time */
-	// if(this->m_isMoving() && this->getAttackTarget()) then this object is moving to attack target
-	ObjectSPtr_t m_attack_target; // not null if attack target is set.
-	//@}
+	/** Attack related data */
+	struct ms_attack
+	{
+		double last_attack_time; /**< last attack time */
+		
+		// if(this->m_isMoving() && this->getAttackTarget()) then this object is moving to attack target
+		ObjectSPtr_t target; // not null if attack target is set.
+	} m_attack;
+	
+	/** Production related data */
+	struct ms_production
+	{
+		std::deque<ObjectId_t> queue; /**< production queue */
+		double starttime; /** the time when the first slot in the queue has begun */
+	} m_production;
+	
+	//std::list<UpgradeId> m_upgrade_queue; /**< Currently not used; todo: implement this */
+	//std::deque<UnitOrder> m_order_queue; /**< Currently not used; todo: implement this */
 	
 	/////////////////////////////////////////////////////////////////////////
 public:
