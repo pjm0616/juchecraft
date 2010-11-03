@@ -44,7 +44,6 @@ public:
 	unsigned int getUpdateRate() const { return 200; } // limit to 60 updates per second
 	float getCurrentUpdateRate() const { return 1.0 / this->getDelta(); }
 	float getCurrentFPS() const { return 1.0 / this->getFrameDelta(); }
-	time_t getLastTicks() const { return this->m_last_ticks; }
 	
 	int getMapWidth() const { return this->m_map_width; }
 	int getMapHeight() const { return this->m_map_height; }
@@ -68,6 +67,8 @@ public:
 protected:
 	
 private:
+	void startTimer();
+	void endTimer();
 	void setStartTime(time_t t) { this->m_start_time = t; }
 	inline time_t getStartTime() const { return this->m_start_time; }
 	inline void setCachedElapsedTime(double time) { this->m_cached_elapsed_time = time; }
@@ -77,7 +78,6 @@ private:
 	inline void setFrameDelta(float val) { this->m_frame_deltat = val; }
 	void setLastDrawTime(double val) { this->m_last_draw = val; }
 	inline double getLastDrawTime() const { return this->m_last_draw; }
-	void setLastTicks(time_t ticks) { this->m_last_ticks = ticks; }
 	
 	void processObjects();
 	
@@ -91,7 +91,6 @@ private:
 	unsigned int m_frame_number;
 	float m_frame_deltat;
 	double m_last_draw;
-	time_t m_last_ticks;
 	
 	// map related
 	//@{

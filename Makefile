@@ -5,20 +5,20 @@ ENABLE_PROFILING 	?= 0
 
 CROSSC				=
 
-SRCS_LIBMPQ			= libs/libmpq/SComp/SComp.cpp libs/libmpq/SComp/SErr.cpp libs/libmpq/SComp/SMem.cpp libs/libmpq/SComp/crc32.c libs/libmpq/SComp/explode.c libs/libmpq/SComp/huffman.cpp libs/libmpq/SComp/implode.c libs/libmpq/SComp/wave.cpp libs/libmpq/SFmpqapi/MpqBlockTable.cpp libs/libmpq/SFmpqapi/MpqCrypt.cpp libs/libmpq/SFmpqapi/MpqHashTable.cpp libs/libmpq/SFmpqapi/SFUtil.cpp libs/libmpq/SFmpqapi/SFmpqapi.cpp libs/libmpq/SFmpqapi/windows.cpp
 SRCS_UI				= ui/SCGameUI.cpp ui/sdl/SCGameUI_SDL.cpp ui/ncurses/SCGameUI_ncurses.cpp
-SRCS				= libs/libmpqgrp/grp.cpp libs/luacpp/luacpp.cpp $(SRCS_UI) $(SRCS_LIBMPQ) SCCoordinate.cpp SCObject.cpp SCPlayer.cpp SCObjectList.cpp SCObjectPrototypes.cpp SCGame.cpp main.cpp
+SRCS				= libs/jcimg/jcimg.cpp libs/luacpp/luacpp.cpp SCCoordinate.cpp SCObject.cpp SCPlayer.cpp SCObjectList.cpp SCObjectPrototypes.cpp SCGame.cpp main.cpp $(SRCS_UI) 
 TARGET1				= mini_sc
 
-DEFS				= -D_REENTRANT -fopenmp -D_FILE_OFFSET_BITS=64
+DEFS				= -D_REENTRANT -fopenmp -D_FILE_OFFSET_BITS=64 -DBOOST_NO_RTTI
 LIBS				= -fopenmp ./libs/lua/src/liblua.a -lSDL -lSDL_ttf -lSDL_image -lSDL_gfx -lz -lbz2 -lncursesw
-INCLUDEDIR			= -I. -Ilibs/lua/src -Ilibs -Ilibs/libmpq/SFmpqapi
+INCLUDEDIR			= -I. -Ilibs/lua/src -Ilibs
 LIBDIR				=
 
 ifeq ($(DEBUG),1)
-DEFS_DBG			= -DDEBUG 
-CFLAGS_DBG			= $(DEFS_DBG) -g -O0 
-CXXFLAGS_DBG		= $(CFLAGS_DBG) 
+DEFS_DBG			= -DDEBUG
+#CFLAGS_DBG			= $(DEFS_DBG) -g -O0
+CFLAGS_DBG			= $(DEFS_DBG) -g -O2 -fno-omit-frame-pointer
+CXXFLAGS_DBG		= $(CFLAGS_DBG)
 LDFLAGS_DBG			=
 ifeq ($(ENABLE_PROFILING),1)
 C_CXX_LD_FLAGS_PROF	= -pg
@@ -53,7 +53,7 @@ UNZIP				=unzip
 CFLAGS				= $(DEFS) $(CFLAGS_DBG) $(C_CXX_LD_FLAGS_PROF) $(INCLUDEDIR) \
 						-std=gnu99 -finline-functions -Wall -Wextra -Wno-unused -Wno-unused-function #-Wextra -Wshadow
 CXXFLAGS			= $(DEFS) $(CXXFLAGS_DBG) $(C_CXX_LD_FLAGS_PROF) $(INCLUDEDIR) \
-						-std=gnu++98 -finline-functions -Wall -Wextra -Wno-unused -Wno-unused-function #-Wextra -Wshadow
+						-std=gnu++98 -finline-functions -Wall -Wextra -Wno-unused -Wno-unused-function -fno-rtti #-Wextra -Wshadow
 LDFLAGS				= $(LDFLAGS_DBG) $(C_CXX_LD_FLAGS_PROF) $(LIBDIR)
 #OBJS				=$(SRCS:.cpp=.o) 
 OBJS_TMP				=$(SRCS:.c=.o) 

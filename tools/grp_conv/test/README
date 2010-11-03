@@ -1,0 +1,9 @@
+
+
+g++ -ojcimg_test -lSDL -lz ../../../libs/jcimg/jcimg.o ../../../libs/etc/md5.o test.cpp -g
+cd ..; ./convert_grp test/testscript.lua; cd test
+./jcimg_test
+
+
+clean: rm jcimg_test test.dat
+

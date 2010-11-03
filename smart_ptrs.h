@@ -9,6 +9,9 @@
 # error include "platform.h" first.
 #endif
 
+// always use boost
+#define SMART_PTR_USE_BOOST
+
 #ifdef __WIN32__
 # define SMART_PTR_USE_BOOST
 #endif

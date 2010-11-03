@@ -21,6 +21,7 @@
 #endif
 
 #ifndef __WIN32__
+#include <time.h>
 #include <sys/time.h>
 #endif
 
@@ -89,6 +90,20 @@ void Game::removeAllObjects()
 	objs.clear();
 }
 
+void Game::startTimer()
+{
+#ifdef __WIN32__
+	timeBeginPeriod(1);
+#endif
+	this->setStartTime(this->getElapsedTime());
+}
+
+void Game::endTimer()
+{
+#ifdef __WIN32__
+	timeEndPeriod(1);
+#endif
+}
 
 double Game::getElapsedTime() const
 {
@@ -96,10 +111,18 @@ double Game::getElapsedTime() const
 	DWORD milisec = timeGetTime();
 	return (double)milisec / 1000;
 #else
-	timeval tv;
+	// it seems that gettimeofday is faster than clock_gettime..
+# if 0
+	struct timespec tsp;
+	clock_gettime(CLOCK_MONOTONIC, &tsp);
+	double time = (tv.tv_sec - this->getStartTime()) + ((double)tv.tv_nsec / 1000000000);
+	return time;
+# else
+	struct timeval tv;
 	gettimeofday(&tv, NULL);
 	double time = (tv.tv_sec - this->getStartTime()) + ((double)tv.tv_usec / 1000000);
 	return time;
+# endif
 #endif
 }
 
@@ -134,7 +157,7 @@ void Game::processObjects()
 
 void Game::run()
 {
-	this->setStartTime(this->getElapsedTime());
+	this->startTimer();
 	
 	this->test_tmp1(); // debug
 	
@@ -149,11 +172,12 @@ void Game::run()
 	this->setFrameDelta(fixed_frame_deltat);
 	this->setLastDrawTime(0.0);
 	double start_time, end_time = this->getElapsedTime();
+	
+	// main game loop
 	while(!this->isGameEnded())
 	{
 		//double start_time = this->getElapsedTime();
 		start_time = end_time;
-		this->setLastTicks(start_time * 1000);
 		
 		this->processObjects();
 		this->m_ui->processFrame();
@@ -180,6 +204,8 @@ void Game::run()
 		this->setDelta(end_time - start_time);
 		this->setCachedElapsedTime(end_time);
 	}
+	
+	this->endTimer();
 }
 
 

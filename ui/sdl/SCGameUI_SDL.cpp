@@ -22,15 +22,6 @@
 #include <omp.h>
 #endif
 
-namespace SDL
-{
-#include <SDL/SDL.h>
-#include <SDL/SDL_ttf.h>
-#include <SDL/SDL_image.h>
-#include <SDL/SDL_gfxPrimitives.h>
-//#include <SDL/SDL_gfxBlitFunc.h>
-}
-
 #include "defs.h"
 #include "compat.h"
 #include "luacpp/luacpp.h"
@@ -48,10 +39,9 @@ namespace SDL
 #include "ui/SCGameUI.h"
 #include "ui/sdl/SCGameUI_SDL.h"
 
-#if 1
-#include "libmpqgrp/grp.h"
-#include "libmpq/SFmpqapi/SFmpqapi.h"
-#endif
+#include "my_sdl.h"
+#include "jcimg/jcimg.h"
+
 
 
 using namespace SDL;
@@ -129,7 +119,7 @@ static void SDL_FillSurfaceP(SDL_Surface *sf, int x, int y, int w, int h, unsign
 }
 static void SDL_BlitRectP(SDL_Surface *sf, int x, int y, int w, int h, unsigned int color)
 {
-	SDL_Surface *tmp = SDL_CreateRGBSurface(SDL_SWSURFACE, w, h, 32, 0xff, 0xff00, 0xff0000, 0xff000000);
+	SDL_Surface *tmp = SDL_CreateRGBSurface(SDL_HWSURFACE, w, h, 32, 0xff, 0xff00, 0xff0000, 0xff000000);
 	SDL_FillRect(tmp, NULL, color);
 	SDL_Rect r = {x, y, w, h};
 	SDL_BlitSurface(tmp, NULL, sf, &r);
@@ -145,96 +135,12 @@ static void SDL_print(TTF_Font *font, SDL_Surface *sf, int x, int y, int w, int 
 }
 
 
-///////////
-//
-
-static void grp_setpix(void *surface, int x, int y, Uint32 color)
-{
-	SDL_SetPixel32((SDL_Surface *)surface, x, y, (color | 0xff000000));
-}
-static grp_pixel_funcs g_grp_pixelfuncs={grp_setpix, NULL};
-
-
-static void grp_setpix_wirefram_green(void *surface, int x, int y, Uint32 color)
-{
-	SDL_SetPixel32((SDL_Surface *)surface, x, y, 0xff00ff00);
-}
-static grp_pixel_funcs g_grp_pixelfuncs_wirefram_green={grp_setpix_wirefram_green, NULL};
-////
-
-
-static SDL_Surface *g_juche_supplies_icon;
-static SDL_Surface *g_sf_juche_aojiworker, *g_sf_juche_rodongcorrectionalfacility;
-
-static grp_palette_t *g_palette_units;
-static grp_data_t *g_grp_icons;
-static grp_data_t *g_grp_minfield01, *g_grp_minfield01_shad;
-static grp_data_t *g_grp_wirefram;
-static grp_data_t *g_grp_t_ccenter, *g_grp_t_marine, *g_grp_t_firebat;
-static grp_data_t *g_grp_z_zergling, *g_grp_z_zergling_shad;
-
-///
-
-
-SDL_Surface *render_grp_frame(grp_data_t *grpdata, int framenum, unsigned int grpflags = 0)
-{
-	grp_header_t *grpinfo = get_grp_info(grpdata);
-	//grp_frameheader_t *frame = grp_get_frame_info(grpdata, framenum);
-	SDL_Surface *sf = SDL_CreateRGBSurface(SDL_SWSURFACE, grpinfo->max_width, grpinfo->max_height, 32, 0xff, 0xff00, 0xff0000, 0xff000000);
-	
-	SDL_LockSurfaceIfNeeded(sf);
-	draw_grp(sf, 0, 0, &g_grp_pixelfuncs, grpdata, g_palette_units, framenum, grpflags, 0);
-	SDL_UnlockSurfaceIfNeeded(sf);
-	
-	return sf;
-}
-
-SDL_Surface *render_grp_frame_flipped(grp_data_t *grpdata, int framenum, bool do_hflip = false, bool do_vflip = false, unsigned int grpflags = 0)
-{
-	grp_header_t *grpinfo = get_grp_info(grpdata);
-	grp_frameheader_t *frame = grp_get_frame_info(grpdata, framenum);
-	SDL_Surface *sf = render_grp_frame(grpdata, framenum, grpflags);
-	int w = grpinfo->max_width;
-	int h = grpinfo->max_height;
-	
-	if(do_hflip)
-	{
-		#pragma omp parallel for if(h > 300) shared(sf, w, h)
-		for(int y = 0; y < h; y++)
-		{
-			Uint32 *line = SDL_GetPixelPtr32(sf, 0, y);
-			for(int x = 0; x < w/2; x++)
-			{
-				Uint32 tmp = line[x];
-				line[x] = line[w-1 - x];
-				line[w-1 - x] = tmp;
-			}
-		}
-	}
-	if(do_vflip)
-	{
-		int ymod = sf->pitch/4;
-		#pragma omp parallel for if(w > 300) shared(sf, w, h)
-		for(int x = 0; x < w; x++)
-		{
-			Uint32 *col = (Uint32 *)sf->pixels + x;
-			// todo: optimize this
-			for(int y = 0; y < h/2; y++)
-			{
-				Uint32 tmp = col[y*ymod];
-				col[y*ymod] = col[(h-1 - y)*ymod];
-				col[(h-1 - y)*ymod] = tmp;
-			}
-		}
-	}
-	
-	return sf;
-}
 
 /* 유닛 색상을 비율에 따라 바꿔줌 */
 // This is slow :(
 void replace_unit_colors(SDL_Surface *sf, Uint32 newcolor)
 {
+	SDL_LockSurfaceIfNeeded(sf);
 	//static const Uint32 orig_unit_colors[] = {0xde00de, 0x5b005b, 0xbd00bd, 0x9c009c, 0x7c007c, 0x190019, 0xff00ff, 0x3a003a};
 	Uint8 nc_r = (newcolor & 0x0000ff) >> 0;
 	Uint8 nc_g = (newcolor & 0x00ff00) >> 8;
@@ -258,70 +164,20 @@ void replace_unit_colors(SDL_Surface *sf, Uint32 newcolor)
 			}
 		}
 	}
+	SDL_UnLockSurfaceIfNeeded(sf);
 }
 
-#define SHADOW_MAGIC_COLOR 0xef00ef
-#define SHADOW_MAGIC_COLOR_RGBA 0xffef00ef
-void render_shadow_image(SDL_Surface *sf)
-{
-	#pragma omp parallel for if(sf->h > 300) shared(sf)
-	for(int y = 0; y < sf->h; y++)
-	{
-		Uint32 *line = SDL_GetPixelPtr32(sf, 0, y);
-		for(int x = 0; x < sf->w; x++)
-		{
-			if(line[x] == SHADOW_MAGIC_COLOR_RGBA)
-				line[x] = 0xe0000000; // black with alpha 0xe0
-		}
-	}
-}
+static SDL_Surface *g_juche_supplies_icon;
+static SDL_Surface *g_sf_juche_aojiworker, *g_sf_juche_rodongcorrectionalfacility;
 
-// this is VERY slow
-void render_grp_frame_to_surface(grp_data_t *grpdata, int framenum, SDL_Surface *dest_sf, int x, int y, 
-	int opt_align_w = -1, int opt_align_h = -1, bool do_hflip = false, bool do_vflip = false, 
-	Uint32 new_unit_color = 0x00000000, unsigned int grpflags = 0)
-{
-	grp_frameheader_t *frame = grp_get_frame_info(grpdata, framenum);
-	
-	SDL_Surface *rmodel = render_grp_frame_flipped(grpdata, framenum, do_hflip, do_vflip, grpflags);
-	
-	int new_x = x, new_y = y;
-	int frame_left = frame->left, frame_top = frame->top;
-	{
-		/* 뒤집었을 경우 x, y 값을 보정해줌 */
-		grp_header_t *grpinfo = get_grp_info(grpdata);
-		if(do_hflip)
-		{
-			int new_left = (grpinfo->max_width-1) - (frame->left+frame->width);
-			new_x -= (frame->left - new_left);
-			frame_left = new_left;
-		}
-		if(do_vflip)
-		{
-			int new_top = (grpinfo->max_height-1) - (frame->top+frame->height);
-			new_y -= (frame->top - new_top);
-			frame_top = new_top;
-		}
-	}
-	
-	SDL_Rect rmodel_rect = {frame_left, frame_top, frame->width, frame->height};
-	SDL_Rect dest_rect = {new_x, new_y, frame->width, frame->height};
-	//if(opt_align_w > 0)
-	//	dest_rect.x -= (frame->width - opt_align_w);
-	if(opt_align_h > 0)
-		dest_rect.y -= (frame->height - opt_align_h);
-	
-	if(new_unit_color != 0x00000000)
-		replace_unit_colors(rmodel, new_unit_color);
-	else if(grpflags & SHADOW_COLOR)
-		render_shadow_image(rmodel);
-	
-	SDL_LockSurfaceIfNeeded(dest_sf);
-	SDL_BlitSurface(rmodel, &rmodel_rect, dest_sf, &dest_rect);
-	SDL_UnlockSurfaceIfNeeded(dest_sf);
-	SDL_FreeSurface(rmodel);
-}
+static grp_palette_t *g_palette_units;
+static SDL_Surface *g_grp_icons;
+static SDL_Surface *g_grp_minfield01, *g_grp_minfield01_shad;
+static SDL_Surface *g_grp_wirefram;
+static SDL_Surface *g_grp_t_ccenter, *g_grp_t_marine, *g_grp_t_firebat;
+static SDL_Surface *g_grp_z_zergling, *g_grp_z_zergling_shad;
 
+///
 
 ///////
 
@@ -361,9 +217,9 @@ bool GameUI_SDL::initUI()
 	this->m_gamescr_left_pos = 0;
 	this->m_gamescr_top_pos = 0;
 	
-	this->m_minimap_wnd = SDL_CreateRGBSurface(SDL_SWSURFACE, 128, 128, 32, 0xff, 0xff00, 0xff0000, 0xff000000);
-	this->m_unitstat_wnd = SDL_CreateRGBSurface(SDL_SWSURFACE, 128, 128, 32, 0xff, 0xff00, 0xff0000, 0xff000000);
-	this->m_buttons_wnd = SDL_CreateRGBSurface(SDL_SWSURFACE, 128, 128, 32, 0xff, 0xff00, 0xff0000, 0xff000000);
+	this->m_minimap_wnd = SDL_CreateRGBSurface(SDL_HWSURFACE, 128, 128, 32, 0xff, 0xff00, 0xff0000, 0xff000000);
+	this->m_unitstat_wnd = SDL_CreateRGBSurface(SDL_HWSURFACE, 128, 128, 32, 0xff, 0xff00, 0xff0000, 0xff000000);
+	this->m_buttons_wnd = SDL_CreateRGBSurface(SDL_HWSURFACE, 128, 128, 32, 0xff, 0xff00, 0xff0000, 0xff000000);
 	
 	// game resources;
 	this->m_sf_console = IMG_Load(GAME_ROOT_DIR "./res/ui/sdl/imgs/tconsole.png");
@@ -374,29 +230,7 @@ bool GameUI_SDL::initUI()
 	g_sf_juche_rodongcorrectionalfacility = IMG_Load(GAME_ROOT_DIR "./res/ui/sdl/objects/buildings/53002.Juche_RodongCorrectionalFacility.jpg");
 	g_sf_juche_aojiworker = IMG_Load(GAME_ROOT_DIR "./res/ui/sdl/objects/units/52001.Juche_AojiWorker.jpg");
 	
-	HANDLE mpq_handles[3];
-	SFileOpenArchive(GAME_DATA_DIR "./StarDat.mpq", 1000, 0, &mpq_handles[0]);
-	SFileOpenArchive(GAME_DATA_DIR "./BrooDat.mpq", 2000, 0, &mpq_handles[1]);
-	SFileOpenArchive(GAME_DATA_DIR "./patch_rt.mpq", 3000, 0, &mpq_handles[2]);
 	
-	#if 0
-	#if 0
-	grp_set_file_method(GRP_USE_FILE);
-	g_palette_units = load_palette(GAME_DATA_DIR "./libmpqgrp/sc_palettes/units.pal");
-	grp_set_file_method(GRP_USE_MPQ);
-	#else
-	g_palette_units = load_palette(GAME_DATA_DIR "./libmpqgrp/sc_palettes/units.pal");
-	#endif
-	g_grp_icons = load_grp("game/icons.grp");
-	g_grp_minfield01 = load_grp("unit/neutral/min01.grp");
-	g_grp_minfield01_shad = load_grp("unit/neutral/min01sha.grp");
-	g_grp_wirefram = load_grp("unit/wirefram/wirefram.grp");
-	g_grp_t_ccenter = load_grp("unit/terran/control.grp");
-	g_grp_t_marine = load_grp("unit/terran/marine.grp");
-	g_grp_t_firebat = load_grp("unit/terran/firebat.grp");
-	g_grp_z_zergling = load_grp("unit/zerg/zergling.grp");
-	g_grp_z_zergling_shad = load_grp("unit/zerg/zzeshad.grp");
-	#else
 	grp_set_file_method(GRP_USE_MPQ);
 	g_palette_units = load_palette("tileset\\Platform.wpe");
 	g_grp_icons = load_grp("game\\icons.grp");
@@ -408,7 +242,6 @@ bool GameUI_SDL::initUI()
 	g_grp_t_firebat = load_grp("unit\\terran\\firebat.grp");
 	g_grp_z_zergling = load_grp("unit\\zerg\\zergling.grp");
 	g_grp_z_zergling_shad = load_grp("unit\\zerg\\zzeshad.grp");
-	#endif
 	
 	return true;
 }
@@ -805,7 +638,7 @@ static int calculate_unit_framenum(const ObjectSPtr_t &obj, int attack_start, in
 	*do_vflip = false;
 	
 	row = convertAngleToDirection(obj->getAngle());
-	time_t ticks = obj->getGame()->getLastTicks();
+	time_t ticks = obj->getGame()->getCachedElapsedTime() * 1000;
 	if(obj->isMoving())
 	{
 		int t = (int)(ticks/50) % (move_end - move_start + 1);
