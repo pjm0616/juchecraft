@@ -203,6 +203,32 @@ static void render_jcimg_to_screen(JucheImage *img, SDL_Surface *scr, int num, i
 	
 	SDL_BlitSurface(sf.get(), &srcrect, scr, &dstrect);
 }
+static void render_jcimg_obj_to_screen(const ObjectSPtr_t &obj, JucheImage *img, SDL_Surface *scr, int num, int scr_x, int scr_y)
+{
+	jcimg_imginfo_t *imginfo;
+	SDL_SurfaceSPtr_t sf = img->getImage(num, &imginfo);
+	
+	// TODO
+	#if 0
+	//@{
+	int obj_w, obj_h;
+	obj->getSize(&obj_w, &obj_h);
+	
+	int obj_centerx = scr_x + (obj_w / 2);
+	int obj_centery = scr_y + (obj_h / 2);
+	//@}
+	
+	//@{
+	int img_centerx = (img->getMaxWidth()-1) / 2;
+	int img_centery = (img->getMaxHeight()-1) / 2;
+	//@}
+	#endif
+	
+	SDL_Rect srcrect = {imginfo->left, imginfo->top, imginfo->width, imginfo->height};
+	SDL_Rect dstrect = {scr_x, scr_y, imginfo->width, imginfo->height};
+	
+	SDL_BlitSurface(sf.get(), &srcrect, scr, &dstrect);
+}
 
 ///////
 
@@ -813,9 +839,9 @@ void GameUI_SDL::drawObject(const ObjectSPtr_t &obj)
 				}
 			
 				if(img1_shad) // shadow
-					render_jcimg_to_screen(img1_shad, this->m_game_scr, framenum, x, y);
+					render_jcimg_obj_to_screen(obj, img1_shad, this->m_game_scr, framenum, x, y);
 				if(img1)
-					render_jcimg_to_screen(img1, this->m_game_scr, framenum, x, y);
+					render_jcimg_obj_to_screen(obj, img1, this->m_game_scr, framenum, x, y);
 			}
 		}
 		#endif

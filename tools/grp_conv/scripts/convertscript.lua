@@ -81,6 +81,7 @@ local grplist = {
 	}, 
 	['unit\\neutral\\min01sha.grp'] = {
 		palette = palettes.units, 
+		draw_shadow = true, 
 		rules = {
 			{	n = {0, 3};
 				file = 'objects/neutral/mineral01_shadow.dat';

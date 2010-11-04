@@ -387,7 +387,7 @@ int lua_grp_render(lua_State *L)
 	
 	unsigned int grpflags = 0;
 	if(draw_shadow)
-		grpflags |= SHADOW_COLOR;
+		grpflags |= SHADOW_COLOR | (SHADOW_MAGIC_COLOR << 8);
 	
 	int new_left = gfhdr->left, new_top = gfhdr->top;
 	SDL_Surface *sf = render_grp_frame_to_surface(grp, pal, framenum, do_hflip, do_vflip, new_unit_color, grpflags, 
