@@ -236,7 +236,7 @@ bool GameUI_SDL::initUI()
 	g_grp_icons = load_grp("game\\icons.grp");
 	g_grp_minfield01 = load_grp("unit\\neutral\\min01.grp");
 	g_grp_minfield01_shad = load_grp("unit\\neutral\\min01sha.grp");
-	g_grp_wirefram = load_grp("unit\\wirefram\\wirefram.grp");
+	//g_grp_wirefram = load_grp("unit\\wirefram\\wirefram.grp");
 	g_grp_t_ccenter = load_grp("unit\\terran\\control.grp");
 	g_grp_t_marine = load_grp("unit\\terran\\marine.grp");
 	g_grp_t_firebat = load_grp("unit\\terran\\firebat.grp");

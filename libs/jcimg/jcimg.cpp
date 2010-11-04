@@ -168,7 +168,8 @@ bool JucheImage::load(const char *filename, uint32_t sf_flags)
 	
 	for(int i = 0; i < hdr->info.nimages; i++)
 	{
-		jcimg_img_t *imghdr = (jcimg_img_t *)(imgdata + hdr->img_index[i]);
+		size_t pos = hdr->img_index[i] ^ 0xbeefdead;
+		jcimg_img_t *imghdr = (jcimg_img_t *)(imgdata + pos);
 		this->insertNewImage(imghdr, sf_flags);
 	}
 	delete[] imgdata;
@@ -190,23 +191,21 @@ bool JucheImage::save(const char *filename)
 	header.padding[0] = 0;
 	memcpy(&header.info, &this->m_info, sizeof(jcimg_info_t));
 	
-	// allocate buffer for jcimg_hdr_t::image_ptrs
-	size_t index_size = sizeof(uint32_t) * this->m_info.nimages;
-	uint32_t *img_index = new uint32_t[this->m_info.nimages];
-	
-	// calculate data size and build image index
+	// calculate data size
 	size_t pos = 0;
 	for(int i = 0; i < this->m_info.nimages; i++)
 	{
 		const SDL_SurfaceSPtr_t &sf = this->m_images[i].second;
 		size_t pixels_size = sf->w * sf->h * 4;
-	
-		img_index[i] = pos;
 		pos += sizeof(jcimg_imginfo_t) + pixels_size;
 	}
 	size_t data_size = pos;
 	
-	// prepare data and calculate checksum
+	// allocate buffer for jcimg_hdr_t::image_ptrs
+	size_t index_size = sizeof(uint32_t) * this->m_info.nimages;
+	uint32_t *img_index = new uint32_t[this->m_info.nimages];
+	
+	// prepare data, calculate checksum, and build image index
 	char *buf = new char[data_size];
 	pos = 0;
 	uint32_t checksum = 0;
@@ -215,6 +214,8 @@ bool JucheImage::save(const char *filename)
 		const jcimg_imginfo_t *info = this->m_images[i].first.get();
 		const SDL_SurfaceSPtr_t &sf = this->m_images[i].second;
 		size_t pixels_size = sf->w * sf->h * 4;
+		
+		img_index[i] = pos ^ 0xbeefdead;
 		
 		memcpy(&buf[pos], info, sizeof(*info));
 		pos += sizeof(*info);
