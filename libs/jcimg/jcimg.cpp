@@ -30,9 +30,6 @@ namespace zlib
 
 
 
-using namespace SDL;
-
-
 
 static char *my_z_compress(const char *data, size_t size, size_t *result_size_out)
 {
@@ -102,6 +99,7 @@ void JucheImage::ImageInfo::set(const jcimg_imginfo_t *imginfo)
 
 JucheImage::JucheImage()
 {
+	this->clear();
 }
 
 JucheImage::JucheImage(const jcimg_info_t *fileinfo)
@@ -132,13 +130,13 @@ void JucheImage::reset(const jcimg_info_t *fileinfo)
 
 void JucheImage::setFileInfo(const jcimg_info_t *fileinfo)
 {
-	memcpy(&this->m_info, fileinfo, sizeof(jcimg_info_t));
+	memcpy(&this->m_info, fileinfo, sizeof(this->m_info));
 }
 
-void JucheImage::insertNewImage(jcimg_imginfo_t *imginfo, SDL_SurfaceSPtr_t sf)
+void JucheImage::insertNewImage(jcimg_imginfo_t *imginfo, SDL::SDL_SurfaceSPtr_t sf)
 {
 	this->m_images.push_back(
-		std::pair<JucheImage::ImageInfo, SDL_SurfaceSPtr_t>(
+		std::pair<JucheImage::ImageInfo, SDL::SDL_SurfaceSPtr_t>(
 			JucheImage::ImageInfo(imginfo), sf
 		));
 	this->m_info.nimages = this->numOfImages();
@@ -146,11 +144,11 @@ void JucheImage::insertNewImage(jcimg_imginfo_t *imginfo, SDL_SurfaceSPtr_t sf)
 
 void JucheImage::insertNewImage(jcimg_imginfo_t *imginfo, uint32_t *pixels, uint32_t sf_flags)
 {
-	SDL_Surface *sf = SDL_CreateRGBSurface(sf_flags, this->m_info.max_width, this->m_info.max_height, 32, 0xff, 0xff00, 0xff0000, 0xff000000);
+	SDL::SDL_Surface *sf = SDL::SDL_CreateRGBSurface(sf_flags, this->m_info.max_width, this->m_info.max_height, 32, 0xff, 0xff00, 0xff0000, 0xff000000);
 	size_t pixels_size = sf->w * sf->h * 4;
 	memcpy(sf->pixels, pixels, pixels_size);
 	
-	this->insertNewImage(imginfo, SDL_SurfaceSPtr_t(sf));
+	this->insertNewImage(imginfo, SDL::SDL_SurfaceSPtr_t(sf));
 }
 
 void JucheImage::insertNewImage(jcimg_img_t *img, uint32_t sf_flags)
@@ -203,7 +201,7 @@ bool JucheImage::save(const char *filename)
 	size_t pos = 0;
 	for(int i = 0; i < this->m_info.nimages; i++)
 	{
-		const SDL_SurfaceSPtr_t &sf = this->m_images[i].second;
+		const SDL::SDL_SurfaceSPtr_t &sf = this->m_images[i].second;
 		size_t pixels_size = sf->w * sf->h * 4;
 		pos += sizeof(jcimg_imginfo_t) + pixels_size;
 	}
@@ -220,7 +218,7 @@ bool JucheImage::save(const char *filename)
 	for(int i = 0; i < this->m_info.nimages; i++)
 	{
 		const jcimg_imginfo_t *info = this->m_images[i].first.get();
-		const SDL_SurfaceSPtr_t &sf = this->m_images[i].second;
+		const SDL::SDL_SurfaceSPtr_t &sf = this->m_images[i].second;
 		size_t pixels_size = sf->w * sf->h * 4;
 		
 		img_index[i] = pos ^ 0xbeefdead;
@@ -257,7 +255,7 @@ bool JucheImage::save(const char *filename)
 
 const SDL::SDL_SurfaceSPtr_t &JucheImage::getImage(unsigned int n, jcimg_imginfo_t **imginfo)
 {
-	static SDL_SurfaceSPtr_t null_sf;
+	static SDL::SDL_SurfaceSPtr_t null_sf;
 	if(unlikely(n > this->numOfImages()))
 		return null_sf;
 	

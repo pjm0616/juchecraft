@@ -726,7 +726,7 @@ void GameUI_SDL::drawObject(const ObjectSPtr_t &obj)
 		#if 1
 		bool do_draw = false;
 		JucheImage *img1 = NULL, *img1_shad = NULL;
-		short framenum;
+		short framenum = -1;
 		Uint32 unit_color = convert_color_from_bgra_to_rgba(owner->getPlayerColor());
 		
 		if(objid == SC::ObjectId::Terran_CommandCenter)

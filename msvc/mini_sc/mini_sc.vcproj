@@ -224,88 +224,20 @@
 				Name="libs"
 				>
 				<Filter
-					Name="libmpqgrp"
+					Name="etc"
 					>
 					<File
-						RelativePath="..\..\libs\libmpqgrp\grp.cpp"
+						RelativePath="..\..\libs\etc\md5.c"
 						>
 					</File>
 				</Filter>
 				<Filter
-					Name="libmpq"
+					Name="jcimg"
 					>
-					<Filter
-						Name="SComp"
+					<File
+						RelativePath="..\..\libs\jcimg\jcimg.cpp"
 						>
-						<File
-							RelativePath="..\..\libs\libmpq\SComp\crc32.c"
-							>
-						</File>
-						<File
-							RelativePath="..\..\libs\libmpq\SComp\explode.c"
-							>
-						</File>
-						<File
-							RelativePath="..\..\libs\libmpq\SComp\huffman.cpp"
-							>
-						</File>
-						<File
-							RelativePath="..\..\libs\libmpq\SComp\implode.c"
-							>
-						</File>
-						<File
-							RelativePath="..\..\libs\libmpq\SComp\SComp.cpp"
-							>
-						</File>
-						<File
-							RelativePath="..\..\libs\libmpq\SComp\SErr.cpp"
-							>
-						</File>
-						<File
-							RelativePath="..\..\libs\libmpq\SComp\SMem.cpp"
-							>
-						</File>
-						<File
-							RelativePath="..\..\libs\libmpq\SComp\wave.cpp"
-							>
-						</File>
-					</Filter>
-					<Filter
-						Name="SFmpqapi"
-						>
-						<File
-							RelativePath="..\..\libs\libmpq\SFmpqapi\MpqBlockTable.cpp"
-							>
-						</File>
-						<File
-							RelativePath="..\..\libs\libmpq\SFmpqapi\MpqCrypt.cpp"
-							>
-						</File>
-						<File
-							RelativePath="..\..\libs\libmpq\SFmpqapi\MpqHashTable.cpp"
-							>
-						</File>
-						<File
-							RelativePath="..\..\libs\libmpq\SFmpqapi\SFmpq_static.cpp"
-							>
-						</File>
-						<File
-							RelativePath="..\..\libs\libmpq\SFmpqapi\SFmpqapi.cpp"
-							>
-						</File>
-						<File
-							RelativePath="..\..\libs\libmpq\SFmpqapi\SFmpqapi_no-lib.cpp"
-							>
-						</File>
-						<File
-							RelativePath="..\..\libs\libmpq\SFmpqapi\SFUtil.cpp"
-							>
-						</File>
-						<File
-							RelativePath="..\..\libs\libmpq\SFmpqapi\windows.cpp"
-							>
-						</File>
-					</Filter>
+					</File>
 				</Filter>
 				<Filter
 					Name="lua"
@@ -598,90 +530,18 @@
 				Name="libs"
 				>
 				<Filter
-					Name="libmpq"
-					>
-					<Filter
-						Name="SComp"
-						>
-						<File
-							RelativePath="..\..\libs\libmpq\SComp\huffman.h"
-							>
-						</File>
-						<File
-							RelativePath="..\..\libs\libmpq\SComp\pklib.h"
-							>
-						</File>
-						<File
-							RelativePath="..\..\libs\libmpq\SComp\SComp.h"
-							>
-						</File>
-						<File
-							RelativePath="..\..\libs\libmpq\SComp\SErr.h"
-							>
-						</File>
-						<File
-							RelativePath="..\..\libs\libmpq\SComp\SMem.h"
-							>
-						</File>
-						<File
-							RelativePath="..\..\libs\libmpq\SComp\wave.h"
-							>
-						</File>
-						<File
-							RelativePath="..\..\libs\libmpq\SComp\wintypes.h"
-							>
-						</File>
-					</Filter>
-					<Filter
-						Name="SFmpqapi"
-						>
-						<File
-							RelativePath="..\..\libs\libmpq\SFmpqapi\MpqBlockTable.h"
-							>
-						</File>
-						<File
-							RelativePath="..\..\libs\libmpq\SFmpqapi\MpqCrypt.h"
-							>
-						</File>
-						<File
-							RelativePath="..\..\libs\libmpq\SFmpqapi\MpqHashTable.h"
-							>
-						</File>
-						<File
-							RelativePath="..\..\libs\libmpq\SFmpqapi\resource.h"
-							>
-						</File>
-						<File
-							RelativePath="..\..\libs\libmpq\SFmpqapi\SFmpq_static.h"
-							>
-						</File>
-						<File
-							RelativePath="..\..\libs\libmpq\SFmpqapi\SFmpqapi.h"
-							>
-						</File>
-						<File
-							RelativePath="..\..\libs\libmpq\SFmpqapi\SFmpqapi_no-lib.h"
-							>
-						</File>
-						<File
-							RelativePath="..\..\libs\libmpq\SFmpqapi\SFTypes.h"
-							>
-						</File>
-						<File
-							RelativePath="..\..\libs\libmpq\SFmpqapi\SFUtil.h"
-							>
-						</File>
-						<File
-							RelativePath="..\..\libs\libmpq\SFmpqapi\windows.h"
-							>
-						</File>
-					</Filter>
-				</Filter>
-				<Filter
-					Name="libmpqgrp"
+					Name="etc"
 					>
 					<File
-						RelativePath="..\..\libs\libmpqgrp\grp.h"
+						RelativePath="..\..\libs\etc\md5.h"
+						>
+					</File>
+				</Filter>
+				<Filter
+					Name="jcimg"
+					>
+					<File
+						RelativePath="..\..\libs\jcimg\jcimg.h"
 						>
 					</File>
 				</Filter>

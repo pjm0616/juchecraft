@@ -16,8 +16,8 @@ LIBDIR				=
 
 ifeq ($(DEBUG),1)
 DEFS_DBG			= -DDEBUG
-CFLAGS_DBG			= $(DEFS_DBG) -g -O0
-#CFLAGS_DBG			= $(DEFS_DBG) -g -O2 -fno-omit-frame-pointer
+CFLAGS_DBG			= $(DEFS_DBG) -g -O0 -fstack-protector-all
+#CFLAGS_DBG			= $(DEFS_DBG) -g -O2 -fstack-protector-all -fno-omit-frame-pointer
 CXXFLAGS_DBG		= $(CFLAGS_DBG)
 LDFLAGS_DBG			=
 ifeq ($(ENABLE_PROFILING),1)
