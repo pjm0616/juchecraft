@@ -187,7 +187,7 @@ bool JucheImage::save(const char *filename)
 	header.magic = JCIMG_MAGIC;
 	header.version = JCIMG_VERSION;
 	header.compression_type = 1; // zlib
-	header.padding[0] = header.padding[1] = header.padding[2] = 0;
+	header.padding[0] = 0;
 	memcpy(&header.info, &this->m_info, sizeof(jcimg_info_t));
 	
 	// allocate buffer for jcimg_hdr_t::image_ptrs

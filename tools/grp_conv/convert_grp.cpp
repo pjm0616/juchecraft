@@ -217,21 +217,6 @@ SDL_Surface *render_grp_frame_to_surface(grp_data_t *grpdata, grp_palette_t *pal
 
 
 
-static HANDLE mpq_handles[3];
-
-void init_mpq()
-{
-	SFileOpenArchive("../../" GAME_DATA_DIR "./StarDat.mpq", 1000, 0, &mpq_handles[0]);
-	SFileOpenArchive("../../" GAME_DATA_DIR "./BrooDat.mpq", 2000, 0, &mpq_handles[1]);
-	SFileOpenArchive("../../" GAME_DATA_DIR "./patch_rt.mpq", 3000, 0, &mpq_handles[2]);
-	
-	grp_set_file_method(GRP_USE_MPQ);
-	//g_palette_units = load_palette("tileset\\Platform.wpe");
-	//g_grp_icons = load_grp("game\\icons.grp");
-}
-
-
-
 int lua_push_grppal(lua_State *L, grp_palette_t *v)
 {
 	grp_palette_t **p = (grp_palette_t **)lua_newuserdata(L, sizeof(grp_palette_t *));
@@ -702,6 +687,20 @@ int lua_my_z_uncompress(lua_State *L)
 }
 
 
+
+
+static HANDLE mpq_handles[3];
+
+static void init_mpq()
+{
+	SFileOpenArchive("../../" GAME_DATA_DIR "./StarDat.mpq", 1000, 0, &mpq_handles[0]);
+	SFileOpenArchive("../../" GAME_DATA_DIR "./BrooDat.mpq", 2000, 0, &mpq_handles[1]);
+	SFileOpenArchive("../../" GAME_DATA_DIR "./patch_rt.mpq", 3000, 0, &mpq_handles[2]);
+	
+	grp_set_file_method(GRP_USE_MPQ);
+	//g_palette_units = load_palette("tileset\\Platform.wpe");
+	//g_grp_icons = load_grp("game\\icons.grp");
+}
 
 int main(int argc, char *argv[])
 {

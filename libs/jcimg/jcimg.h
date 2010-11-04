@@ -16,13 +16,16 @@
 		{
 			u16 magic;
 			u16 version;
-			u32 checksum;
-			u8 compression_type;
-			u8 padding[3];
 			
+			u32 checksum;
+			
+			u8 compression_type;
+			u8 padding[1];
 			u16 nimages;
+			
 			u16 max_width;
 			u16 max_height;
+			
 			u32 img_index[nimages]; // img_index[] = {0, sizeof(next_item), ...};
 		}
 	///////////////////////// compressed: from here _ ->
@@ -70,11 +73,11 @@ typedef struct jcimg_hdr_s
 	uint16_t version;
 	uint32_t checksum;
 	uint8_t compression_type;
-	uint8_t padding[3];
+	uint8_t padding[1];
 	
 	jcimg_info_t info;
 	
-	uint32_t img_index[0]; // pointer to jcimg_img_t
+	uint32_t img_index[0]; // array of pointer to jcimg_img_t
 } jcimg_hdr_t;
 #endif
 
