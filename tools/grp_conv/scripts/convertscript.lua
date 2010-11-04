@@ -14,13 +14,15 @@ end
 
 ----------- data starts
 
-local lg_prefix = '/home/pjm0616/Desktop/tmp/res/'
+--local lg_prefix = '/home/pjm0616/Desktop/tmp/res/ui/sdl/imgs/'
+local lg_prefix = '/home/pjm0616/Desktop/tmp/res/imgs/'
+local lg_png_load_prefix = '../../res_raw/ui/sdl/imgs/'
 
 local palettes = {
 	units = grppal.load('tileset\\Platform.wpe')
 }
 
-local grplist1 = {
+local grplist = {
 	['game\\icons.grp'] = {
 		palette = palettes.units, 
 		rules = {
@@ -62,7 +64,7 @@ local grplist1 = {
 		palette = palettes.units, 
 		rules = {
 			{	n = {0, 3};
-				file = 'unit/neutral/mineral01.dat';
+				file = 'objects/neutral/mineral01.dat';
 			}, 
 		}, 
 	}, 
@@ -70,7 +72,7 @@ local grplist1 = {
 		palette = palettes.units, 
 		rules = {
 			{	n = {0, 3};
-				file = 'unit/neutral/mineral_shadow01.dat';
+				file = 'objects/neutral/mineral_shadow01.dat';
 			}, 
 		}, 
 	}, 
@@ -79,13 +81,13 @@ local grplist1 = {
 		palette = palettes.units, 
 		rules = {
 			{	n = {0, 0};
-				file = 'unit/terran/command_center.dat';
+				file = 'objects/terran/buildings/command_center.dat';
 			}, 
 			{	n = {1, 1};
-				file = 'unit/terran/command_center_building.dat';
+				file = 'objects/terran/buildings/command_center_building.dat';
 			}, 
 			--[[{	n = {2, 5};
-				file = 'unit/terran/command_center_lifting.dat';
+				file = 'objects/terran/buildings/command_center_lifting.dat';
 			}, ]]
 		}, 
 	}, 
@@ -94,18 +96,18 @@ local grplist1 = {
 		rules = {
 			{	row = {0, 1};
 				create_hflipped_imgs = true;
-				file = 'unit/terran/marine_attack_start.dat';
+				file = 'objects/terran/units/marine_attack_start.dat';
 			}, 
 			{	row = {2, 3};
 				create_hflipped_imgs = true;
-				file = 'unit/terran/marine_attack.dat';
+				file = 'objects/terran/units/marine_attack.dat';
 			}, 
 			{	row = {4, 12};
 				create_hflipped_imgs = true;
-				file = 'unit/terran/marine_walk.dat';
+				file = 'objects/terran/units/marine_walk.dat';
 			}, 
 			{	n = {221, 228};
-				file = 'unit/terran/marine_dying.dat';
+				file = 'objects/terran/units/marine_dying.dat';
 			}, 
 		}, 
 	}, 
@@ -115,11 +117,11 @@ local grplist1 = {
 		rules = {
 			{	row = {0, 1};
 				create_hflipped_imgs = true;
-				file = 'unit/terran/firebat_attack.dat';
+				file = 'objects/terran/units/firebat_attack.dat';
 			}, 
 			{	row = {2, 9};
 				create_hflipped_imgs = true;
-				file = 'unit/terran/firebat_walk.dat';
+				file = 'objects/terran/units/firebat_walk.dat';
 			}, 
 		}, 
 	}, 
@@ -128,22 +130,22 @@ local grplist1 = {
 		rules = {
 			{	row = {0, 3};
 				create_hflipped_imgs = true;
-				file = 'unit/zerg/zergling_attack.dat';
+				file = 'objects/zerg/units/zergling_attack.dat';
 			}, 
 			{	row = {4, 11};
 				create_hflipped_imgs = true;
-				file = 'unit/zerg/zergling_walk.dat';
+				file = 'objects/zerg/units/zergling_walk.dat';
 			}, 
 			{	row = {4, 11};
 				create_hflipped_imgs = true;
-				file = 'unit/zerg/zergling_walk.dat';
+				file = 'objects/zerg/units/zergling_walk.dat';
 			}, 
 			{	row = {12, 15};
 				create_hflipped_imgs = true;
-				file = 'unit/zerg/zergling_burrow.dat';
+				file = 'objects/zerg/units/zergling_burrow.dat';
 			}, 
 			{	n = {289, 295};
-				file = 'unit/zerg/zergling_dying.dat';
+				file = 'objects/zerg/units/zergling_dying.dat';
 			}, 
 		}, 
 	}, 
@@ -153,22 +155,22 @@ local grplist1 = {
 		rules = {
 			{	row = {0, 3};
 				create_hflipped_imgs = true;
-				file = 'unit/zerg/zergling_shadow_attack.dat';
+				file = 'objects/zerg/units/zergling_shadow_attack.dat';
 			}, 
 			{	row = {4, 11};
 				create_hflipped_imgs = true;
-				file = 'unit/zerg/zergling_shadow_walk.dat';
+				file = 'objects/zerg/units/zergling_shadow_walk.dat';
 			}, 
 			{	row = {4, 11};
 				create_hflipped_imgs = true;
-				file = 'unit/zerg/zzeshad_walk.dat';
+				file = 'objects/zerg/units/zzeshad_walk.dat';
 			}, 
 			{	row = {12, 15};
 				create_hflipped_imgs = true;
-				file = 'unit/zerg/zergling_shadow_burrow.dat';
+				file = 'objects/zerg/units/zergling_shadow_burrow.dat';
 			}, 
 			{	n = {289, 295};
-				file = 'unit/zerg/zergling_shadow_dying.dat';
+				file = 'objects/zerg/units/zergling_shadow_dying.dat';
 			}, 
 		}, 
 	}, 
@@ -176,9 +178,38 @@ local grplist1 = {
 }
 
 
+local pnglist = {
+	['game/tconsole.png'] = {
+		file = 'game/tconsole.dat';
+	}, 
+	['game/icons/juche_supplies_icon.png'] = {
+		file = 'game/icons/supplies_juche.dat';
+	}, 
+	
+	['objects/juche/units/52001.Juche_AojiWorker.png'] = {
+		file = 'objects/juche/units/52001.Juche_AojiWorker.dat';
+	}, 
+	['objects/juche/buildings/53002.Juche_RodongCorrectionalFacility.png'] = {
+		file = 'objects/juche/buildings/53002.Juche_RodongCorrectionalFacility.png';
+	}, 
+	-- add more images here
+}
 
 
-for file, info in pairs(grplist1) do
+
+
+for file, info in pairs(pnglist) do
+	print('processing', file)
+	local imgdata, imginfo = load_image(lg_png_load_prefix .. file)
+	
+	local img = jcimage.new({max_width = imginfo.width, max_height = imginfo.height})
+	img:insertNewImage(imginfo, imgdata)
+	img:save(lg_prefix .. info.file)
+end
+
+
+
+for file, info in pairs(grplist) do
 	print('processing', file)
 	local grp = grp.load(file)
 	local grpinfo = grp:info()
@@ -217,6 +248,12 @@ for file, info in pairs(grplist1) do
 		img:save(lg_prefix .. rule.file)
 	end
 end
+
+
+
+
+
+
 
 
 

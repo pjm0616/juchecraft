@@ -237,7 +237,10 @@ int lua_loadgrppal(lua_State *L)
 	const char *path = luaL_checkstring(L, 1);
 	grp_palette_t *p = load_palette(path);
 	if(!p)
+	{
+		luaL_error(L, "failed to open file");
 		return 0;
+	}
 	
 	lua_push_grppal(L, p);
 	return 1;
@@ -311,7 +314,10 @@ int lua_loadgrp(lua_State *L)
 	const char *path = luaL_checkstring(L, 1);
 	grp_data_t *p = load_grp(path);
 	if(!p)
+	{
+		luaL_error(L, "failed to open file");
 		return 0;
+	}
 	
 	lua_push_grp(L, p);
 	return 1;
@@ -686,6 +692,100 @@ int lua_my_z_uncompress(lua_State *L)
 	return 1;
 }
 
+static SDL_PixelFormat sg_jcimg_pixelformat = {
+	/*.palette =*/ NULL, 
+	
+	/*.BitsPerPixel =*/ 32, 
+	/*.BytesPerPixel =*/ 4, 
+	/*.Rloss =*/ 0, 
+	/*.Gloss =*/ 0, 
+	/*.Bloss =*/ 0, 
+	/*.Aloss =*/ 0, 
+	/*.Rshift =*/ 0, 
+	/*.Gshift =*/ 8, 
+	/*.Bshift =*/ 16, 
+	/*.Ashift =*/ 24, 
+	/*.Rmask =*/ 0x000000ff, 
+	/*.Gmask =*/ 0x0000ff00, 
+	/*.Bmask =*/ 0x00ff0000, 
+	/*.Amask =*/ 0xff000000, 
+
+	/*colorkey =*/ 0, 
+	/*alpha =*/ 0xff, 
+};
+
+// checks if `a' and `b' are compatible format
+static bool SDL_ComparePixelFormat(SDL_PixelFormat *a, SDL_PixelFormat *b)
+{
+	int ret = 0;
+	
+	#define COMPARE(name_) ret += !(a->name_ == b->name_)
+	COMPARE(BitsPerPixel);
+	COMPARE(BytesPerPixel);
+	COMPARE(Rloss);
+	COMPARE(Gloss);
+	COMPARE(Bloss);
+	COMPARE(Aloss);
+	COMPARE(Rshift);
+	COMPARE(Gshift);
+	COMPARE(Bshift);
+	COMPARE(Ashift);
+	COMPARE(Rmask);
+	COMPARE(Gmask);
+	COMPARE(Bmask);
+	COMPARE(Amask);
+	#undef COMPARE
+	
+	return ret == 0;
+}
+
+int lua_load_image(lua_State *L)
+{
+	const char *filename = luaL_checkstring(L, 1);
+	
+	SDL_Surface *sf = IMG_Load(filename);
+	if(!sf)
+	{
+		luaL_error(L, "failed to open file");
+		return 0;
+	}
+	
+	// we assume that IMG_Load gives surface in this format.
+	if(!SDL_ComparePixelFormat(&sg_jcimg_pixelformat, sf->format))
+	{
+		SDL_Surface *sf2 = SDL_CreateRGBSurface(SDL_SWSURFACE, sf->w, sf->h, 32, 0xff, 0xff00, 0xff0000, 0xff000000);
+		SDL_BlitSurface(sf, NULL, sf2, NULL);
+		SDL_FreeSurface(sf);
+		sf = sf2;
+	}
+	
+	size_t size = (char *)(SDL_GetPixelPtr32(sf, sf->w-1, sf->h-1)+1) - (char *)sf->pixels;
+	lua_pushlstring(L, (const char *)sf->pixels, size);
+	
+	{
+		lua_createtable(L, 0, 4);
+		
+		lua_pushliteral(L, "left");
+		lua_pushinteger(L, 0);
+		lua_rawset(L, -3);
+	
+		lua_pushliteral(L, "top");
+		lua_pushinteger(L, 0);
+		lua_rawset(L, -3);
+	
+		lua_pushliteral(L, "width");
+		lua_pushinteger(L, sf->w);
+		lua_rawset(L, -3);
+	
+		lua_pushliteral(L, "height");
+		lua_pushinteger(L, sf->h);
+		lua_rawset(L, -3);
+	}
+	SDL_FreeSurface(sf);
+	
+	return 2;
+}
+
 
 
 
@@ -722,6 +822,7 @@ int main(int argc, char *argv[])
 	lua_register(L, "z_uncompress", lua_z_uncompress);
 	lua_register(L, "my_z_compress", lua_my_z_compress);
 	lua_register(L, "my_z_uncompress", lua_my_z_uncompress);
+	lua_register(L, "load_image", lua_load_image);
 	
 	int ret = Lc.dofile(argv[1]);
 	if(ret != 0)
