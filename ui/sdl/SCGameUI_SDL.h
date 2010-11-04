@@ -46,6 +46,8 @@ private:
 	Coordinate m_mouse_pos_in_gamescr;
 	
 private:
+	bool loadResources();
+	
 	void drawUI();
 	void drawMap();
 	void drawUI_MinimapWnd();
@@ -61,9 +63,6 @@ private:
 	SDL::SDL_Surface *m_minimap_wnd, *m_unitstat_wnd, *m_buttons_wnd;
 	
 	int m_gamescr_left_pos, m_gamescr_top_pos;
-	
-private:
-	SDL::SDL_Surface *m_sf_console;
 };
 
 

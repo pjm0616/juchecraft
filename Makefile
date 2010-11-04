@@ -6,7 +6,7 @@ ENABLE_PROFILING 	?= 0
 CROSSC				=
 
 SRCS_UI				= ui/SCGameUI.cpp ui/sdl/SCGameUI_SDL.cpp ui/ncurses/SCGameUI_ncurses.cpp
-SRCS				= libs/jcimg/jcimg.cpp libs/luacpp/luacpp.cpp SCCoordinate.cpp SCObject.cpp SCPlayer.cpp SCObjectList.cpp SCObjectPrototypes.cpp SCGame.cpp main.cpp $(SRCS_UI) 
+SRCS				= libs/etc/md5.c libs/jcimg/jcimg.cpp libs/luacpp/luacpp.cpp SCCoordinate.cpp SCObject.cpp SCPlayer.cpp SCObjectList.cpp SCObjectPrototypes.cpp SCGame.cpp main.cpp $(SRCS_UI) 
 TARGET1				= mini_sc
 
 DEFS				= -D_REENTRANT -fopenmp -D_FILE_OFFSET_BITS=64 -DBOOST_NO_RTTI
@@ -16,8 +16,8 @@ LIBDIR				=
 
 ifeq ($(DEBUG),1)
 DEFS_DBG			= -DDEBUG
-#CFLAGS_DBG			= $(DEFS_DBG) -g -O0
-CFLAGS_DBG			= $(DEFS_DBG) -g -O2 -fno-omit-frame-pointer
+CFLAGS_DBG			= $(DEFS_DBG) -g -O0
+#CFLAGS_DBG			= $(DEFS_DBG) -g -O2 -fno-omit-frame-pointer
 CXXFLAGS_DBG		= $(CFLAGS_DBG)
 LDFLAGS_DBG			=
 ifeq ($(ENABLE_PROFILING),1)
@@ -60,7 +60,7 @@ OBJS_TMP				=$(SRCS:.c=.o)
 OBJS				=$(OBJS_TMP:.cpp=.o) 
 
 
-all:	lua resources $(TARGET1)
+all:	lua $(TARGET1) tools resources
 
 .SUFFIXES: .c .o
 .c.o:
@@ -81,7 +81,12 @@ lua:
 luaclean:
 	make -C ./libs/lua/src clean
 
-resources:
+tools: lua $(TARGET1)
+	make -C tools
+toolclean:
+	make -C tools clean
+
+resources: lua tools
 	make -C res_raw
 resclean:
 	make -C res_raw clean
@@ -95,7 +100,7 @@ clean:
 	rm -f $(OBJS)
 	rm -f $(TARGET1)
 	
-distclean: luaclean resclean clean docclean
+distclean: luaclean resclean clean toolclean docclean
 	rm -f .depend
 
 dep:    depend

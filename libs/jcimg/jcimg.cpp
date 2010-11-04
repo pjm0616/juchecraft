@@ -102,12 +102,20 @@ void JucheImage::ImageInfo::set(const jcimg_imginfo_t *imginfo)
 
 JucheImage::JucheImage()
 {
-	
+}
+
+JucheImage::JucheImage(const jcimg_info_t *fileinfo)
+{
+	this->reset(fileinfo);
+}
+
+JucheImage::JucheImage(const char *filename, uint32_t sf_flags)
+{
+	this->load(filename, sf_flags);
 }
 
 JucheImage::~JucheImage()
 {
-	
 }
 
 void JucheImage::clear()
@@ -250,7 +258,7 @@ bool JucheImage::save(const char *filename)
 const SDL::SDL_SurfaceSPtr_t &JucheImage::getImage(unsigned int n, jcimg_imginfo_t **imginfo)
 {
 	static SDL_SurfaceSPtr_t null_sf;
-	if(n > this->numOfImages())
+	if(unlikely(n > this->numOfImages()))
 		return null_sf;
 	
 	std::pair<JucheImage::ImageInfo, SDL::SDL_SurfaceSPtr_t> &img = this->m_images[n];

@@ -164,20 +164,45 @@ void replace_unit_colors(SDL_Surface *sf, Uint32 newcolor)
 			}
 		}
 	}
-	SDL_UnLockSurfaceIfNeeded(sf);
+	SDL_UnlockSurfaceIfNeeded(sf);
 }
 
-static SDL_Surface *g_juche_supplies_icon;
-static SDL_Surface *g_sf_juche_aojiworker, *g_sf_juche_rodongcorrectionalfacility;
 
-static grp_palette_t *g_palette_units;
-static SDL_Surface *g_grp_icons;
-static SDL_Surface *g_grp_minfield01, *g_grp_minfield01_shad;
-static SDL_Surface *g_grp_wirefram;
-static SDL_Surface *g_grp_t_ccenter, *g_grp_t_marine, *g_grp_t_firebat;
-static SDL_Surface *g_grp_z_zergling, *g_grp_z_zergling_shad;
+static JucheImage	g_img_game_tconsole, 
+					g_img_game_icon_mineral, 
+					g_img_game_icon_gas_terran, 
+					g_img_game_icon_gas_protoss, 
+					g_img_game_icon_gas_zerg, 
+					g_img_game_icon_supplies_terran, 
+					g_img_game_icon_supplies_protoss, 
+					g_img_game_icon_supplies_zerg, 
+					g_img_game_icon_supplies_juche;
 
-///
+static JucheImage	g_img_obj_terran_unit_marine, 
+					g_img_obj_terran_unit_marine_attack, 
+					g_img_obj_terran_building_command_center, 
+					g_img_obj_zerg_unit_zergling, 
+					g_img_obj_zerg_unit_zergling_shadow, 
+					g_img_obj_zerg_unit_zergling_attack, 
+					g_img_obj_zerg_unit_zergling_attack_shadow, 
+					
+					g_img_obj_juche_unit_aojiworker, 
+					g_img_obj_juche_building_rodongcorrectionalfacility, 
+					g_img_obj_neutral_mineral01, 
+					g_img_obj_neutral_mineral01_shadow, 
+					g_img_end;
+
+//	const SDL::SDL_SurfaceSPtr_t &getImage(unsigned int n, jcimg_imginfo_t **imginfo = NULL);
+static void render_jcimg_to_screen(JucheImage *img, SDL_Surface *scr, int num, int scr_x, int scr_y)
+{
+	jcimg_imginfo_t *imginfo;
+	SDL_SurfaceSPtr_t sf = img->getImage(num, &imginfo);
+	
+	SDL_Rect srcrect = {imginfo->left, imginfo->top, imginfo->width, imginfo->height};
+	SDL_Rect dstrect = {scr_x, scr_y, imginfo->width, imginfo->height};
+	
+	SDL_BlitSurface(sf.get(), &srcrect, scr, &dstrect);
+}
 
 ///////
 
@@ -191,6 +216,35 @@ GameUI_SDL::GameUI_SDL(Game *game, const PlayerSPtr_t &player)
 GameUI_SDL::~GameUI_SDL()
 {
 	//this->cleanupUI();
+}
+
+bool GameUI_SDL::loadResources()
+{
+	g_img_game_tconsole.load(GAME_ROOT_DIR "./res/ui/sdl/imgs/game/tconsole.dat", SDL_HWSURFACE);
+	g_img_game_icon_mineral.load(GAME_ROOT_DIR "./res/ui/sdl/imgs/game/icons/mineral.dat", SDL_HWSURFACE);
+	g_img_game_icon_gas_terran.load(GAME_ROOT_DIR "./res/ui/sdl/imgs/game/icons/gas_terran.dat", SDL_HWSURFACE);
+	g_img_game_icon_gas_protoss.load(GAME_ROOT_DIR "./res/ui/sdl/imgs/game/icons/gas_protoss.dat", SDL_HWSURFACE);
+	g_img_game_icon_gas_zerg.load(GAME_ROOT_DIR "./res/ui/sdl/imgs/game/icons/gas_zerg.dat", SDL_HWSURFACE);
+	g_img_game_icon_supplies_terran.load(GAME_ROOT_DIR "./res/ui/sdl/imgs/game/icons/supplies_terran.dat", SDL_HWSURFACE);
+	g_img_game_icon_supplies_protoss.load(GAME_ROOT_DIR "./res/ui/sdl/imgs/game/icons/supplies_protoss.dat", SDL_HWSURFACE);
+	g_img_game_icon_supplies_zerg.load(GAME_ROOT_DIR "./res/ui/sdl/imgs/game/icons/supplies_zerg.dat", SDL_HWSURFACE);
+	g_img_game_icon_supplies_juche.load(GAME_ROOT_DIR "./res/ui/sdl/imgs/game/icons/supplies_juche.dat", SDL_HWSURFACE);
+	
+
+	g_img_obj_terran_unit_marine.load(GAME_ROOT_DIR "./res/ui/sdl/imgs/objects/terran/units/marine_walk.dat", SDL_HWSURFACE);
+	g_img_obj_terran_unit_marine_attack.load(GAME_ROOT_DIR "./res/ui/sdl/imgs/objects/terran/units/marine_attack.dat", SDL_HWSURFACE);
+	g_img_obj_terran_building_command_center.load(GAME_ROOT_DIR "./res/ui/sdl/imgs/objects/terran/buildings/command_center.dat", SDL_HWSURFACE);
+	g_img_obj_zerg_unit_zergling.load(GAME_ROOT_DIR "./res/ui/sdl/imgs/objects/zerg/units/zergling_walk.dat", SDL_HWSURFACE);
+	g_img_obj_zerg_unit_zergling_shadow.load(GAME_ROOT_DIR "./res/ui/sdl/imgs/objects/zerg/units/zergling_walk_shadow.dat", SDL_HWSURFACE);
+	g_img_obj_zerg_unit_zergling_attack.load(GAME_ROOT_DIR "./res/ui/sdl/imgs/objects/zerg/units/zergling_attack.dat", SDL_HWSURFACE);
+	g_img_obj_zerg_unit_zergling_attack_shadow.load(GAME_ROOT_DIR "./res/ui/sdl/imgs/objects/zerg/units/zergling_attack_shadow.dat", SDL_HWSURFACE);
+
+	g_img_obj_juche_unit_aojiworker.load(GAME_ROOT_DIR "./res/ui/sdl/imgs/objects/juche/units/52001.Juche_AojiWorker.dat", SDL_HWSURFACE);
+	g_img_obj_juche_building_rodongcorrectionalfacility.load(GAME_ROOT_DIR "./res/ui/sdl/imgs/objects/juche/buildings/53002.Juche_RodongCorrectionalFacility.dat", SDL_HWSURFACE);
+	g_img_obj_neutral_mineral01.load(GAME_ROOT_DIR "./res/ui/sdl/imgs/objects/neutral/mineral01.dat", SDL_HWSURFACE);
+	g_img_obj_neutral_mineral01_shadow.load(GAME_ROOT_DIR "./res/ui/sdl/imgs/objects/neutral/mineral01_shadow.dat", SDL_HWSURFACE);
+	
+	return 0;
 }
 
 bool GameUI_SDL::initUI()
@@ -221,27 +275,7 @@ bool GameUI_SDL::initUI()
 	this->m_unitstat_wnd = SDL_CreateRGBSurface(SDL_HWSURFACE, 128, 128, 32, 0xff, 0xff00, 0xff0000, 0xff000000);
 	this->m_buttons_wnd = SDL_CreateRGBSurface(SDL_HWSURFACE, 128, 128, 32, 0xff, 0xff00, 0xff0000, 0xff000000);
 	
-	// game resources;
-	this->m_sf_console = IMG_Load(GAME_ROOT_DIR "./res/ui/sdl/imgs/tconsole.png");
-	
-	// FIXME
-	
-	g_juche_supplies_icon = IMG_Load(GAME_ROOT_DIR "./res/ui/sdl/ingame/icons/juche_supplies_icon.jpg");
-	g_sf_juche_rodongcorrectionalfacility = IMG_Load(GAME_ROOT_DIR "./res/ui/sdl/objects/buildings/53002.Juche_RodongCorrectionalFacility.jpg");
-	g_sf_juche_aojiworker = IMG_Load(GAME_ROOT_DIR "./res/ui/sdl/objects/units/52001.Juche_AojiWorker.jpg");
-	
-	
-	grp_set_file_method(GRP_USE_MPQ);
-	g_palette_units = load_palette("tileset\\Platform.wpe");
-	g_grp_icons = load_grp("game\\icons.grp");
-	g_grp_minfield01 = load_grp("unit\\neutral\\min01.grp");
-	g_grp_minfield01_shad = load_grp("unit\\neutral\\min01sha.grp");
-	//g_grp_wirefram = load_grp("unit\\wirefram\\wirefram.grp");
-	g_grp_t_ccenter = load_grp("unit\\terran\\control.grp");
-	g_grp_t_marine = load_grp("unit\\terran\\marine.grp");
-	g_grp_t_firebat = load_grp("unit\\terran\\firebat.grp");
-	g_grp_z_zergling = load_grp("unit\\zerg\\zergling.grp");
-	g_grp_z_zergling_shad = load_grp("unit\\zerg\\zzeshad.grp");
+	this->loadResources();
 	
 	return true;
 }
@@ -253,7 +287,7 @@ bool GameUI_SDL::cleanupUI()
 	// do free(g_grp_*)
 	
 	// free game resources
-	SDL_FreeSurface(this->m_sf_console);
+	// TODO
 	
 	// free game surfaces
 	SDL_FreeSurface(this->m_buttons_wnd);
@@ -460,25 +494,18 @@ void GameUI_SDL::drawUI()
 			
 			// draw icon
 			{
-				int frn = -1;
-				if(i == RaceId::Zerg) frn = 4;
-				else if(i == RaceId::Terran) frn = 5;
-				else if(i == RaceId::Protoss) frn = 6;
-				if(frn >= 0)
+				JucheImage *ico = NULL;
+				if(i == RaceId::Zerg) ico = &g_img_game_icon_supplies_zerg;
+				else if(i == RaceId::Terran) ico = &g_img_game_icon_supplies_terran;
+				else if(i == RaceId::Protoss) ico = &g_img_game_icon_supplies_protoss;
+				else if(i == RaceId::Juche) ico = &g_img_game_icon_supplies_juche;
+				if(ico != NULL)
 				{
-					render_grp_frame_to_surface(g_grp_icons, frn, this->m_screen, x, y, -1, -1, false, false);
+					render_jcimg_to_screen(ico, this->m_screen, 0, x, y);
 				}
 				else
 				{
-					if(i == RaceId::Juche)
-					{
-						SDL_Rect r = {x, y, 14, 14};
-						SDL_BlitSurface(g_juche_supplies_icon, NULL, this->m_screen, &r);
-					}
-					else
-					{
-						SDL_FillSurfaceP(this->m_screen, x, y, 14, 14, me->getPlayerColor());
-					}
+					SDL_FillSurfaceP(this->m_screen, x, y, 14, 14, me->getPlayerColor());
 				}
 			}
 			
@@ -498,11 +525,11 @@ void GameUI_SDL::drawUI()
 	// draw gas
 	{
 		//fprintf(stderr, "gas: x:%d, y:%d, race:%d\n", x, y);
-		int frn = 2;
-		if(my_raceid == RaceId::Zerg) frn = 1;
-		else if(my_raceid == RaceId::Terran) frn = 2;
-		else if(my_raceid == RaceId::Protoss) frn = 3;
-		render_grp_frame_to_surface(g_grp_icons, frn, this->m_screen, x, y, -1, -1, false, false);
+		JucheImage *ico = &g_img_game_icon_gas_terran;
+		if(my_raceid == RaceId::Zerg) ico = &g_img_game_icon_gas_zerg;
+		else if(my_raceid == RaceId::Terran) ico = &g_img_game_icon_gas_terran;
+		else if(my_raceid == RaceId::Protoss) ico = &g_img_game_icon_gas_protoss;
+		render_jcimg_to_screen(ico, this->m_screen, 0, x, y);
 		
 		snprintf(buf, sizeof(buf), "%d", me->getVespeneGas());
 		SDL_print(this->m_font, this->m_screen, x + 15, y - 2, 68-15, 16, 0xff00ff00, buf);
@@ -512,7 +539,7 @@ void GameUI_SDL::drawUI()
 	{
 		//fprintf(stderr, "min: x:%d, y:%d, race:%d\n", x, y);
 		int frn = 0;
-		render_grp_frame_to_surface(g_grp_icons, frn, this->m_screen, x, y, -1, -1, false, false);
+		render_jcimg_to_screen(&g_img_game_icon_mineral, this->m_screen, 0, x, y);
 		
 		snprintf(buf, sizeof(buf), "%d", me->getMinerals());
 		SDL_print(this->m_font, this->m_screen, x + 15, y - 2, 68-15, 16, 0xff00ff00, buf);
@@ -524,7 +551,7 @@ void GameUI_SDL::drawUI()
 	SDL_print(this->m_font, this->m_screen, 0, 0, 640, 16, 0xff00ff00, buf);
 	
 	// draw console area
-	SDL_BlitSurface(this->m_sf_console, NULL, this->m_screen, NULL); // this takes avg 0.006 secs
+	SDL_BlitSurface(g_img_game_tconsole.getImage(0).get(), NULL, this->m_screen, NULL); // this takes avg 0.006 secs
 	this->drawUI_MinimapWnd();
 	this->drawUI_UnitStatWnd();
 	this->drawUI_ButtonsWnd();
@@ -630,44 +657,35 @@ static int convertAngleToDirection(float angle)
 	return direction;
 }
 
-static int calculate_unit_framenum(const ObjectSPtr_t &obj, int attack_start, int attack_end, int move_start, int move_end, 
-		bool *do_hflip, bool *do_vflip)
+static int calculate_unit_framenum(const ObjectSPtr_t &obj, int start, int end)
 {
 	int col, row;
-	*do_hflip = false;
-	*do_vflip = false;
 	
 	row = convertAngleToDirection(obj->getAngle());
 	time_t ticks = obj->getGame()->getCachedElapsedTime() * 1000;
 	if(obj->isMoving())
 	{
-		int t = (int)(ticks/50) % (move_end - move_start + 1);
-		col = t + move_start;
+		int t = (int)(ticks/50) % (end - start + 1);
+		col = t + start;
 	}
 	else if(obj->isAttacking())
 	{
-		int t = (int)(ticks/80) % (attack_end - attack_start + 1);
-		col = t + attack_start;
+		int t = (int)(ticks/80) % (end - start + 1);
+		col = t + start;
 	}
 	else
-		col = move_start;
+		col = start;
 	
 	if(row == 34) // angle == 90deg
 		row = 0;
-	else if(row >= 0 && row <= 16){} /* 오른쪽 */
-	else if(row >= 17 && row <= 33) /* 왼쪽 */
-	{
-		row = row - 17;
-		row = 16 - row;
-		*do_hflip = true;
-	}
+	else if(row >= 0 && row <= 33){}
 	else
 	{
 		fprintf(stderr, "Cannot happen: row: %d; angle: %f\n", row, obj->getAngle());
 		row = 0;
 	}
 	
-	int framenum = col*17 + row;
+	int framenum = col*34 + row;
 	return framenum;
 }
 
@@ -707,77 +725,97 @@ void GameUI_SDL::drawObject(const ObjectSPtr_t &obj)
 	
 		#if 1
 		bool do_draw = false;
-		grp_data_t *grpdata = NULL, *grpdata2 = NULL;
-		SDL_Surface *sf1 = NULL;
+		JucheImage *img1 = NULL, *img1_shad = NULL;
 		short framenum;
-		bool do_hflip = false, do_vflip = false;
 		Uint32 unit_color = convert_color_from_bgra_to_rgba(owner->getPlayerColor());
 		
 		if(objid == SC::ObjectId::Terran_CommandCenter)
 		{
-			grpdata = g_grp_t_ccenter;
+			img1 = &g_img_obj_terran_building_command_center;
 			framenum = 0;
 			do_draw = true;
 		}
 		else if((objid == SC::ObjectId::Terran_Marine) || (objid == SC::ObjectId::Juche_DaepodongLauncher))
 		{
-			grpdata = g_grp_t_marine;
-			// 0~1: attack preparation images
-			// 13: dying image
-			framenum = calculate_unit_framenum(obj, 2, 3, 4, 12, &do_hflip, &do_vflip);
+			if(obj->isAttacking())
+			{
+				img1 = &g_img_obj_terran_unit_marine_attack;
+				framenum = calculate_unit_framenum(obj, 0, 1);
+			}
+			else
+			{
+				img1 = &g_img_obj_terran_unit_marine;
+				framenum = calculate_unit_framenum(obj, 0, 8);
+			}
 			do_draw = true;
 		}
+		#if 0
 		else if(objid == SC::ObjectId::Terran_Firebat)
 		{
-			grpdata = g_grp_t_firebat;
-			framenum = calculate_unit_framenum(obj, 0, 1, 2, 9, &do_hflip, &do_vflip);
+			if(obj->isAttacking())
+			{
+				img1 = &g_img_obj_terran_unit_firebat_attack;
+				framenum = calculate_unit_framenum(obj, 0, 1);
+			}
+			else
+			{
+				img1 = &g_img_obj_terran_unit_firebat;
+				framenum = calculate_unit_framenum(obj, 0, 7);
+			}
 			do_draw = true;
 		}
+		#endif
 		else if(objid == SC::ObjectId::Zerg_Zergling)
 		{
-			grpdata = g_grp_z_zergling;
-			grpdata2 = g_grp_z_zergling_shad;
-			framenum = calculate_unit_framenum(obj, 0, 3, 4, 11, &do_hflip, &do_vflip);
+			if(obj->isAttacking())
+			{
+				img1 = &g_img_obj_zerg_unit_zergling_attack;
+				img1_shad = &g_img_obj_zerg_unit_zergling_attack_shadow;
+				framenum = calculate_unit_framenum(obj, 0, 3);
+			}
+			else
+			{
+				img1 = &g_img_obj_zerg_unit_zergling;
+				img1_shad = &g_img_obj_zerg_unit_zergling_shadow;
+				framenum = calculate_unit_framenum(obj, 0, 7);
+			}
 			do_draw = true;
 		}
 		else if(objid == SC::ObjectId::Resource_MineralField)
 		{
-			grpdata = g_grp_minfield01;
-			grpdata2 = g_grp_minfield01_shad;
+			img1 = &g_img_obj_neutral_mineral01;
+			img1_shad = &g_img_obj_neutral_mineral01_shadow;
 			framenum = 0;
 			do_draw = true;
 		}
 		else if(objid == SC::ObjectId::Juche_AojiWorker)
 		{
-			sf1 = g_sf_juche_aojiworker;
+			img1 = &g_img_obj_juche_unit_aojiworker;
+			framenum = 0;
 			do_draw = true;
 		}
 		else if(objid == SC::ObjectId::Juche_RodongCorrectionalFacility)
 		{
-			sf1 = g_sf_juche_rodongcorrectionalfacility;
+			img1 = &g_img_obj_juche_building_rodongcorrectionalfacility;
+			framenum = 0;
 			do_draw = true;
 		}
 		
 		if(do_draw)
 		{
-			if(grpdata)
+			if(img1)
 			{
 				{ /* 이동시 마우스 포인터 중앙이 아래 점에 오도록 이동 */
-					grp_header_t *grphdr = get_grp_info(grpdata);
-					grp_frameheader_t *frame = grp_get_frame_info(grpdata, framenum);
-					int center_x = (grphdr->max_width/2 - 1) - frame->left;
-					int center_y = (grphdr->max_height/2 - 1) - frame->top;
+					jcimg_imginfo_t *imginfo;
+					img1->getImage(framenum, &imginfo);
+					int center_x = (img1->getMaxWidth()/2 - 1) - imginfo->left;
+					int center_y = (img1->getMaxHeight()/2 - 1) - imginfo->top;
 				}
 			
-				if(grpdata2) // shadow
-					render_grp_frame_to_surface(grpdata2, framenum, this->m_game_scr, x, y, 0, h, do_hflip, false, 0x00000000, SHADOW_COLOR|(SHADOW_MAGIC_COLOR<<8));
-				if(grpdata)
-					render_grp_frame_to_surface(grpdata, framenum, this->m_game_scr, x, y, 0, h, do_hflip, false, unit_color);
-			}
-			if(sf1)
-			{
-				SDL_Rect r = {x, y, w, h};
-				SDL_BlitSurface(sf1, NULL, this->m_game_scr, &r);
+				if(img1_shad) // shadow
+					render_jcimg_to_screen(img1_shad, this->m_game_scr, framenum, x, y);
+				if(img1)
+					render_jcimg_to_screen(img1, this->m_game_scr, framenum, x, y);
 			}
 		}
 		#endif

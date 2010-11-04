@@ -87,6 +87,8 @@ class JucheImage
 {
 public:
 	JucheImage();
+	JucheImage(const jcimg_info_t *fileinfo);
+	JucheImage(const char *filename, uint32_t sf_flags = SDL_SWSURFACE);
 	~JucheImage();
 	
 	void clear();
@@ -100,9 +102,11 @@ public:
 	bool save(const char *filename);
 #endif
 	
-	const SDL::SDL_SurfaceSPtr_t &getImage(unsigned int n, jcimg_imginfo_t **imginfo);
+	const SDL::SDL_SurfaceSPtr_t &getImage(unsigned int n, jcimg_imginfo_t **imginfo = NULL);
 	
 	size_t numOfImages() const { return this->m_images.size(); }
+	size_t getMaxWidth() const { return this->m_info.max_width; }
+	size_t getMaxHeight() const { return this->m_info.max_height; }
 	
 private:
 	void setFileInfo(const jcimg_info_t *fileinfo); // only called by JucheImage::reset()

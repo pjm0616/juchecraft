@@ -789,17 +789,29 @@ int lua_load_image(lua_State *L)
 
 
 
-static HANDLE mpq_handles[3];
+static HANDLE mpq_handles[3] = {(void *)0xffffffff, (void *)0xffffffff, (void *)0xffffffff};
 
-static void init_mpq()
+static void init_mpq(const char *dir)
 {
-	SFileOpenArchive("../../" GAME_DATA_DIR "./StarDat.mpq", 1000, 0, &mpq_handles[0]);
-	SFileOpenArchive("../../" GAME_DATA_DIR "./BrooDat.mpq", 2000, 0, &mpq_handles[1]);
-	SFileOpenArchive("../../" GAME_DATA_DIR "./patch_rt.mpq", 3000, 0, &mpq_handles[2]);
+	char buf[1024];
+	
+	snprintf(buf, sizeof(buf), "%sStarDat.mpq", dir);
+	SFileOpenArchive(buf, 1000, 0, &mpq_handles[0]);
+	snprintf(buf, sizeof(buf), "%sBrooDat.mpq", dir);
+	SFileOpenArchive(buf, 2000, 0, &mpq_handles[1]);
+	snprintf(buf, sizeof(buf), "%spatch_rt.mpq", dir);
+	SFileOpenArchive(buf, 3000, 0, &mpq_handles[2]);
 	
 	grp_set_file_method(GRP_USE_MPQ);
-	//g_palette_units = load_palette("tileset\\Platform.wpe");
-	//g_grp_icons = load_grp("game\\icons.grp");
+}
+
+
+
+int lua_init_mpq(lua_State *L)
+{
+	const char *dir = luaL_checkstring(L, 1);
+	init_mpq(dir);
+	return 0;
 }
 
 int main(int argc, char *argv[])
@@ -810,7 +822,7 @@ int main(int argc, char *argv[])
 		return 1;
 	}
 	
-	init_mpq();
+	init_mpq("../../" GAME_DATA_DIR "./"); // hack, not needed, for compatibility
 	
 	luacpp Lc;
 	lua_State *L = Lc.lua;
@@ -823,6 +835,7 @@ int main(int argc, char *argv[])
 	lua_register(L, "my_z_compress", lua_my_z_compress);
 	lua_register(L, "my_z_uncompress", lua_my_z_uncompress);
 	lua_register(L, "load_image", lua_load_image);
+	lua_register(L, "init_mpq", lua_init_mpq);
 	
 	int ret = Lc.dofile(argv[1]);
 	if(ret != 0)

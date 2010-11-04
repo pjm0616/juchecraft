@@ -4,12 +4,14 @@ DEBUG				?= 1
 
 CROSSC				=
 
-SRCS_LIBMPQ			= ../libs/libmpq/SComp/SComp.cpp ../libs/libmpq/SComp/SErr.cpp ../libs/libmpq/SComp/SMem.cpp ../libs/libmpq/SComp/crc32.c ../libs/libmpq/SComp/explode.c ../libs/libmpq/SComp/huffman.cpp ../libs/libmpq/SComp/implode.c ../libs/libmpq/SComp/wave.cpp ../libs/libmpq/SFmpqapi/MpqBlockTable.cpp ../libs/libmpq/SFmpqapi/MpqCrypt.cpp ../libs/libmpq/SFmpqapi/MpqHashTable.cpp ../libs/libmpq/SFmpqapi/SFUtil.cpp ../libs/libmpq/SFmpqapi/SFmpqapi.cpp ../libs/libmpq/SFmpqapi/windows.cpp
-SRCS				= ../libs/libmpqgrp/grp.cpp ../../libs/etc/md5.c ../../libs/luacpp/luacpp.cpp $(SRCS_LIBMPQ) convert_grp.cpp
+LIBOBJS_LIBMPQ			= ../libs/libmpq/SComp/SComp.o ../libs/libmpq/SComp/SErr.o ../libs/libmpq/SComp/SMem.o ../libs/libmpq/SComp/crc32.c ../libs/libmpq/SComp/explode.c ../libs/libmpq/SComp/huffman.o ../libs/libmpq/SComp/implode.c ../libs/libmpq/SComp/wave.o ../libs/libmpq/SFmpqapi/MpqBlockTable.o ../libs/libmpq/SFmpqapi/MpqCrypt.o ../libs/libmpq/SFmpqapi/MpqHashTable.o ../libs/libmpq/SFmpqapi/SFUtil.o ../libs/libmpq/SFmpqapi/SFmpqapi.o ../libs/libmpq/SFmpqapi/windows.o
+LIBOBJS				= ../libs/libmpqgrp/grp.o ../../libs/etc/md5.o ../../libs/luacpp/luacpp.o $(LIBOBJS_LIBMPQ)
+
+SRCS				= convert_grp.cpp
 TARGET1				= convert_grp
 
 DEFS				= -D_REENTRANT -D_FILE_OFFSET_BITS=64
-LIBS				= ./../../libs/lua/src/liblua.a -lSDL -lSDL_ttf -lSDL_image -lSDL_gfx -lz -lbz2
+LIBS				= $(LIBOBJS) ./../../libs/lua/src/liblua.a -lSDL -lSDL_ttf -lSDL_image -lSDL_gfx -lz -lbz2
 INCLUDEDIR			= -I../.. -I../../libs/lua/src -I../../libs -I../libs -I../libs/libmpq/SFmpqapi
 LIBDIR				=
 

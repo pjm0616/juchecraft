@@ -14,9 +14,20 @@ end
 
 ----------- data starts
 
---local lg_prefix = '/home/pjm0616/Desktop/tmp/res/ui/sdl/imgs/'
-local lg_prefix = '/home/pjm0616/Desktop/tmp/res/imgs/'
-local lg_png_load_prefix = '../../res_raw/ui/sdl/imgs/'
+-- working dir: /tools/grp_conv
+--local lg_prefix = '../../res/ui/sdl/imgs/'
+--local lg_png_load_prefix = '../../res_raw/ui/sdl/imgs/'
+local lg_mpq_dir = '../../../mini_sc_data/'
+
+-- working dir: /res_raw/ui/sdl/imgs
+local lg_prefix = '../../../../res/ui/sdl/imgs/'
+local lg_png_load_prefix = './'
+local lg_mpq_dir = '../../../../../mini_sc_data/'
+
+
+init_mpq(lg_mpq_dir)
+
+
 
 local palettes = {
 	units = grppal.load('tileset\\Platform.wpe')
@@ -72,7 +83,7 @@ local grplist = {
 		palette = palettes.units, 
 		rules = {
 			{	n = {0, 3};
-				file = 'objects/neutral/mineral_shadow01.dat';
+				file = 'objects/neutral/mineral01_shadow.dat';
 			}, 
 		}, 
 	}, 
@@ -155,22 +166,18 @@ local grplist = {
 		rules = {
 			{	row = {0, 3};
 				create_hflipped_imgs = true;
-				file = 'objects/zerg/units/zergling_shadow_attack.dat';
+				file = 'objects/zerg/units/zergling_attack_shadow.dat';
 			}, 
 			{	row = {4, 11};
 				create_hflipped_imgs = true;
-				file = 'objects/zerg/units/zergling_shadow_walk.dat';
-			}, 
-			{	row = {4, 11};
-				create_hflipped_imgs = true;
-				file = 'objects/zerg/units/zzeshad_walk.dat';
+				file = 'objects/zerg/units/zergling_walk_shadow.dat';
 			}, 
 			{	row = {12, 15};
 				create_hflipped_imgs = true;
-				file = 'objects/zerg/units/zergling_shadow_burrow.dat';
+				file = 'objects/zerg/units/zergling_burrow_shadow.dat';
 			}, 
 			{	n = {289, 295};
-				file = 'objects/zerg/units/zergling_shadow_dying.dat';
+				file = 'objects/zerg/units/zergling_dying_shadow.dat';
 			}, 
 		}, 
 	}, 
@@ -190,7 +197,7 @@ local pnglist = {
 		file = 'objects/juche/units/52001.Juche_AojiWorker.dat';
 	}, 
 	['objects/juche/buildings/53002.Juche_RodongCorrectionalFacility.png'] = {
-		file = 'objects/juche/buildings/53002.Juche_RodongCorrectionalFacility.png';
+		file = 'objects/juche/buildings/53002.Juche_RodongCorrectionalFacility.dat';
 	}, 
 	-- add more images here
 }
