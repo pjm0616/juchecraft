@@ -99,11 +99,12 @@ static char *my_readfile(const char *file, size_t *filesize_out)
 
 void JucheImage::ImageInfo::set(const jcimg_imginfo_t *imginfo)
 {
-	memcpy(&this->m_imginfo, imginfo, sizeof(jcimg_imginfo_t));
+	memcpy(&this->m_imginfo, imginfo, sizeof(this->m_imginfo));
 }
 
 JucheImage::JucheImage()
 {
+	memset(&this->m_info, 0, sizeof(this->m_info)); // -_-
 	this->clear();
 }
 

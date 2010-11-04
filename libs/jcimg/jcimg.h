@@ -118,6 +118,8 @@ private:
 	public:
 		ImageInfo(const jcimg_imginfo_t *imginfo) { this->set(imginfo); }
 		ImageInfo(const ImageInfo &o) { this->set(o.get()); }
+		~ImageInfo(){}
+		
 		void set(const jcimg_imginfo_t *imginfo);
 		jcimg_imginfo_t *get() { return &this->m_imginfo; }
 		const jcimg_imginfo_t *get() const { return &this->m_imginfo; }

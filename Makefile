@@ -60,33 +60,38 @@ OBJS_TMP				=$(SRCS:.c=.o)
 OBJS				=$(OBJS_TMP:.cpp=.o) 
 
 
-all:	lib $(TARGET1) tool resources
+
+
+.PHONY:	all libs libclean tools toolclean resources resclean doc docclean clean distclean dep depclean
+
+all:	libs $(TARGET1) tools resources
 
 .SUFFIXES: .c .o
 .c.o:
 	@echo CC $<
-	@@$(CC) -c $(CFLAGS) -o $@ $<
+	@$(CC) -c $(CFLAGS) -o $@ $<
 
 .SUFFIXES: .cpp .o
 .cpp.o:
 	@echo CXX $<
 	$(CXX) -c $(CXXFLAGS) -o $@ $<
 
-$(TARGET1):     $(OBJS) lib
+# FIXME: mini_sc is relinked every time. it doesn't happen if there's not `libs'
+$(TARGET1):	libs $(OBJS)
 	@echo LD $@
 	@$(LD) -o $@ $(LDFLAGS) $(OBJS) $(LIBS)
 
-lib:
+libs:
 	$(MAKE) -C ./libs
 libclean:
 	$(MAKE) -C ./libs clean
 
-tool: lib $(TARGET1)
+tools: libs $(TARGET1)
 	$(MAKE) -C tools
 toolclean:
 	$(MAKE) -C tools clean
 
-resources: lib tool
+resources: libs tools
 	$(MAKE) -C res_raw
 resclean:
 	$(MAKE) -C res_raw clean
@@ -103,9 +108,9 @@ clean:
 distclean: libclean resclean clean toolclean docclean
 	rm -f .depend
 
-dep:    depend
+dep:	.depend
 
-depend:
+.depend:
 	$(CC) -MM $(CXXFLAGS) $(SRCS) 1>.depend
 
 depclean:
