@@ -82,8 +82,13 @@ static char *my_readfile(const char *file, size_t *filesize_out)
 	fseek(fp, 0, SEEK_SET);
 	
 	char *buf = new char[filesize];
-	fread(buf, filesize, 1, fp);
+	size_t nread = fread(buf, filesize, 1, fp);
 	fclose(fp);
+	
+	if(nread != 1)
+	{
+		assert(!"failed to read data. 0a93mu24dnmud");
+	}
 	
 	if(filesize_out)
 		*filesize_out = filesize;
