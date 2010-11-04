@@ -1,9 +1,9 @@
 
 
 all:
-	make -C object_data
+	$(MAKE) -C object_data
 
 clean:
-	make -C object_data clean
+	$(MAKE) -C object_data clean
 
 

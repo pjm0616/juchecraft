@@ -2,11 +2,11 @@
 
 
 all:
-	make -C game
-	make -C ui
+	$(MAKE) -C game
+	$(MAKE) -C ui
 
 clean:
-	make -C game clean
-	make -C ui clean
+	$(MAKE) -C game clean
+	$(MAKE) -C ui clean
 
 

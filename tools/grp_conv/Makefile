@@ -59,7 +59,7 @@ all:	lua $(TARGET1)
 .SUFFIXES: .c .o
 .c.o:
 	@echo CC $<
-	@@$(CC) -c $(CFLAGS) -o $@ $<
+	@$(CC) -c $(CFLAGS) -o $@ $<
 
 .SUFFIXES: .cpp .o
 .cpp.o:
@@ -71,9 +71,9 @@ $(TARGET1):     $(OBJS)
 	@$(LD) -o $@ $(LDFLAGS) $(OBJS) $(LIBS)
 
 lua:
-	make -C ./../../libs/lua/src linux
+	$(MAKE) -C ./../../libs/lua/src linux
 luaclean:
-	make -C ./../../libs/lua/src clean
+	$(MAKE) -C ./../../libs/lua/src clean
 
 clean:
 	rm -f $(OBJS)

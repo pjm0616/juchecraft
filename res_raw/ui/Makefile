@@ -1,7 +1,7 @@
 
 all:
-	make -C sdl
+	$(MAKE) -C sdl
 
 clean:
-	make -C sdl clean
+	$(MAKE) -C sdl clean
 

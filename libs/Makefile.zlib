@@ -1,0 +1,11 @@
+
+
+zlib/libz.a:
+	cd zlib && ./configure --static
+	$(MAKE) -C zlib
+
+clean:
+	$(MAKE) -C zlib distclean
+
+
+

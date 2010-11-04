@@ -9,7 +9,7 @@ SRCS_UI				= ui/SCGameUI.cpp ui/sdl/SCGameUI_SDL.cpp ui/ncurses/SCGameUI_ncurses
 SRCS				= libs/etc/md5.c libs/jcimg/jcimg.cpp libs/luacpp/luacpp.cpp SCCoordinate.cpp SCObject.cpp SCPlayer.cpp SCObjectList.cpp SCObjectPrototypes.cpp SCGame.cpp main.cpp $(SRCS_UI) 
 TARGET1				= mini_sc
 
-DEFS				= -D_REENTRANT -fopenmp -D_FILE_OFFSET_BITS=64 -DBOOST_NO_RTTI
+DEFS				= -D_REENTRANT -fopenmp -D_FILE_OFFSET_BITS=64 -D_LARGEFILE64_SOURCE=1 -DBOOST_NO_RTTI
 LIBS				= -fopenmp ./libs/lua/src/liblua.a -lSDL -lSDL_ttf -lSDL_image -lSDL_gfx -lz -lbz2 -lncursesw
 INCLUDEDIR			= -I. -Ilibs/lua/src -Ilibs
 LIBDIR				=
@@ -60,7 +60,7 @@ OBJS_TMP				=$(SRCS:.c=.o)
 OBJS				=$(OBJS_TMP:.cpp=.o) 
 
 
-all:	lua $(TARGET1) tools resources
+all:	lib $(TARGET1) tool resources
 
 .SUFFIXES: .c .o
 .c.o:
@@ -72,24 +72,24 @@ all:	lua $(TARGET1) tools resources
 	@echo CXX $<
 	$(CXX) -c $(CXXFLAGS) -o $@ $<
 
-$(TARGET1):     $(OBJS)
+$(TARGET1):     $(OBJS) lib
 	@echo LD $@
 	@$(LD) -o $@ $(LDFLAGS) $(OBJS) $(LIBS)
 
-lua:
-	make -C ./libs/lua/src linux
-luaclean:
-	make -C ./libs/lua/src clean
+lib:
+	$(MAKE) -C ./libs
+libclean:
+	$(MAKE) -C ./libs clean
 
-tools: lua $(TARGET1)
-	make -C tools
+tool: lib $(TARGET1)
+	$(MAKE) -C tools
 toolclean:
-	make -C tools clean
+	$(MAKE) -C tools clean
 
-resources: lua tools
-	make -C res_raw
+resources: lib tool
+	$(MAKE) -C res_raw
 resclean:
-	make -C res_raw clean
+	$(MAKE) -C res_raw clean
 
 doc:
 	doxygen ./Doxyfile
@@ -100,7 +100,7 @@ clean:
 	rm -f $(OBJS)
 	rm -f $(TARGET1)
 	
-distclean: luaclean resclean clean toolclean docclean
+distclean: libclean resclean clean toolclean docclean
 	rm -f .depend
 
 dep:    depend

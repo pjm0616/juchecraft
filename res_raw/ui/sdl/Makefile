@@ -1,7 +1,7 @@
 
 all:
-	make -C imgs
+	$(MAKE) -C imgs
 
 clean:
-	make -C imgs clean
+	$(MAKE) -C imgs clean
 
