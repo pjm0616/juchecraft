@@ -6,6 +6,7 @@ SRCS = $(shell find -type f -name '*.png')
 	touch $@
 
 clean:
+	rm -f ../../../../res/ui/sdl/imgs/.timestamp
 	find ../../../../res/ui/sdl/imgs -name '*.dat' -exec rm {} \;
 
 
