@@ -1,6 +1,5 @@
 *.o
 *.a
 .depend
-
 /mini_sc
-
+/gmon.out
