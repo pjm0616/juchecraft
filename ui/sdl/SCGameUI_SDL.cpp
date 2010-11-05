@@ -210,7 +210,7 @@ static void render_jcimg_obj_to_screen(const ObjectSPtr_t &obj, JucheImage *img,
 	SDL_SurfaceSPtr_t sf = img->getImage(num, &imginfo);
 	
 	// TODO
-	#if 0
+	#if 1
 	//@{
 	int obj_w, obj_h;
 	obj->getSize(&obj_w, &obj_h);
@@ -226,7 +226,7 @@ static void render_jcimg_obj_to_screen(const ObjectSPtr_t &obj, JucheImage *img,
 	#endif
 	
 	SDL_Rect srcrect = {imginfo->left, imginfo->top, imginfo->width, imginfo->height};
-	SDL_Rect dstrect = {scr_x, scr_y, imginfo->width, imginfo->height};
+	SDL_Rect dstrect = {obj_centerx-img_centerx+imginfo->left, obj_centery-img_centery+imginfo->top, imginfo->width, imginfo->height};
 	
 	SDL_BlitSurface(sf.get(), &srcrect, scr, &dstrect);
 }
@@ -737,12 +737,15 @@ void GameUI_SDL::drawObject(const ObjectSPtr_t &obj)
 	//(this->m_player->isSelectionInProgress() && obj->insideRect(this->m_player->getSelectionStartCoordinate(), this->m_mouse_pos_in_gamescr))
 	if(this->m_player->isSelectedObject(obj))
 	{
+		uint8_t r, g, b;
 		if(owner == player)
-			ellipseRGBA(this->m_game_scr, x+w/2, y+h/2 +1, w/2 +1, h/2 +1, 0, 255, 0, 255);
+			(r = 0), (g = 255), (b = 0);
 		else if(owner->getRaceId() == RaceId::Neutral)
-			ellipseRGBA(this->m_game_scr, x+w/2, y+h/2 +1, w/2 +1, h/2 +1, 255, 255, 0, 255);
+			(r = 255), (g = 255), (b = 0);
 		else
-			ellipseRGBA(this->m_game_scr, x+w/2, y+h/2 +1, w/2 +1, h/2 +1, 255, 0, 0, 255);
+			(r = 255), (g = 0), (b = 0);
+		
+		ellipseRGBA(this->m_game_scr, x+w/2, y+h/2 +4, w/2 +1, h/2 +1, r, g, b, 255);
 	}
 	#endif
 	

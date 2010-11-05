@@ -165,6 +165,7 @@ void replace_unit_colors(SDL_Surface *sf, Uint32 newcolor)
 
 #define SHADOW_MAGIC_COLOR 0xef00ef
 #define SHADOW_MAGIC_COLOR_RGBA 0xffef00ef
+#define SHADOW_BLACK_ALPHA 0xa0
 void render_shadow_image(SDL_Surface *sf)
 {
 	for(int y = 0; y < sf->h; y++)
@@ -173,7 +174,7 @@ void render_shadow_image(SDL_Surface *sf)
 		for(int x = 0; x < sf->w; x++)
 		{
 			if(line[x] == SHADOW_MAGIC_COLOR_RGBA)
-				line[x] = 0xe0000000; // black with alpha 0xe0
+				line[x] = 0x000000 | (SHADOW_BLACK_ALPHA << 24); // black with alpha SHADOW_BLACK_ALPHA
 		}
 	}
 }
@@ -387,7 +388,7 @@ int lua_grp_render(lua_State *L)
 	
 	unsigned int grpflags = 0;
 	if(draw_shadow)
-		grpflags |= SHADOW_COLOR | (SHADOW_MAGIC_COLOR << 8);
+		grpflags |= (SHADOW_COLOR | (SHADOW_MAGIC_COLOR << 8));
 	
 	int new_left = gfhdr->left, new_top = gfhdr->top;
 	SDL_Surface *sf = render_grp_frame_to_surface(grp, pal, framenum, do_hflip, do_vflip, new_unit_color, grpflags, 
