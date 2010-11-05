@@ -178,7 +178,7 @@ int luacpp::callfxn(const char *name, int nresults, const char *argfmt, ...)
 
 
 luaref::luaref()
-	:L(NULL), 
+	:lua(NULL), 
 	ref_id(LUA_NOREF)
 {
 }
@@ -188,7 +188,7 @@ luaref::luaref(lua_State *L, int stack_n)
 	this->ref(L, stack_n);
 }
 luaref::luaref(const luaref &o)
-	:L(o.L), 
+	:lua(o.lua), 
 	ref_id(o.ref_id)
 {
 #if 0
@@ -202,24 +202,24 @@ luaref::~luaref()
 {
 	// FIXME: stl container 에서 문제 발생
 	// 그래서 해제를 수동으로 해야됨
-	//if(this->L)
+	//if(this->lua)
 	//	this->unref();
 }
 
 int luaref::ref(lua_State *L, int stack_n)
 {
-	this->L = L;
+	this->lua = L;
 	if(this->ref_id != LUA_NOREF)
 		this->unref();
 	
-	lua_pushvalue(this->L, stack_n);
-	this->ref_id = luaL_ref(this->L, LUA_REGISTRYINDEX);
+	lua_pushvalue(this->lua, stack_n);
+	this->ref_id = luaL_ref(this->lua, LUA_REGISTRYINDEX);
 	return this->ref_id;
 }
 
 void luaref::unref()
 {
-	luaL_unref(this->L, LUA_REGISTRYINDEX, this->ref_id);
+	luaL_unref(this->lua, LUA_REGISTRYINDEX, this->ref_id);
 	this->ref_id = LUA_NOREF;
 }
 
@@ -229,7 +229,7 @@ void luaref::pushref(lua_State *L) const
 }
 void luaref::pushref() const
 {
-	lua_rawgeti(this->L, LUA_REGISTRYINDEX, this->ref_id);
+	lua_rawgeti(this->lua, LUA_REGISTRYINDEX, this->ref_id);
 }
 
 void luaref::clearref()
@@ -239,7 +239,7 @@ void luaref::clearref()
 
 bool luaref::operator==(const luaref &o) const
 {
-	if((this->L == o.L) && (this->ref_id == o.ref_id))
+	if((this->lua == o.lua) && (this->ref_id == o.ref_id))
 		return true;
 	else
 		return false;

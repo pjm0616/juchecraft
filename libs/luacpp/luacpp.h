@@ -114,7 +114,7 @@ struct luaref
 	void clearref();
 	bool operator==(const luaref &o) const;
 	
-	lua_State *L;
+	lua_State *lua;
 	int ref_id;
 	
 };

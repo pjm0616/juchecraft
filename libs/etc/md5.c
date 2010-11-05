@@ -283,7 +283,12 @@ void md5_simple(const char *data, size_t len, uint32_t dest[4])
 	MD5_Final((unsigned char *)dest, &ctx);
 }
 
-
+uint32_t md5_simple32(const char *data, size_t len)
+{
+	uint32_t buf[4];
+	md5_simple(data, len, buf);
+	return buf[0];
+}
 
 
 

@@ -29,12 +29,8 @@ extern void MD5_Final(unsigned char *result, MD5_CTX *ctx);
 
 
 extern void md5_simple(const char *data, size_t len, uint32_t dest[4]);
-static uint32_t md5_simple32(const char *data, size_t len)
-{
-	uint32_t buf[4];
-	md5_simple(data, len, buf);
-	return buf[0];
-}
+extern uint32_t md5_simple32(const char *data, size_t len);
+
 
 #ifdef __cplusplus
 }

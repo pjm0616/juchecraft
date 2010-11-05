@@ -16,7 +16,7 @@ LIBDIR				=
 
 ifeq ($(DEBUG),1)
 DEFS_DBG			= -DDEBUG
-CFLAGS_DBG			= $(DEFS_DBG) -g -O0 -fstack-protector-all
+CFLAGS_DBG			= $(DEFS_DBG) -g -O0 -fstack-protector-all -fstrict-aliasing
 #CFLAGS_DBG			= $(DEFS_DBG) -g -O2 -fstack-protector-all -fno-omit-frame-pointer
 CXXFLAGS_DBG		= $(CFLAGS_DBG)
 LDFLAGS_DBG			=
@@ -51,9 +51,9 @@ ZIP					=zip
 UNZIP				=unzip
 
 CFLAGS				= $(DEFS) $(CFLAGS_DBG) $(C_CXX_LD_FLAGS_PROF) $(INCLUDEDIR) \
-						-std=gnu99 -finline-functions -Wall -Wextra -Wno-unused -Wno-unused-function #-Wextra -Wshadow
+						-std=gnu99 -finline-functions -Wall -Wextra -Wno-unused-parameter -Wshadow
 CXXFLAGS			= $(DEFS) $(CXXFLAGS_DBG) $(C_CXX_LD_FLAGS_PROF) $(INCLUDEDIR) \
-						-std=gnu++98 -finline-functions -Wall -Wextra -Wno-unused -Wno-unused-function -fno-rtti #-Wextra -Wshadow
+						-std=gnu++98 -finline-functions -Wall -Wextra -Wno-unused-parameter -fno-rtti -Wshadow -Wno-unused
 LDFLAGS				= $(LDFLAGS_DBG) $(C_CXX_LD_FLAGS_PROF) $(LIBDIR)
 #OBJS				=$(SRCS:.cpp=.o) 
 OBJS_TMP				=$(SRCS:.c=.o) 
@@ -74,7 +74,7 @@ all:	libs $(TARGET1) tools resources
 .SUFFIXES: .cpp .o
 .cpp.o:
 	@echo CXX $<
-	$(CXX) -c $(CXXFLAGS) -o $@ $<
+	@$(CXX) -c $(CXXFLAGS) -o $@ $<
 
 # FIXME: mini_sc is relinked every time. it doesn't happen if there's not `libs'
 $(TARGET1):	libs $(OBJS)

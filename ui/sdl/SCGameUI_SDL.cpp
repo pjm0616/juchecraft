@@ -128,7 +128,8 @@ static void SDL_BlitRectP(SDL_Surface *sf, int x, int y, int w, int h, unsigned 
 
 static void SDL_print(TTF_Font *font, SDL_Surface *sf, int x, int y, int w, int h, unsigned int color, const char *text)
 {
-	SDL_Surface *tsf = TTF_RenderUTF8_Blended(font, text, *(SDL_Color*)&color);
+	SDL_Color sdlcolor = {color&0xff, (color&0xff00) >> 8, (color&0xff0000) >> 16, 0};
+	SDL_Surface *tsf = TTF_RenderUTF8_Blended(font, text, sdlcolor);
 	SDL_Rect r = {x, y, w, h};
 	SDL_BlitSurface(tsf, NULL, sf, &r);
 	SDL_FreeSurface(tsf);
@@ -275,14 +276,11 @@ bool GameUI_SDL::loadResources()
 
 bool GameUI_SDL::initUI()
 {
-	int ret;
-	
 	if(unlikely(SDL_Init(SDL_INIT_VIDEO | SDL_INIT_NOPARACHUTE) < 0))
 		throw new Exception("SDL_Init() failed");
 	if(unlikely(TTF_Init() < 0))
 		throw new Exception("TTF_Init() failed");
 	
-	SDL_Surface *screen;
 	this->m_screen = SDL_SetVideoMode(640, 480, 32, SDL_HWSURFACE | SDL_DOUBLEBUF);
 	SDL_WM_SetCaption("JucheCraft", NULL);
 	SDL_ShowCursor(SDL_ENABLE);
@@ -564,7 +562,6 @@ void GameUI_SDL::drawUI()
 	// draw minerals
 	{
 		//fprintf(stderr, "min: x:%d, y:%d, race:%d\n", x, y);
-		int frn = 0;
 		render_jcimg_to_screen(&g_img_game_icon_mineral, this->m_screen, 0, x, y);
 		
 		snprintf(buf, sizeof(buf), "%d", me->getMinerals());
