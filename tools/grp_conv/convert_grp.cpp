@@ -136,7 +136,6 @@ SDL_Surface *render_grp_frame_flipped(grp_data_t *grpdata, grp_palette_t *pal, i
 	return sf;
 }
 
-/* 유닛 색상을 비율에 따라 바꿔줌 */
 void replace_unit_colors(SDL_Surface *sf, Uint32 newcolor)
 {
 	//static const Uint32 orig_unit_colors[] = {0xde00de, 0x5b005b, 0xbd00bd, 0x9c009c, 0x7c007c, 0x190019, 0xff00ff, 0x3a003a};
@@ -191,7 +190,7 @@ SDL_Surface *render_grp_frame_to_surface(grp_data_t *grpdata, grp_palette_t *pal
 	
 	int frame_left = frame->left, frame_top = frame->top;
 	{
-		/* 뒤집었을 경우 x, y 값을 보정해줌 */
+		/* correct x, y values */
 		grp_header_t *grpinfo = get_grp_info(grpdata);
 		if(do_hflip)
 		{

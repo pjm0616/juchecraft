@@ -192,7 +192,7 @@ luaref::luaref(const luaref &o)
 	ref_id(o.ref_id)
 {
 #if 0
-	// multi-threaded 환경에서 문제가 생길것같음
+	// should i do this?
 	o.pushref();
 	this->ref(o.L, -1);
 	luaL_pop(o.L, 1);
@@ -200,8 +200,7 @@ luaref::luaref(const luaref &o)
 }
 luaref::~luaref()
 {
-	// FIXME: stl container 에서 문제 발생
-	// 그래서 해제를 수동으로 해야됨
+	// should i do this?
 	//if(this->lua)
 	//	this->unref();
 }

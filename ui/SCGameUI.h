@@ -27,8 +27,8 @@ public:
 	virtual bool initUI() = 0;
 	virtual bool cleanupUI() = 0;
 	
-	/** @brief 1초동안 화면을 다시 그리는 횟수
-	 *  @detail 너무 높으면 메인 루프가 지연됨. 메인 FPS제한 푼 상태에서도 RedrawFPS가 30을 넘으면 FPS가 50을 못넘음
+	/** @brief get fps value
+	 *  @detail if m_fps is too high, main loop can be delayed
 	 */
 	inline unsigned int getFPS() const { return this->m_fps; }
 	

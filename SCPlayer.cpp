@@ -97,7 +97,7 @@ void Player::filterCurSelectedObjects(ObjectList &selected_objs, int select_cnt_
 	{
 		const ObjectSPtr_t &obj = *it;
 		
-		/* 유닛이 하나 이상 있다면 유닛 빼고 다른 물체는 선택하지 않음 */
+		// if there are at least one selected unit, deselect non-unit objects.
 		if(stats[ObjectType::Unit] > 0)
 		{
 			if(obj->getObjectType() != ObjectType::Unit)
