@@ -1,19 +1,19 @@
 // Copyright (C) 2010 Park Jeongmin <pjm0616@gmail.com>
 // See LICENSE.txt for details
 
-#ifndef SCObjectPrototypes_H_
-#define SCObjectPrototypes_H_
+#ifndef SCObjectFactory_H_
+#define SCObjectFactory_H_
 
 namespace SC {
 
 
 /** @brief Manages object prototypes
  */
-class ObjectPrototypes
+class ObjectFactory
 {
 public:
-	ObjectPrototypes(Game *game);
-	~ObjectPrototypes();
+	ObjectFactory(Game *game);
+	~ObjectFactory();
 	
 	bool load(const char *listfile);
 	

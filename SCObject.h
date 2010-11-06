@@ -17,7 +17,7 @@ namespace SC {
  */
 class Object
 {
-	friend class ObjectPrototypes;
+	friend class ObjectFactory;
 	
 public:
 	/** @name Constructor/destructor */
@@ -546,9 +546,9 @@ public:
 public:
 	/** @brief Creates a new object based on this object.
 	 *  @return Pointer to newly created object.
-	 *  @sa SC::ObjectPrototypes
+	 *  @sa SC::ObjectFactory
 	 */
-	ObjectSPtr_t duplicate();
+	ObjectSPtr_t clone();
 	
 protected:
 	/** @name Constant object attributes */

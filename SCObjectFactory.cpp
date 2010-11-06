@@ -22,7 +22,7 @@
 #include "SCObjectIdList.h"
 #include "SCObject.h"
 #include "SCObjectList.h"
-#include "SCObjectPrototypes.h"
+#include "SCObjectFactory.h"
 #include "SCUnitCommand.h"
 #include "SCPlayer.h"
 
@@ -32,17 +32,17 @@ using namespace SC;
 
 
 
-ObjectPrototypes::ObjectPrototypes(Game *game)
+ObjectFactory::ObjectFactory(Game *game)
 	:m_game(game)
 {
 }
 
-ObjectPrototypes::~ObjectPrototypes()
+ObjectFactory::~ObjectFactory()
 {
 }
 
 
-bool ObjectPrototypes::load(const char *listfile)
+bool ObjectFactory::load(const char *listfile)
 {
 	lua_State *L = this->m_lua.lua;
 	
@@ -95,7 +95,7 @@ static ObjectState_t parseLuaObjectStateString(const char *str)
 }
 
 
-void ObjectPrototypes::parseObjectData(Object *obj, int stack_idx)
+void ObjectFactory::parseObjectData(Object *obj, int stack_idx)
 {
 	lua_State *L = this->m_lua.lua;
 	
@@ -155,12 +155,12 @@ void ObjectPrototypes::parseObjectData(Object *obj, int stack_idx)
 
 
 
-ObjectSPtr_t ObjectPrototypes::newObjectById(ObjectId_t id)
+ObjectSPtr_t ObjectFactory::newObjectById(ObjectId_t id)
 {
 	const ObjectSPtr_t &proto = this->findObjectById(id);
 	if(!proto)
 		throw new Exception("Cannot find object prototype");
-	return ObjectSPtr_t(proto->duplicate());
+	return ObjectSPtr_t(proto->clone());
 }
 
 

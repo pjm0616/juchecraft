@@ -82,7 +82,7 @@ private:
 	void processObjects();
 	
 	GameUI *m_ui;
-	ObjectPrototypes m_obj_protos;
+	ObjectFactory m_obj_factory;
 	ObjectList m_objects;
 	
 	time_t m_start_time;

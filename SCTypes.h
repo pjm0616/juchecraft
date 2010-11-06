@@ -114,7 +114,7 @@ typedef std::vector<PlayerSPtr_t> PlayerVector;
 class Object;
 typedef SC::shared_ptr<Object> ObjectSPtr_t;
 class Game;
-class ObjectPrototypes;
+class ObjectFactory;
 
 //typedef std::list<ObjectSPtr> ObjectList;
 class ObjectList;

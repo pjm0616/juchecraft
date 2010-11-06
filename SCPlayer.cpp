@@ -34,7 +34,7 @@
 #include "SCObjectIdList.h"
 #include "SCObject.h"
 #include "SCObjectList.h"
-#include "SCObjectPrototypes.h"
+#include "SCObjectFactory.h"
 #include "SCUnitCommand.h"
 #include "SCPlayer.h"
 #include "SCGame.h"

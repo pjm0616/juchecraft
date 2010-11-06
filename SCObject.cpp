@@ -26,7 +26,7 @@
 #include "SCObjectIdList.h"
 #include "SCObject.h"
 #include "SCObjectList.h"
-#include "SCObjectPrototypes.h"
+#include "SCObjectFactory.h"
 #include "SCUnitCommand.h"
 #include "SCPlayer.h"
 #include "SCGame.h"
@@ -146,7 +146,7 @@ void Object::setMovementFlags(MovementFlags_t type, bool onoff)
 
 
 
-ObjectSPtr_t Object::duplicate()
+ObjectSPtr_t Object::clone()
 {
 	Object *obj = new Object(this->m_game);
 	

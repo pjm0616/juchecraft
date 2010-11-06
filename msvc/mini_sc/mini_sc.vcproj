@@ -197,7 +197,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\SCObjectPrototypes.cpp"
+				RelativePath="..\..\SCObjectFactory.cpp"
 				>
 			</File>
 			<File
@@ -423,7 +423,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\SCObjectPrototypes.h"
+				RelativePath="..\..\SCObjectFactory.h"
 				>
 			</File>
 			<File

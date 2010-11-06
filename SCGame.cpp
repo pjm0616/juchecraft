@@ -34,7 +34,7 @@
 #include "SCObjectIdList.h"
 #include "SCObject.h"
 #include "SCObjectList.h"
-#include "SCObjectPrototypes.h"
+#include "SCObjectFactory.h"
 #include "SCUnitCommand.h"
 #include "SCPlayer.h"
 #include "SCGame.h"
@@ -44,7 +44,7 @@ using namespace SC;
 
 
 Game::Game()
-	:m_obj_protos(this), 
+	:m_obj_factory(this), 
 	m_start_time(0.0), 
 	m_is_game_ended(false)
 {
@@ -59,7 +59,7 @@ Game::~Game()
 void Game::loadGameData(const char *dir)
 {
 	std::string basedir(dir);
-	this->m_obj_protos.load(std::string(basedir + "./object_data/objects.dat").c_str());
+	this->m_obj_factory.load(std::string(basedir + "./object_data/objects.dat").c_str());
 }
 
 const ObjectSPtr_t &Game::addObject(const ObjectSPtr_t &obj)
@@ -70,7 +70,7 @@ const ObjectSPtr_t &Game::addObject(const ObjectSPtr_t &obj)
 
 ObjectSPtr_t Game::newObject(ObjectId_t objid)
 {
-	return this->addObject(this->m_obj_protos.newObjectById(objid));
+	return this->addObject(this->m_obj_factory.newObjectById(objid));
 }
 
 int Game::removeObject(const ObjectSPtr_t &obj)
