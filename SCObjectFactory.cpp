@@ -99,58 +99,41 @@ void ObjectFactory::parseObjectData(Object *obj, int stack_idx)
 {
 	lua_State *L = this->m_lua.lua;
 	
-#define SET_OBJ_PROPERTY_INT(L_, tblidx_, name_) \
+	// used vars: `L', `stack_idx', `obj'
+#define SET_OBJ_PROPERTY_EXPR(name_, expr_) \
 	do { \
-		lua_pushliteral((L_), #name_); \
-		lua_gettable((L_), (tblidx_)); \
-		obj->m_##name_ = luaL_checkint((L_), -1); \
-		lua_pop((L_), 1); \
+		lua_pushliteral(L, #name_); \
+		lua_gettable(L, stack_idx); \
+		obj->m_constattrs.name_ = (expr_); \
+		lua_pop(L, 1); \
 	} while(0)
-#define SET_OBJ_PROPERTY_NUMBER(L_, tblidx_, name_) \
-	do { \
-		lua_pushliteral((L_), #name_); \
-		lua_gettable((L_), (tblidx_)); \
-		obj->m_##name_ = luaL_checknumber((L_), -1); \
-		lua_pop((L_), 1); \
-	} while(0)
-#define SET_OBJ_PROPERTY_STRING(L_, tblidx_, name_) \
-	do { \
-		lua_pushliteral((L_), #name_); \
-		lua_gettable((L_), (tblidx_)); \
-		obj->m_##name_ = luaL_checkstring((L_), -1); \
-		lua_pop((L_), 1); \
-	} while(0)
+#define SET_OBJ_PROPERTY(type_, name_) SET_OBJ_PROPERTY_EXPR(name_, luaL_check##type_(L, -1))
 	
-	SET_OBJ_PROPERTY_INT(L, stack_idx, object_type);
-	SET_OBJ_PROPERTY_INT(L, stack_idx, object_id);
-	SET_OBJ_PROPERTY_STRING(L, stack_idx, object_id_name);
-	SET_OBJ_PROPERTY_STRING(L, stack_idx, object_name);
-	SET_OBJ_PROPERTY_INT(L, stack_idx, race_id);
+	SET_OBJ_PROPERTY(int, object_type);
+	SET_OBJ_PROPERTY(int, object_id);
+	SET_OBJ_PROPERTY(string, object_id_name);
+	SET_OBJ_PROPERTY(string, object_name);
+	SET_OBJ_PROPERTY(int, race_id);
 	
-	{
-		lua_pushliteral(L, "initial_state");
-		lua_gettable(L, stack_idx);
-		obj->m_initial_state = parseLuaObjectStateString(luaL_checkstring(L, -1));
-		lua_pop(L, 1);
-	}
-	SET_OBJ_PROPERTY_INT(L, stack_idx, width);
-	SET_OBJ_PROPERTY_INT(L, stack_idx, height);
-	SET_OBJ_PROPERTY_INT(L, stack_idx, max_hp);
-	SET_OBJ_PROPERTY_INT(L, stack_idx, max_energy);
-	SET_OBJ_PROPERTY_INT(L, stack_idx, initial_minerals);
-	SET_OBJ_PROPERTY_INT(L, stack_idx, initial_vespene_gas);
-	SET_OBJ_PROPERTY_INT(L, stack_idx, provided_supplies);
-	SET_OBJ_PROPERTY_INT(L, stack_idx, required_supplies);
+	SET_OBJ_PROPERTY_EXPR(initial_state, parseLuaObjectStateString(luaL_checkstring(L, -1)));
 	
-	SET_OBJ_PROPERTY_NUMBER(L, stack_idx, armor);
-	SET_OBJ_PROPERTY_NUMBER(L, stack_idx, damage);
-	SET_OBJ_PROPERTY_NUMBER(L, stack_idx, moving_speed);
-	SET_OBJ_PROPERTY_NUMBER(L, stack_idx, attack_speed);
-	SET_OBJ_PROPERTY_NUMBER(L, stack_idx, attack_range);
+	SET_OBJ_PROPERTY(int, width);
+	SET_OBJ_PROPERTY(int, height);
+	SET_OBJ_PROPERTY(int, max_hp);
+	SET_OBJ_PROPERTY(int, max_energy);
+	SET_OBJ_PROPERTY(int, initial_minerals);
+	SET_OBJ_PROPERTY(int, initial_vespene_gas);
+	SET_OBJ_PROPERTY(int, provided_supplies);
+	SET_OBJ_PROPERTY(int, required_supplies);
 	
-	#undef SET_OBJ_PROPERTY_INT
-	#undef SET_OBJ_PROPERTY_NUMBER
-	#undef SET_OBJ_PROPERTY_STRING
+	SET_OBJ_PROPERTY(number, armor);
+	SET_OBJ_PROPERTY(number, damage);
+	SET_OBJ_PROPERTY(number, moving_speed);
+	SET_OBJ_PROPERTY(number, attack_speed);
+	SET_OBJ_PROPERTY(number, attack_range);
+	
+	#undef SET_OBJ_PROPERTY
+	#undef SET_OBJ_PROPERTY_EXPR
 }
 
 

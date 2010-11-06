@@ -491,56 +491,56 @@ public:
 	//@{
 	/** @sa ObjectType
 	 */
-	ObjectType_t getObjectType() const { return this->m_object_type; }
+	ObjectType_t getObjectType() const { return this->m_constattrs.object_type; }
 	/** @sa ObjectId
 	 */
-	ObjectId_t getObjectId() const { return this->m_object_id; }
-	const char *getObjectIdName() const { return this->m_object_id_name.c_str(); }
-	const char *getObjectName() const { return this->m_object_name.c_str(); }
+	ObjectId_t getObjectId() const { return this->m_constattrs.object_id; }
+	const char *getObjectIdName() const { return this->m_constattrs.object_id_name.c_str(); }
+	const char *getObjectName() const { return this->m_constattrs.object_name.c_str(); }
 	/** @sa RaceId
 	 */
-	RaceId_t getRaceId() const { return this->m_race_id; }
+	RaceId_t getRaceId() const { return this->m_constattrs.race_id; }
 	
-	int getWidth() const { return this->m_width; }
-	int getHeight() const { return this->m_height; }
+	int getWidth() const { return this->m_constattrs.width; }
+	int getHeight() const { return this->m_constattrs.height; }
 	void getSize(int *w, int *h) const { *w = this->getWidth(); *h = this->getHeight(); }
 	
 	/** @brief Get object's initial state.
 	 *  @sa ObjectState
 	 */
-	ObjectState_t getInitialState() const { return this->m_initial_state; }
-	int getMaxHP() const { return this->m_max_hp; }
-	int getMaxEnergy() const { return this->m_max_energy; }
-	int getInitialMinerals() const { return this->m_initial_minerals; }
-	int getInitialVespeneGas() const { return this->m_initial_vespene_gas; }
-	int getProvidedSupplies() const { return this->m_provided_supplies; }
-	int getRequiredSupplies() const { return this->m_required_supplies; }
+	ObjectState_t getInitialState() const { return this->m_constattrs.initial_state; }
+	int getMaxHP() const { return this->m_constattrs.max_hp; }
+	int getMaxEnergy() const { return this->m_constattrs.max_energy; }
+	int getInitialMinerals() const { return this->m_constattrs.initial_minerals; }
+	int getInitialVespeneGas() const { return this->m_constattrs.initial_vespene_gas; }
+	int getProvidedSupplies() const { return this->m_constattrs.provided_supplies; }
+	int getRequiredSupplies() const { return this->m_constattrs.required_supplies; }
 	
 	/** @brief Get bare armor of the object.
 	 *  @detail DO NOT use this function unless you want the RAW unit attribute(without upgrades).
 	 *  @detail use getNetArmor() instead.
 	 */
-	float getArmor() const { return this->m_armor; }
+	float getArmor() const { return this->m_constattrs.armor; }
 	/** @brief Get bare damage of the object.
 	 *  @detail DO NOT use this function unless you want the RAW unit attribute(without upgrades).
 	 *  @detail use getNetDamage() instead.
 	 */
-	float getDamage() const { return this->m_damage; }
+	float getDamage() const { return this->m_constattrs.damage; }
 	/** @brief Get bare moving speed of the object.
 	 *  @detail DO NOT use this function unless you want the RAW unit attribute(without upgrades).
 	 *  @detail use getNetMovingSpeed() instead.
 	 */
-	float getMovingSpeed() const { return this->m_moving_speed; }
+	float getMovingSpeed() const { return this->m_constattrs.moving_speed; }
 	/** @brief Get bare attack speed of the object.
 	 *  @detail DO NOT use this function unless you want the RAW unit attribute(without upgrades).
 	 *  @detail use getNetAttackSpeed() instead.
 	 */
-	float getAttackSpeed() const { return this->m_attack_speed; }
+	float getAttackSpeed() const { return this->m_constattrs.attack_speed; }
 	/** @brief Get bare attack range of the object.
 	 *  @detail DO NOT use this function unless you want the RAW unit attribute(without upgrades).
 	 *  @detail use getNetAttackRange() instead.
 	 */
-	float getAttackRange() const { return this->m_attack_range; }
+	float getAttackRange() const { return this->m_constattrs.attack_range; }
 	//@}
 	
 public:
@@ -552,29 +552,33 @@ public:
 	
 protected:
 	/** @name Constant object attributes */
-	//@{
-	ObjectType_t m_object_type; /**< Object type @sa ObjectType */
-	ObjectId_t m_object_id; /**< Object ID @sa ObjectId */
-	std::string m_object_id_name; /**< Name of ObjectId in string */
-	std::string m_object_name; /**< Object's name */
-	RaceId_t m_race_id; /**< Race of the object @sa RaceId */
+	struct ConstantAttributes
+	{
+		ConstantAttributes();
+		void operator=(const ConstantAttributes &o);
+		
+		ObjectType_t object_type; /**< Object type @sa ObjectType */
+		ObjectId_t object_id; /**< Object ID @sa ObjectId */
+		std::string object_id_name; /**< Name of ObjectId in string */
+		std::string object_name; /**< Object's name */
+		RaceId_t race_id; /**< Race of the object @sa RaceId */
 	
-	ObjectState_t m_initial_state; /**< Object's initial state @sa ObjectState */
-	int m_width; /**< Width of the object */
-	int m_height; /**< Height of the object */
-	int m_max_hp; /**< Object's max hit point */
-	int m_max_energy; /**< Object's max energy */
-	int m_initial_minerals; /**< The initial amount of minerals */
-	int m_initial_vespene_gas; /**< The initial amount of vespene gas */
-	int m_provided_supplies; /**< The amount of supplies this object provide */
-	int m_required_supplies; /**< The amount of supplies this object uses */
+		ObjectState_t initial_state; /**< Object's initial state @sa ObjectState */
+		int width; /**< Width of the object */
+		int height; /**< Height of the object */
+		int max_hp; /**< Object's max hit point */
+		int max_energy; /**< Object's max energy */
+		int initial_minerals; /**< The initial amount of minerals */
+		int initial_vespene_gas; /**< The initial amount of vespene gas */
+		int provided_supplies; /**< The amount of supplies this object provide */
+		int required_supplies; /**< The amount of supplies this object uses */
 	
-	float m_armor; /**< Bare armor of the object. Bonuses can be applied. @sa getNetArmor() */
-	float m_damage; /**< Bare damage of the object @sa getNetDamage() */
-	float m_moving_speed; /**< Bare moving speed of the object @sa getNetMovingSpeed() */
-	float m_attack_speed; /**< Bare attack speed of the object @sa getNetAttackSpeed() */
-	float m_attack_range; /**< Bare attack range of the object @sa getNetAttackRange() */
-	//@}
+		float armor; /**< Bare armor of the object. Bonuses can be applied. @sa getNetArmor() */
+		float damage; /**< Bare damage of the object @sa getNetDamage() */
+		float moving_speed; /**< Bare moving speed of the object @sa getNetMovingSpeed() */
+		float attack_speed; /**< Bare attack speed of the object @sa getNetAttackSpeed() */
+		float attack_range; /**< Bare attack range of the object @sa getNetAttackRange() */
+	} m_constattrs;
 	
 private:
 	bool m_cleanup_called; /**< for debugging */

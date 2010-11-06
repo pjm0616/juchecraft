@@ -11,6 +11,7 @@
 #include <deque>
 #include <cmath>
 #include <cstdlib>
+#include <cstring>
 #include <cassert>
 
 #ifdef DEBUG
@@ -34,30 +35,60 @@
 using namespace SC;
 
 
+// default object properties. these will be modified in prototypes.
+Object::ConstantAttributes::ConstantAttributes()
+	:object_type(ObjectType::None), 
+	object_id(ObjectId::None), 
+	object_id_name("Object"), 
+	object_name("Object"), 
+	race_id(RaceId::None), 
+	initial_state(ObjectState::None), 
+	width(0), 
+	height(0), 
+	max_hp(-1), 
+	max_energy(-1), 
+	initial_minerals(0), 
+	initial_vespene_gas(0), 
+	provided_supplies(0), 
+	required_supplies(0), 
+	armor(0.0), 
+	damage(0.0), 
+	moving_speed(0.0), 
+	attack_speed(0.0), 
+	attack_range(0.0)
+{
+}
+
+void Object::ConstantAttributes::operator=(const ConstantAttributes &o)
+{
+	#define COPY_MEMBER_VARIABLE(name_) this->name_ = o.name_
+	COPY_MEMBER_VARIABLE(object_type);
+	COPY_MEMBER_VARIABLE(object_id);
+	COPY_MEMBER_VARIABLE(object_id_name);
+	COPY_MEMBER_VARIABLE(object_name);
+	COPY_MEMBER_VARIABLE(race_id);
+	
+	COPY_MEMBER_VARIABLE(initial_state);
+	COPY_MEMBER_VARIABLE(width);
+	COPY_MEMBER_VARIABLE(height);
+	COPY_MEMBER_VARIABLE(max_hp);
+	COPY_MEMBER_VARIABLE(max_energy);
+	COPY_MEMBER_VARIABLE(initial_minerals);
+	COPY_MEMBER_VARIABLE(initial_vespene_gas);
+	COPY_MEMBER_VARIABLE(provided_supplies);
+	COPY_MEMBER_VARIABLE(required_supplies);
+	
+	COPY_MEMBER_VARIABLE(armor);
+	COPY_MEMBER_VARIABLE(damage);
+	COPY_MEMBER_VARIABLE(moving_speed);
+	COPY_MEMBER_VARIABLE(attack_speed);
+	COPY_MEMBER_VARIABLE(attack_range);
+	#undef COPY_MEMBER_VARIABLE
+}
 
 
 Object::Object(Game *game)
-	:m_game(game), 
-	// default object properties. these will be modified in derived class.
-	m_object_type(ObjectType::None), 
-	m_object_id(ObjectId::None), 
-	m_object_id_name("Object"), 
-	m_object_name("Object"), 
-	m_race_id(RaceId::None), 
-	m_initial_state(ObjectState::None), 
-	m_width(0), 
-	m_height(0), 
-	m_max_hp(-1), 
-	m_max_energy(-1), 
-	m_initial_minerals(0), 
-	m_initial_vespene_gas(0), 
-	m_provided_supplies(0), 
-	m_required_supplies(0), 
-	m_armor(0.0), 
-	m_damage(0.0), 
-	m_moving_speed(0.0), 
-	m_attack_speed(0.0), 
-	m_attack_range(0.0)
+	:m_game(game)
 {
 	this->setState(ObjectState::None);
 	
@@ -149,32 +180,7 @@ void Object::setMovementFlags(MovementFlags_t type, bool onoff)
 ObjectSPtr_t Object::clone()
 {
 	Object *obj = new Object(this->m_game);
-	
-	#define COPY_MEMBER_VARIABLE(name_) obj->name_ = this->name_
-	
-	COPY_MEMBER_VARIABLE(m_object_type);
-	COPY_MEMBER_VARIABLE(m_object_id);
-	COPY_MEMBER_VARIABLE(m_object_id_name);
-	COPY_MEMBER_VARIABLE(m_object_name);
-	COPY_MEMBER_VARIABLE(m_race_id);
-	
-	COPY_MEMBER_VARIABLE(m_initial_state);
-	COPY_MEMBER_VARIABLE(m_width);
-	COPY_MEMBER_VARIABLE(m_height);
-	COPY_MEMBER_VARIABLE(m_max_hp);
-	COPY_MEMBER_VARIABLE(m_max_energy);
-	COPY_MEMBER_VARIABLE(m_initial_minerals);
-	COPY_MEMBER_VARIABLE(m_initial_vespene_gas);
-	COPY_MEMBER_VARIABLE(m_provided_supplies);
-	COPY_MEMBER_VARIABLE(m_required_supplies);
-	
-	COPY_MEMBER_VARIABLE(m_armor);
-	COPY_MEMBER_VARIABLE(m_damage);
-	COPY_MEMBER_VARIABLE(m_moving_speed);
-	COPY_MEMBER_VARIABLE(m_attack_speed);
-	COPY_MEMBER_VARIABLE(m_attack_range);
-	
-	#undef COPY_MEMBER_VARIABLE
+	obj->m_constattrs = this->m_constattrs;
 	
 	return ObjectSPtr_t(obj);
 }

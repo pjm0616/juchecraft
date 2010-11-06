@@ -64,7 +64,7 @@ OBJS				=$(OBJS_TMP:.cpp=.o)
 
 .PHONY:	all libs libclean tools toolclean resources resclean doc docclean clean distclean dep depclean
 
-all:	libs $(TARGET1) tools resources
+all:	dep libs $(TARGET1) tools resources
 
 .SUFFIXES: .c .o
 .c.o:
