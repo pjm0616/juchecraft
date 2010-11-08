@@ -4,6 +4,24 @@
 namespace SC {
 
 
+
+namespace UnitActionId
+{
+	enum UnitActionId
+	{
+		None, 
+		Move, 
+		Attack, 
+	};
+}
+
+class UnitAction
+{
+
+};
+
+
+
 namespace UnitCommandId
 {
 	enum UnitCommandId
