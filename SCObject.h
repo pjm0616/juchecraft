@@ -18,6 +18,7 @@ namespace SC {
 class Object
 {
 	friend class ObjectFactory;
+	friend class UnitAction;
 	
 public:
 	/** @name Constructor/destructor */
@@ -127,14 +128,6 @@ public:
 	};
 	typedef unsigned int MovementFlags_t;
 	
-	/** @brief Moves to top-left coordiate.
-	 *
-	 *  @param[in] dest Coordinate to destination
-	 *  @param[in] flags Attack options. see MovementFlags.
-	 *  @return true if succeeded. false if there's an error.
-	 *  @sa MovementFlags
-	 */
-	bool move_notAligned(const Coordinate &dest, MovementFlags_t flags = MovementFlags::None);
 	/** @brief Moves to coordinate, coordinate is corrected to unit's center.
 	 *
 	 *  @param[in] dest Coordinate to destination
@@ -152,14 +145,6 @@ public:
 	 *  @sa MovementFlags
 	 */
 	bool move(const ObjectSPtr_t &target, float minumum_distance = 0.0, MovementFlags_t flags = MovementFlags::None);
-	/** @brief Stops any other commands, and moves to coordinate.
-	 *
-	 *  @param[in] dest Coordinate to destination
-	 *  @param[in] flags Attack options. see MovementFlags.
-	 *  @return true if succeeded. false if there's an error.
-	 *  @sa MovementFlags
-	 */
-	bool cmd_move_notAligned(const Coordinate &dest, MovementFlags_t flags = MovementFlags::None);
 	/** @brief Stops any other commands, and moves to coordinate. Coordinate is corrected to unit's center.
 	 *
 	 *  @param[in] dest Coordinate to destination
@@ -452,6 +437,7 @@ private:
 	float m_mul_armor_bonus, m_mul_damage_bonus, m_mul_moving_speed_bonus, m_mul_attack_speed_bonus;
 	//@}
 	
+	//ActionList m_actions;
 	/** Movement related data */
 	struct ms_movement
 	{

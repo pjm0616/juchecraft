@@ -337,7 +337,7 @@ bool Object::doMovement(float time)
 
 
 
-bool Object::move_notAligned(const Coordinate &dest, MovementFlags_t flags)
+bool Object::move(const Coordinate &dest, MovementFlags_t flags)
 {
 	if(!this->canMove())
 	{
@@ -387,14 +387,6 @@ void Object::stopMoving()
 	this->setMovementStartPoint(Coordinate(0.0, 0.0)); // not necessary
 }
 
-bool Object::move(const Coordinate &dest, MovementFlags_t flags)
-{
-	Coordinate dest2(dest);
-	dest2.addX(-(this->getWidth() / 2));
-	dest2.addY(-(this->getHeight() / 2));
-	
-	return this->move_notAligned(dest2, flags);
-}
 
 
 Coordinate Object::calculateDestination_TargetedMoving()
@@ -493,8 +485,10 @@ bool Object::checkMinDistanceOld(const ObjectSPtr_t &target, float min_distance,
 
 bool Object::checkMinDistance(const ObjectSPtr_t &target, float min_distance, Coordinate *where_to_move)
 {
-	float x = this->getX(), w = this->getWidth(), target_x = target->getX(), target_w = target->getWidth();
-	float y = this->getY(), h = this->getHeight(), target_y = target->getY(), target_h = target->getHeight();
+	float cx = this->getX(), w = this->getWidth(), target_cx = target->getX(), target_w = target->getWidth();
+	float cy = this->getY(), h = this->getHeight(), target_cy = target->getY(), target_h = target->getHeight();
+	float x = cx - w/2, y = cy - h/2;
+	float target_x = target_cy - target_w/2, target_y = target_cy - target_h/2;
 	float x_center = x + w/2, target_x_center = target_x + target_w/2;
 	float y_center = y + h/2, target_y_center = target_y + target_h/2;
 	float dx_center = target_x_center - x_center;
@@ -652,11 +646,6 @@ bool Object::cmd_attack(const ObjectSPtr_t &target)
 	return this->attack(target);
 }
 
-bool Object::cmd_move_notAligned(const Coordinate &dest, MovementFlags_t flags)
-{
-	this->stopAttacking();
-	return this->move_notAligned(dest, flags);
-}
 bool Object::cmd_move(const Coordinate &dest, MovementFlags_t flags)
 {
 	this->stopAttacking();
@@ -716,10 +705,12 @@ void Object::processFrame()
 
 bool Object::insideRect(int left, int top, int right, int bottom)
 {
-	int obj_left, obj_top, obj_width, obj_height;
-	this->getPosition(&obj_left, &obj_top);
+	int obj_cx, obj_cy;
+	int obj_width, obj_height;
+	this->getPosition(&obj_cx, &obj_cy);
 	this->getSize(&obj_width, &obj_height);
-	int obj_right = obj_left + obj_width, obj_bottom = obj_top + obj_height;
+	int obj_left = obj_cx - obj_width/2, obj_top = obj_cy - obj_height/2;
+	int obj_right = obj_cx + obj_width/2, obj_bottom = obj_cy + obj_height/2;
 	
 	if(	(left <= obj_left && obj_right <= right) || 
 		(obj_left <= left && left <= obj_right) || 

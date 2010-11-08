@@ -371,10 +371,11 @@ const std::string *GameUI_ncurses::getObjectImg(ObjectId_t id) const
 
 void GameUI_ncurses::drawObject(const ObjectSPtr_t &obj)
 {
-	int x, y, w, h;
+	int cx, cy, w, h;
 	int owner_id = obj->getOwner()->getPlayerId();
-	obj->getPosition(&x, &y);
+	obj->getPosition(&cx, &cy);
 	obj->getSize(&w, &h);
+	int x = cx - w/2, y = cy - h/2;
 	x = roundf((float)x/10); w = roundf((float)w/10);
 	y = roundf((float)y/20); h = roundf((float)h/20);
 	
