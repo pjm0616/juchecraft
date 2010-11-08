@@ -3,6 +3,11 @@
 DEBUG				?= 1
 ENABLE_PROFILING 	?= 0
 
+# 0: don't use, 1: generate, 2: use
+ENABLE_PGO			?= 0
+PGO_DIR			= ./tmp_profile/
+#########
+
 CROSSC				=
 
 SRCS_UI				= ui/SCGameUI.cpp ui/sdl/SCGameUI_SDL.cpp ui/ncurses/SCGameUI_ncurses.cpp
@@ -23,7 +28,6 @@ LDFLAGS_DBG			=
 ifeq ($(ENABLE_PROFILING),1)
 C_CXX_LD_FLAGS_PROF	= -pg
 endif
-
 else
 DEFS_DBG			= -DNDEBUG
 CFLAGS_DBG			= $(DEFS_DBG) -O3
@@ -31,6 +35,13 @@ CXXFLAGS_DBG		= $(CFLAGS_DBG)
 LDFLAGS_DBG			=
 endif
 
+ifeq ($(ENABLE_PGO),1)
+C_CXX_LD_FLAGS_PGO	= --coverage -fprofile-dir=$(PGO_DIR) -fprofile-generate #-fprofile-correction
+else
+ifeq ($(ENABLE_PGO),2)
+C_CXX_LD_FLAGS_PGO	= --coverage -fprofile-dir=$(PGO_DIR) -fprofile-use -Wcoverage-mismatch
+endif
+endif
 
 
 
@@ -50,11 +61,11 @@ TAR					=tar
 ZIP					=zip
 UNZIP				=unzip
 
-CFLAGS				= $(DEFS) $(CFLAGS_DBG) $(C_CXX_LD_FLAGS_PROF) $(INCLUDEDIR) \
+CFLAGS				= $(DEFS) $(CFLAGS_DBG) $(C_CXX_LD_FLAGS_PROF) $(C_CXX_LD_FLAGS_PGO) $(INCLUDEDIR) \
 						-std=gnu99 -finline-functions -Wall -Wextra -Wno-unused-parameter -Wshadow
-CXXFLAGS			= $(DEFS) $(CXXFLAGS_DBG) $(C_CXX_LD_FLAGS_PROF) $(INCLUDEDIR) \
+CXXFLAGS			= $(DEFS) $(CXXFLAGS_DBG) $(C_CXX_LD_FLAGS_PROF) $(C_CXX_LD_FLAGS_PGO) $(INCLUDEDIR) \
 						-std=gnu++98 -finline-functions -Wall -Wextra -Wno-unused-parameter -fno-rtti -Wshadow -Wno-unused
-LDFLAGS				= $(LDFLAGS_DBG) $(C_CXX_LD_FLAGS_PROF) $(LIBDIR)
+LDFLAGS				= $(LDFLAGS_DBG) $(C_CXX_LD_FLAGS_PROF) $(C_CXX_LD_FLAGS_PGO) $(LIBDIR)
 #OBJS				=$(SRCS:.cpp=.o) 
 OBJS_TMP				=$(SRCS:.c=.o) 
 OBJS				=$(OBJS_TMP:.cpp=.o) 
@@ -69,17 +80,17 @@ all:	dep libs $(TARGET1) tools resources
 .SUFFIXES: .c .o
 .c.o:
 	@echo CC $<
-	@$(CC) -c $(CFLAGS) -o $@ $<
+	$(CC) -c $(CFLAGS) -o $@ $<
 
 .SUFFIXES: .cpp .o
 .cpp.o:
 	@echo CXX $<
-	@$(CXX) -c $(CXXFLAGS) -o $@ $<
+	$(CXX) -c $(CXXFLAGS) -o $@ $<
 
 # FIXME: mini_sc is relinked every time. it doesn't happen if there's not `libs'
 $(TARGET1):	libs $(OBJS)
 	@echo LD $@
-	@$(LD) -o $@ $(LDFLAGS) $(OBJS) $(LIBS)
+	$(LD) -o $@ $(LDFLAGS) $(OBJS) $(LIBS)
 
 libs:
 	$(MAKE) -C ./libs
