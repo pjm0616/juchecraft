@@ -1,50 +1,10 @@
+// Copyright (C) 2010 Park Jeongmin <pjm0616@gmail.com>
+// See LICENSE.txt for details
+
 #ifndef SCUnitCommand_H_
 #define SCUnitCommand_H_
 
 namespace SC {
-
-
-
-namespace UnitActionId
-{
-	enum UnitActionId
-	{
-		None, 
-		Move, 
-		Attack, 
-	};
-}
-
-class UnitAction
-{
-public:
-	
-private:
-	
-};
-
-#if 0
-class UnitAction_Move: public UnitAction
-{
-public:
-	
-private:
-	/** Movement related data */
-	struct ms_movement
-	{
-		Coordinate start_point, destination, final_destination;
-		MovementFlags_t flags;
-		
-		// if target is set, object moves to target. is target is not set, object moves to coordinate.
-		ObjectSPtr_t target;
-		
-		// if movement_target is set and movement_min_distance_to_target is set, 
-		//		object moves to movement_target.getPosition(), but keeps distance `min. movement_min_distance_to_target' to target.
-		float min_distance_to_target; // TODO: implement this
-	} m_movement;
-}
-
-#endif
 
 
 

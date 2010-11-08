@@ -111,22 +111,11 @@ public:
 	bool insideRect(int left, int top, int right, int bottom);
 	bool insideRect(const Coordinate &top_left, const Coordinate &bottom_right);
 	
+	void clearActions();
+	#if 0
 	/** @name Movement methods */
 	//@{
 	
-	/** @brief Defines movement options.
-	 *  @detail This is an enum class. C++98 does not support enum classes, damn.
-	 */
-	struct MovementFlags
-	{
-		enum
-		{
-			None = 0, 
-			
-			AutomaticallyAttack = 1, 
-		};
-	};
-	typedef unsigned int MovementFlags_t;
 	
 	/** @brief Moves to coordinate, coordinate is corrected to unit's center.
 	 *
@@ -163,7 +152,9 @@ public:
 	 */
 	bool cmd_move(const ObjectSPtr_t &target, float minumum_distance = 0.0, MovementFlags_t flags = MovementFlags::None);
 	//@}
+	#endif
 	
+	#if 0
 	/** @name Attack methods */
 	//@{
 	/** @brief Attacks target object.
@@ -184,6 +175,7 @@ public:
 	const ObjectSPtr_t &getAttackTarget() const { return this->m_attack.target; }
 	double getLastAttackTime() const { return this->m_attack.last_attack_time; }
 	//@}
+	#endif
 	
 	/** @name Unit states */
 	/*@{*/
@@ -328,16 +320,6 @@ protected:
 	void setState(ObjectState_t state, bool onoff);
 	//@}}
 	
-	/** @name Movement related */
-	//@{
-	void setFinalDestination(const Coordinate &pos) { this->m_movement.final_destination = pos; }
-	Coordinate &getFinalDestination() { return this->m_movement.final_destination; }
-	const Coordinate &getFinalDestination() const { return this->m_movement.final_destination; }
-	void setDestination(const Coordinate &pos);
-	Coordinate &getDestination() { return this->m_movement.destination; }
-	const Coordinate &getDestination() const { return this->m_movement.destination; }
-	//@}
-	
 private:
 	/** @name Unit owner related */
 	//@{
@@ -352,27 +334,7 @@ private:
 	void detachFromOwner();
 	//@}
 	
-	/** @name Movement related */
-	//@{
-	void setMovement_MinimumDistanceToTarget(float distance) { this->m_movement.min_distance_to_target = distance; }
-	float getMovement_MinimumDistanceToTarget() const { return this->m_movement.min_distance_to_target; }
-	void setMovementTarget(const ObjectSPtr_t &target, float minimum_distance = 0.0)
-		{ this->m_movement.target = target; this->setMovement_MinimumDistanceToTarget(minimum_distance); }
-	void clearMovementTarget() { this->m_movement.target.reset(); }
-	const ObjectSPtr_t &getMovementTarget() const { return this->m_movement.target; }
-	void setMovementStartPoint(const Coordinate &pos) { this->m_movement.start_point = pos; }
-	const Coordinate &getMovementStartPoint() const { return this->m_movement.start_point; }
-	
-	Coordinate calculateDestination_TargetedMoving();
-	Coordinate calculateMovementSpeed(float time);
-	/** @brief Processes movement.
-	 *  @detail Called by game main loop.
-	 *  @param[in] time this->game->getDelta()
-	 */
-	bool doMovement(float time);
-	void stopMoving();
-	//@}
-	
+	#if 0
 	/** @name Attack related */
 	//@{
 	void setAttackTarget(const ObjectSPtr_t &target) { this->m_attack.target = target; }
@@ -396,6 +358,7 @@ private:
 	bool doAttack(float time);
 	void stopAttacking();
 	//@}
+	#endif
 	
 	/** @name production related */
 	//@{
@@ -437,21 +400,9 @@ private:
 	float m_mul_armor_bonus, m_mul_damage_bonus, m_mul_moving_speed_bonus, m_mul_attack_speed_bonus;
 	//@}
 	
-	//ActionList m_actions;
-	/** Movement related data */
-	struct ms_movement
-	{
-		Coordinate start_point, destination, final_destination;
-		MovementFlags_t flags;
-		
-		// if target is set, object moves to target. is target is not set, object moves to coordinate.
-		ObjectSPtr_t target;
-		
-		// if movement_target is set and movement_min_distance_to_target is set, 
-		//		object moves to movement_target.getPosition(), but keeps distance `min. movement_min_distance_to_target' to target.
-		float min_distance_to_target; // TODO: implement this
-	} m_movement;
+	UnitActionTable m_actions;
 	
+	#if 0
 	/** Attack related data */
 	struct ms_attack
 	{
@@ -460,6 +411,7 @@ private:
 		// if(this->m_isMoving() && this->getAttackTarget()) then this object is moving to attack target
 		ObjectSPtr_t target; // not null if attack target is set.
 	} m_attack;
+	#endif
 	
 	/** Production related data */
 	struct ms_production

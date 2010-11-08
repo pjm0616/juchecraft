@@ -6,7 +6,7 @@ ENABLE_PROFILING 	?= 0
 CROSSC				=
 
 SRCS_UI				= ui/SCGameUI.cpp ui/sdl/SCGameUI_SDL.cpp ui/ncurses/SCGameUI_ncurses.cpp
-SRCS				= libs/etc/md5.c libs/jcimg/jcimg.cpp libs/luacpp/luacpp.cpp SCCoordinate.cpp SCObject.cpp SCPlayer.cpp SCObjectList.cpp SCObjectFactory.cpp SCGame.cpp main.cpp $(SRCS_UI) 
+SRCS				= libs/etc/md5.c libs/jcimg/jcimg.cpp libs/luacpp/luacpp.cpp SCCoordinate.cpp SCObject.cpp SCUnitAction.cpp SCPlayer.cpp SCObjectList.cpp SCObjectFactory.cpp SCGame.cpp main.cpp $(SRCS_UI) 
 TARGET1				= mini_sc
 
 DEFS				= -D_REENTRANT -fopenmp -D_FILE_OFFSET_BITS=64 -D_LARGEFILE64_SOURCE=1 -DBOOST_NO_RTTI

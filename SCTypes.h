@@ -121,10 +121,23 @@ class ObjectList;
 typedef std::map<ObjectId_t, ObjectSPtr_t> ObjectTable;
 
 
+namespace UnitActionId
+{
+	typedef unsigned int UnitActionId_t;
+	// enum UnitActionId: see SCUnitAction.h
+}
+using UnitActionId::UnitActionId_t;
 class UnitAction;
-typedef std::list<UnitAction> ActionList;
+typedef std::map<UnitActionId_t, UnitAction> UnitActionTable;
 
 
+namespace UnitCommandId
+{
+	typedef unsigned int UnitCommandId_t;
+	// enum UnitCommandId: see SCUnitCommand.h
+}
+using UnitCommandId::UnitCommandId_t;
+class UnitCommand;
 
 ////// 
 
