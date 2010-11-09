@@ -75,7 +75,7 @@ namespace ObjectState
 	{
 		ObjectState_t state;
 		const char *str;
-	} gs_objectstate_stringified[] = {
+	} gs_objectstate_stringified[] ATTRIBUTE_UNUSED = {
 		{ObjectState::None, "None"}, 
 		{ObjectState::Burrowed, "Burrowed"}, 
 		{ObjectState::InTransit, "InTransit"}, 

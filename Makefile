@@ -64,7 +64,7 @@ UNZIP				=unzip
 CFLAGS				= $(DEFS) $(CFLAGS_DBG) $(C_CXX_LD_FLAGS_PROF) $(C_CXX_LD_FLAGS_PGO) $(INCLUDEDIR) \
 						-std=gnu99 -finline-functions -Wall -Wextra -Wno-unused-parameter -Wshadow
 CXXFLAGS			= $(DEFS) $(CXXFLAGS_DBG) $(C_CXX_LD_FLAGS_PROF) $(C_CXX_LD_FLAGS_PGO) $(INCLUDEDIR) \
-						-std=gnu++98 -finline-functions -Wall -Wextra -Wno-unused-parameter -fno-rtti -Wshadow -Wno-unused
+						-std=gnu++98 -finline-functions -Wall -Wextra -Wno-unused-parameter -fno-rtti -Wshadow
 LDFLAGS				= $(LDFLAGS_DBG) $(C_CXX_LD_FLAGS_PROF) $(C_CXX_LD_FLAGS_PGO) $(LIBDIR)
 #OBJS				=$(SRCS:.cpp=.o) 
 OBJS_TMP				=$(SRCS:.c=.o) 
