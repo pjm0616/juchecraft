@@ -29,10 +29,11 @@
 #include "SCException.h"
 #include "SCCoordinate.h"
 #include "SCObjectIdList.h"
+#include "SCUnitAction.h"
+#include "SCUnitCommand.h"
 #include "SCObject.h"
 #include "SCObjectList.h"
 #include "SCObjectFactory.h"
-#include "SCUnitCommand.h"
 #include "SCPlayer.h"
 #include "SCGame.h"
 
@@ -404,7 +405,7 @@ void GameUI_SDL::processFrame()
 						for(ObjectList::const_iterator it = selected_objs.begin(); 
 							it != selected_objs.end(); ++it)
 						{
-							(*it)->cmd_attack(first);
+							//(*it)->cmd_attack(first);
 						}
 					}
 					else
@@ -412,7 +413,7 @@ void GameUI_SDL::processFrame()
 						for(ObjectList::const_iterator it = selected_objs.begin(); 
 							it != selected_objs.end(); ++it)
 						{
-							(*it)->cmd_move(Coordinate(x, y), Object::MovementFlags::AutomaticallyAttack);
+							(*it)->cmd_move(Coordinate(x, y), UnitAction_Move::MovementFlags::AutomaticallyAttack);
 						}
 					}
 					this->m_player->clearCommandQueue();

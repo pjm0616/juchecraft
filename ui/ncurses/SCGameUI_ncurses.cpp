@@ -35,10 +35,11 @@ namespace ncurses
 #include "SCException.h"
 #include "SCCoordinate.h"
 #include "SCObjectIdList.h"
+#include "SCUnitAction.h"
+#include "SCUnitCommand.h"
 #include "SCObject.h"
 #include "SCObjectList.h"
 #include "SCObjectFactory.h"
-#include "SCUnitCommand.h"
 #include "SCPlayer.h"
 #include "SCGame.h"
 
@@ -284,7 +285,7 @@ void GameUI_ncurses::processFrame()
 				SC::ObjectList::iterator it = this->m_game->getObjectList().begin();
 				SC::ObjectList::iterator it2 = this->m_game->getObjectList().begin(); ++it2;
 				
-				(*it)->cmd_attack(*it2);
+				//(*it)->cmd_attack(*it2);
 			}
 			break;
 		}

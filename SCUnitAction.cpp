@@ -25,11 +25,11 @@
 #include "SCException.h"
 #include "SCCoordinate.h"
 #include "SCObjectIdList.h"
+#include "SCUnitAction.h"
+#include "SCUnitCommand.h"
 #include "SCObject.h"
 #include "SCObjectList.h"
 #include "SCObjectFactory.h"
-#include "SCUnitAction.h"
-#include "SCUnitCommand.h"
 #include "SCPlayer.h"
 #include "SCGame.h"
 
@@ -38,25 +38,39 @@ using namespace SC;
 
 
 
-UnitAction::UnitAction(ObjectSPtr_t *obj)
+UnitAction::UnitAction(UnitActionId_t actid)
+	:m_actid(actid)
+{
+}
+UnitAction::UnitAction(const ObjectSPtr_t &obj, UnitActionId_t actid)
+	:m_actid(actid), 
 	m_obj(obj)
 {
+	this->setObject(obj);
 }
-virtual ~UnitAction::UnitAction()
+UnitAction::~UnitAction()
 {
 }
 
+void UnitAction::setObject(const ObjectSPtr_t &obj)
+{
+	// if this->m_obj is already been set, throw an exception
+	//assert(!this->m_obj);
+	
+	this->m_obj = obj;
+}
 
 
 
 
-UnitAction_Move::UnitAction_Move(ObjectSPtr_t *obj, const Coordinate &dest, MovementFlags_t flags = MovementFlags::None)
-	:UnitAction(obj)
+
+UnitAction_Move::UnitAction_Move(const ObjectSPtr_t &obj, const Coordinate &dest, MovementFlags_t flags)
+	:UnitAction(obj, UnitActionId::Move)
 {
 	this->move(dest, flags);
 }
-UnitAction_Move::UnitAction_Move(ObjectSPtr_t *obj, const ObjectSPtr_t &target, float minumum_distance = 0.0, MovementFlags_t flags = MovementFlags::None)
-	:UnitAction(obj)
+UnitAction_Move::UnitAction_Move(const ObjectSPtr_t &obj, const ObjectSPtr_t &target, float minimum_distance, MovementFlags_t flags)
+	:UnitAction(obj, UnitActionId::Move)
 {
 	this->move(target, minimum_distance, flags);
 }
@@ -66,7 +80,7 @@ UnitAction_Move::UnitAction_Move(ObjectSPtr_t *obj, const ObjectSPtr_t &target, 
 
 bool UnitAction_Move::move(const Coordinate &dest, MovementFlags_t flags)
 {
-	if(!this->obj->canMove())
+	if(!this->m_obj->canMove())
 	{
 		return false;
 	}
@@ -82,15 +96,14 @@ bool UnitAction_Move::move(const Coordinate &dest, MovementFlags_t flags)
 	this->setFinalDestination(dest);
 	this->setDestination(next_pos);
 	
-	this->obj->setState(ObjectState::Moving, true);
-	this->obj->setAngle(this->getMovementStartPoint().calculateAngle(this->getDestination()));
+	this->m_obj->setAngle(this->getMovementStartPoint().calculateAngle(this->getDestination()));
 	
 	return true;
 }
 
 bool UnitAction_Move::move(const ObjectSPtr_t &target, float minimum_distance, MovementFlags_t flags)
 {
-	if(!this->obj->canMove())
+	if(!this->m_obj->canMove())
 	{
 		return false;
 	}
@@ -100,24 +113,13 @@ bool UnitAction_Move::move(const ObjectSPtr_t &target, float minimum_distance, M
 	this->setFinalDestination(Coordinate(-1.0, -1.0)); // not necessary; our final destination is `target'
 	this->setDestination(this->calculateDestination_TargetedMoving());
 	
-	this->obj->setState(ObjectState::Moving, true);
-	this->obj->setAngle(this->getMovementStartPoint().calculateAngle(this->getDestination()));
+	this->m_obj->setAngle(this->getMovementStartPoint().calculateAngle(this->getDestination()));
 	
 	return true;
 }
 
-void UnitAction_Move::stopMoving()
-{
-	this->setState(ObjectState::Moving, false);
-	this->clearMovementTarget();
-	
-	this->setFinalDestination(Coordinate(0.0, 0.0)); // not necessary
-	this->setDestination(Coordinate(0.0, 0.0)); // not necessary
-	this->setMovementStartPoint(Coordinate(0.0, 0.0)); // not necessary
-}
 
-
-virtual bool UnitAction_Move::process(float time)
+bool UnitAction_Move::process(float time)
 {
 	const ObjectSPtr_t &mvtarget = this->getMovementTarget();
 	if(mvtarget)
@@ -128,8 +130,6 @@ virtual bool UnitAction_Move::process(float time)
 		float min_dist = this->getMovement_MinimumDistanceToTarget();
 		if(this->checkMinDistance(mvtarget, min_dist, NULL))
 		{
-			// FIXME
-			this->setState(ObjectState::Moving, false);
 			return true;
 		}
 		else
@@ -137,7 +137,7 @@ virtual bool UnitAction_Move::process(float time)
 			this->getDestination().set(this->calculateDestination_TargetedMoving());
 		}
 	#endif
-		this->setAngle(this->getMovementStartPoint().calculateAngle(this->getDestination()));
+		this->m_obj->setAngle(this->getMovementStartPoint().calculateAngle(this->getDestination()));
 	}
 	
 	float startx = this->getMovementStartPoint().getX();
@@ -145,7 +145,7 @@ virtual bool UnitAction_Move::process(float time)
 	float destx = this->getDestination().getX();
 	float desty = this->getDestination().getY();
 	Coordinate d_move = this->calculateMovementSpeed(time);
-	Coordinate newpos = d_move + this->getPosition();
+	Coordinate newpos = d_move + this->m_obj->getPosition();
 	float newx = newpos.getX();
 	float newy = newpos.getY();
 	
@@ -154,31 +154,27 @@ virtual bool UnitAction_Move::process(float time)
 		|| (startx <= destx && newx >= destx)) // moving right
 	{
 		//fprintf(stderr, "X dir finished\n");
-		this->setX(destx);
+		this->m_obj->setX(destx);
 		nfinished++;
 	}
 	else
 	{
-		this->addX(d_move.getX());
+		this->m_obj->addX(d_move.getX());
 	}
 	
 	if((starty >= desty && newy <= desty) // moving up
 		|| (starty <= desty && newy >= desty)) // moving down
 	{
 		//fprintf(stderr, "Y dir finished\n");
-		this->setY(desty);
+		this->m_obj->setY(desty);
 		nfinished++;
 	}
 	else
 	{
-		this->addY(d_move.getY());
+		this->m_obj->addY(d_move.getY());
 	}
 	
 	bool is_finished = (nfinished == 2);
-	if(is_finished)
-	{
-		this->setState(ObjectState::Moving, false);
-	}
 	
 	return is_finished;
 }
@@ -189,19 +185,19 @@ virtual bool UnitAction_Move::process(float time)
 
 void UnitAction_Move::setDestination(const Coordinate &pos)
 {
-	this->setMovementStartPoint(this->getPosition());
-	this->m_movement.destination = pos;
+	this->setMovementStartPoint(this->m_obj->getPosition());
+	this->m_destination = pos;
 }
 
 Coordinate UnitAction_Move::calculateMovementSpeed(float time)
 {
-	float v = this->getNetMovingSpeed();
+	float v = this->m_obj->getNetMovingSpeed();
 	float startx = this->getMovementStartPoint().getX();
 	float starty = this->getMovementStartPoint().getY();
 	float destx = this->getDestination().getX();
 	float desty = this->getDestination().getY();
-	float x = this->getX();
-	float y = this->getY();
+	float x = this->m_obj->getX();
+	float y = this->m_obj->getY();
 	float tdx = destx - startx;
 	float tdy = desty - starty;
 	float dx = destx - x;
@@ -230,7 +226,7 @@ Coordinate UnitAction_Move::calculateMovementSpeed(float time)
 	}
 	else // move diagonally
 	{
-		float distance = this->getPosition().calculateDistance(this->getDestination());
+		float distance = this->m_obj->getPosition().calculateDistance(this->getDestination());
 		float t = distance / v;
 		float vx = dx / t, vy = dy / t;
 		
@@ -266,8 +262,8 @@ bool UnitAction_Move::checkMinDistanceOld(const ObjectSPtr_t &target, float min_
 {
 	float my_xarr[4], target_xarr[4]; // 0, 1 = left, right
 	float my_yarr[4], target_yarr[4]; // 0, 1 = top, bottom
-	my_xarr[0] = this->getX(); my_xarr[1] = this->getX() + this->getWidth();
-	my_yarr[0] = this->getY(), my_yarr[1] = this->getY() + this->getHeight();
+	my_xarr[0] = this->m_obj->getX(); my_xarr[1] = this->m_obj->getX() + this->m_obj->getWidth();
+	my_yarr[0] = this->m_obj->getY(), my_yarr[1] = this->m_obj->getY() + this->m_obj->getHeight();
 	target_xarr[0] = target->getX(); target_xarr[1] = target->getX() + target->getWidth();
 	target_yarr[0] = target->getY(), target_yarr[1] = target->getY() + target->getHeight();
 	
@@ -337,8 +333,8 @@ bool UnitAction_Move::checkMinDistanceOld(const ObjectSPtr_t &target, float min_
 
 bool UnitAction_Move::checkMinDistance(const ObjectSPtr_t &target, float min_distance, Coordinate *where_to_move)
 {
-	float cx = this->getX(), w = this->getWidth(), target_cx = target->getX(), target_w = target->getWidth();
-	float cy = this->getY(), h = this->getHeight(), target_cy = target->getY(), target_h = target->getHeight();
+	float cx = this->m_obj->getX(), w = this->m_obj->getWidth(), target_cx = target->getX(), target_w = target->getWidth();
+	float cy = this->m_obj->getY(), h = this->m_obj->getHeight(), target_cy = target->getY(), target_h = target->getHeight();
 	float x = cx - w/2, y = cy - h/2;
 	float target_x = target_cy - target_w/2, target_y = target_cy - target_h/2;
 	float x_center = x + w/2, target_x_center = target_x + target_w/2;

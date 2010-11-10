@@ -65,9 +65,6 @@ namespace ObjectState
 		Cloaked = 4, /**< Object is cloaked */
 		Invincible = 8, /**< Object is invincible */
 		Hallucinated = 16, /**< Object is hallucinated */
-		
-		Moving = 64, /**< Object is moving */
-		Attacking = 128, /**< Object is attacking @detail does not include pending attack */
 	};
 	
 	// FIXME, move to elsewhere
@@ -82,8 +79,6 @@ namespace ObjectState
 		{ObjectState::Cloaked, "Cloaked"}, 
 		{ObjectState::Invincible, "Invincible"}, 
 		{ObjectState::Hallucinated, "Hallucinated"}, 
-		{ObjectState::Moving, "Moving"}, 
-		{ObjectState::Attacking, "Attacking"}, 
 		{ObjectState::None, NULL}
 	};
 }
@@ -124,11 +119,21 @@ typedef std::map<ObjectId_t, ObjectSPtr_t> ObjectTable;
 namespace UnitActionId
 {
 	typedef unsigned int UnitActionId_t;
-	// enum UnitActionId: see SCUnitAction.h
+	// enum UnitActionId: see SCUnitActionIdList.h
+}
+namespace UnitActionId // FIXME
+{
+	enum UnitActionId
+	{
+		None, 
+		Move, 
+		Attack, 
+	};
 }
 using UnitActionId::UnitActionId_t;
 class UnitAction;
-typedef std::map<UnitActionId_t, UnitAction> UnitActionTable;
+typedef SC::shared_ptr<UnitAction> UnitActionSPtr_t;
+typedef std::map<UnitActionId_t, UnitActionSPtr_t> UnitActionTable;
 
 
 namespace UnitCommandId

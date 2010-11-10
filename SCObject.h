@@ -43,6 +43,8 @@ public:
 	void cleanup();
 	//@}
 	
+	const ObjectSPtr_t &getSPtr() const { return this->m_this; }
+	
 	/** @brief checks if this object is removed from the game.
 	 *  @return true if this object is removed from game.
 	 */
@@ -95,6 +97,12 @@ public:
 	 *  @return The angle in degrees
 	 */
 	float getAngle() const { return this->m_angle; }
+	
+	/** @brief Set object's current angle.
+	 *  @return The angle in degrees
+	 */
+	void setAngle(float angle) { this->m_angle = angle; }
+	
 	//@{
 	/** @brief Calculates angle from object to destination coordinate.
 	 *  @return The angle in degrees
@@ -178,8 +186,7 @@ public:
 	#endif
 	
 	/** @name Unit states */
-	/*@{*/
-	
+	//@{
 	/** @brief Get current unit state.
 	 *
 	 *  @return true or false
@@ -189,10 +196,28 @@ public:
 	bool isCloaked() const { return (this->getState() & ObjectState::Cloaked); }
 	bool isInvincible() const { return (this->getState() & ObjectState::Invincible); }
 	bool isHallucinated() const { return (this->getState() & ObjectState::Hallucinated); }
-	bool isMoving() const { return (this->getState() & ObjectState::Moving); }
+	//@{
+	
+	//@{
+	const UnitActionSPtr_t &getAction(UnitActionId_t action_id) const;
+	bool isActivatedAction(UnitActionId_t action_id) const { return (this->getAction(action_id) != NULL); }
+	
+	UnitActionSPtr_t &getActionForWriting(UnitActionId_t action_id);
+	void setAction(const UnitActionSPtr_t &action);
+	//@}
+	//@{
+	void move(const Coordinate &pos, UnitAction_Move::MovementFlags_t flags = UnitAction_Move::MovementFlags::None)
+	{
+		this->setAction(UnitActionSPtr_t(new UnitAction_Move(this->m_this, pos, flags)));
+	}
+	void cmd_move(const Coordinate &pos, UnitAction_Move::MovementFlags_t flags = UnitAction_Move::MovementFlags::None)
+	{ this->move(pos, flags); }
+	//@}
+	//@{
+	bool isMoving() const { return this->isActivatedAction(UnitActionId::Move); }
 	bool isStopped() const { return !this->isMoving(); }
-	bool isAttacking() const { return (this->getState() & ObjectState::Attacking); }
-	/*@}*/
+	bool isAttacking() const { return this->isActivatedAction(UnitActionId::Attack);; }
+	//@}
 	
 	/** @name Unit abilities */
 	//@{
@@ -299,7 +324,7 @@ public:
 	float getAttackSpeedBonusM() const { return this->getObjectAttackSpeedBonusM();}
 	//@}
 	
-protected:
+public: /* protected */
 	/** @name Current unit states */
 	//@{{
 	/** @brief Get unit states.
@@ -340,17 +365,6 @@ private:
 	void setAttackTarget(const ObjectSPtr_t &target) { this->m_attack.target = target; }
 	void clearAttackTarget() { this->m_attack.target.reset(); }
 	void setLastAttackTime(double time) { this->m_attack.last_attack_time = time; }
-	void setMovementFlags(MovementFlags_t val) { this->m_movement.flags = val; }
-	void setMovementFlags(MovementFlags_t type, bool onoff);
-	MovementFlags_t getMovementFlags() const { return this->m_movement.flags; }
-	bool getMovementFlag(MovementFlags_t type) const { return this->getMovementFlags() & type; }
-	bool checkMinDistanceOld(const ObjectSPtr_t &target, float min_distance, Coordinate *where_to_move);
-	/** @brief checks the distance between `this' and `dest'
-	 *  @detail Checks if the distance if less(or equal) than `min_distance'.
-	 *  @detail if not, stores the coordinate to move in order to attack target in `where_to_move'.
-	 *  @return true if the distance if less(or equal) than `min_distance'. Otherwise false.
-	 */
-	bool checkMinDistance(const ObjectSPtr_t &target, float min_distance, Coordinate *where_to_move);
 	/** @brief Processes attack.
 	 *  @detail Called by game main loop.
 	 *  @param[in] time this->game->getDelta()
@@ -378,11 +392,7 @@ private:
 	
 	/** @name Object owner/state/position etc. */
 	//@{
-	void setAngle(float angle) { this->m_angle = angle; }
-	//@}
-	
-	/** @name Object owner/state/position etc. */
-	//@{
+	ObjectSPtr_t m_this; // this pointer in shared_ptr
 	Game *m_game;
 	PlayerSPtr_t m_owner;
 	ObjectState_t m_state;

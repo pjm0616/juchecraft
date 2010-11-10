@@ -32,10 +32,11 @@
 #include "SCException.h"
 #include "SCCoordinate.h"
 #include "SCObjectIdList.h"
+#include "SCUnitAction.h"
+#include "SCUnitCommand.h"
 #include "SCObject.h"
 #include "SCObjectList.h"
 #include "SCObjectFactory.h"
-#include "SCUnitCommand.h"
 #include "SCPlayer.h"
 #include "SCGame.h"
 

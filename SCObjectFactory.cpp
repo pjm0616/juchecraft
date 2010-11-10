@@ -20,10 +20,11 @@
 #include "SCException.h"
 #include "SCCoordinate.h"
 #include "SCObjectIdList.h"
+#include "SCUnitAction.h"
+#include "SCUnitCommand.h"
 #include "SCObject.h"
 #include "SCObjectList.h"
 #include "SCObjectFactory.h"
-#include "SCUnitCommand.h"
 #include "SCPlayer.h"
 
 using namespace SC;
@@ -68,9 +69,8 @@ bool ObjectFactory::load(const char *listfile)
 		Object *obj = new Object(this->m_game);
 		this->parseObjectData(obj, objdata_idx);
 		
-		ObjectSPtr_t objp(obj);
-		this->m_obj_prototypes.addObject(objp);
-		this->m_obj_protos_by_id[obj->getObjectId()] = objp;
+		this->m_obj_prototypes.addObject(obj->getSPtr());
+		this->m_obj_protos_by_id[obj->getObjectId()] = obj->getSPtr();
 		
 		lua_pop(L, 1);
 	}
@@ -143,7 +143,8 @@ ObjectSPtr_t ObjectFactory::newObjectById(ObjectId_t id)
 	const ObjectSPtr_t &proto = this->findObjectById(id);
 	if(!proto)
 		throw new Exception("Cannot find object prototype");
-	return ObjectSPtr_t(proto->clone());
+	// return shared_ptr of newly created(cloned) object
+	return proto->clone()->getSPtr();
 }
 
 

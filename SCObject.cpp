@@ -25,11 +25,11 @@
 #include "SCException.h"
 #include "SCCoordinate.h"
 #include "SCObjectIdList.h"
+#include "SCUnitAction.h"
+#include "SCUnitCommand.h"
 #include "SCObject.h"
 #include "SCObjectList.h"
 #include "SCObjectFactory.h"
-#include "SCUnitAction.h"
-#include "SCUnitCommand.h"
 #include "SCPlayer.h"
 #include "SCGame.h"
 
@@ -89,7 +89,8 @@ void Object::ConstantAttributes::operator=(const ConstantAttributes &o)
 
 
 Object::Object(Game *game)
-	:m_game(game)
+	:m_this(this), 
+	m_game(game)
 {
 	this->setState(ObjectState::None);
 	
@@ -173,7 +174,7 @@ ObjectSPtr_t Object::clone()
 	Object *obj = new Object(this->m_game);
 	obj->m_constattrs = this->m_constattrs;
 	
-	return ObjectSPtr_t(obj);
+	return obj->getSPtr();
 }
 
 void Object::clearActions()
@@ -342,7 +343,11 @@ void Object::processFrame()
 		it != this->m_actions.end(); 
 		it++)
 	{
-		bool res = it->second.process(deltat);
+		const UnitActionSPtr_t &act = it->second;
+		if(act)
+		{
+			bool res = act->process(deltat);
+		}
 	}
 	#if 0
 	if(this->isMoving())
@@ -413,6 +418,31 @@ bool Object::insideRect(const Coordinate &top_left, const Coordinate &bottom_rig
 	Coordinate::normalizeTopLeftCoordinate(top_left2, bottom_right2);
 	
 	return this->insideRect(top_left2.getX(), top_left2.getY(), bottom_right2.getX(), bottom_right2.getY());
+}
+
+
+
+
+UnitActionSPtr_t &Object::getActionForWriting(UnitActionId_t action_id)
+{
+	UnitActionSPtr_t &action = this->m_actions[action_id];
+	if(!action->getObject())
+		action->setObject(this->getSPtr());
+	return action;
+}
+const UnitActionSPtr_t &Object::getAction(UnitActionId_t action_id) const
+{
+	static UnitActionSPtr_t null_obj;
+	UnitActionTable::const_iterator it = this->m_actions.find(action_id);
+	if(it == this->m_actions.end())
+		return null_obj;
+	else
+		return it->second;
+}
+
+void Object::setAction(const UnitActionSPtr_t &action)
+{
+	this->m_actions[action->getActionId()] = action;
 }
 
 

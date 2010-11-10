@@ -7,27 +7,26 @@
 namespace SC {
 
 
-
-namespace UnitActionId
-{
-	enum UnitActionId
-	{
-		None, 
-		Move, 
-		Attack, 
-	};
-}
-
+/** An abstract class for UnitAction_*
+ */
 class UnitAction
 {
 public:
-	UnitAction(ObjectSPtr_t *obj);
+	/** Warning: when calling this function, you must call setObject immediately
+	 */
+	UnitAction(UnitActionId_t actid = UnitActionId::None);
+	UnitAction(const ObjectSPtr_t &obj, UnitActionId_t actid);
 	virtual ~UnitAction();
 	
+	void setObject(const ObjectSPtr_t &obj);
+	const ObjectSPtr_t &getObject() const { return this->m_obj; }
+	
+	UnitActionId_t getActionId() const { return this->m_actid; }
+	
 	virtual bool process(float time) {return false;}
-private:
-	ObjectSPtr_t *m_obj;
+protected:
 	UnitActionId_t m_actid;
+	ObjectSPtr_t m_obj;
 };
 
 
@@ -48,13 +47,14 @@ public:
 	};
 	typedef unsigned int MovementFlags_t;
 	
-	UnitAction_Move(ObjectSPtr_t *obj, const Coordinate &dest, MovementFlags_t flags = MovementFlags::None);
-	UnitAction_Move(ObjectSPtr_t *obj, const ObjectSPtr_t &target, float minumum_distance = 0.0, MovementFlags_t flags = MovementFlags::None);
+	UnitAction_Move(const ObjectSPtr_t &obj, const Coordinate &dest, MovementFlags_t flags = MovementFlags::None);
+	UnitAction_Move(const ObjectSPtr_t &obj, const ObjectSPtr_t &target, float minimum_distance = 0.0, MovementFlags_t flags = MovementFlags::None);
+	virtual ~UnitAction_Move(){}
 	
 	virtual bool process(float time);
 private:
 	bool move(const Coordinate &dest, MovementFlags_t flags = MovementFlags::None);
-	bool move(const ObjectSPtr_t &target, float minumum_distance = 0.0, MovementFlags_t flags = MovementFlags::None);
+	bool move(const ObjectSPtr_t &target, float minimum_distance = 0.0, MovementFlags_t flags = MovementFlags::None);
 	
 	//@{
 	void setMovement_MinimumDistanceToTarget(float distance) { this->m_min_distance_to_target = distance; }
@@ -68,7 +68,16 @@ private:
 	
 	Coordinate calculateDestination_TargetedMoving();
 	Coordinate calculateMovementSpeed(float time);
-	void stopMoving();
+	//@}
+	
+	//@{
+	bool checkMinDistanceOld(const ObjectSPtr_t &target, float min_distance, Coordinate *where_to_move);
+	/** @brief checks the distance between `this' and `dest'
+	 *  @detail Checks if the distance if less(or equal) than `min_distance'.
+	 *  @detail if not, stores the coordinate to move in order to attack target in `where_to_move'.
+	 *  @return true if the distance if less(or equal) than `min_distance'. Otherwise false.
+	 */
+	bool checkMinDistance(const ObjectSPtr_t &target, float min_distance, Coordinate *where_to_move);
 	//@}
 	
 	//@{
@@ -78,6 +87,13 @@ private:
 	void setDestination(const Coordinate &pos);
 	Coordinate &getDestination() { return this->m_destination; }
 	const Coordinate &getDestination() const { return this->m_destination; }
+	//@}
+	
+	//@{
+	void setMovementFlags(MovementFlags_t val) { this->m_flags = val; }
+	void setMovementFlags(MovementFlags_t type, bool onoff);
+	MovementFlags_t getMovementFlags() const { return this->m_flags; }
+	bool getMovementFlag(MovementFlags_t type) const { return this->getMovementFlags() & type; }
 	//@}
 	
 	Coordinate m_start_point, m_destination, m_final_destination;
