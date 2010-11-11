@@ -187,7 +187,7 @@ public:
 	 *  @return The number of selected objects.
 	 *  @sa SelectionFlags
 	 */
-	size_t getCurrentlySelectedObjects(ObjectList &buf, const Coordinate &crnt_coord, SelectionFlags_t flags);
+	size_t getCurrentlySelectedObjects(ObjectList &buf, const Coordinate &crnt_coord, SelectionFlags_t flags) const;
 	/** @brief Selects object that are inside the rect[`coord' ~ `coord2']
 	 *  @detail internally this function calls startObjectSelection, finishObjectSelection continuously
 	 *  @return The number of selected objects.
@@ -239,14 +239,14 @@ private:
 	/** @brief filters objects in the list according to internal rules
 	 *  @param[in] select_cnt_limit Maximum number of object to select.
 	 */
-	void filterCurSelectedObjects(ObjectList &selected_objs, int select_cnt_limit);
+	void filterCurSelectedObjects(ObjectList &selected_objs, int select_cnt_limit) const;
 	/** @brief Merges two object list
 	 *  @param[in,out] orig The ObjectList to merge in
 	 *  @param[in] newobjs A constant referenct to ObjectList to merge
 	 *  @param[in] flags merge options
 	 *  @sa SelectionFlags
 	 */
-	void mergeObjectList(ObjectList &orig, const ObjectList &newobjs, SelectionFlags_t flags);
+	static void mergeObjectList(ObjectList &orig, const ObjectList &newobjs, SelectionFlags_t flags);
 	
 	bool m_selection_in_progress; /**< true if object selection is in progress */
 	Coordinate m_selection_start_coordinate; /**< The coordinate where the selection was started. Only set if m_selection_in_progress is true */

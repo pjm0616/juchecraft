@@ -433,6 +433,8 @@ private:
 	//std::list<UpgradeId> m_upgrade_queue; /**< Currently not used; todo: implement this */
 	//std::deque<UnitOrder> m_order_queue; /**< Currently not used; todo: implement this */
 	
+	//RenderingContext *m_renderctx; /**< TODO: contains information about rendering states. animation frame etc. It's not used in Object class */
+	
 	/////////////////////////////////////////////////////////////////////////
 public:
 	/** @name Constant object attributes */

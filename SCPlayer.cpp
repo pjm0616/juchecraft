@@ -80,7 +80,7 @@ bool Player::isSelectedObject(const ObjectSPtr_t &obj) const
 		return false;
 }
 
-void Player::filterCurSelectedObjects(ObjectList &selected_objs, int select_cnt_limit)
+void Player::filterCurSelectedObjects(ObjectList &selected_objs, int select_cnt_limit) const
 {
 	int stats[ObjectType::SIZE] = {0, };
 	int my_unit_cnt = 0;
@@ -146,7 +146,7 @@ void Player::mergeObjectList(ObjectList &orig, const ObjectList &newobjs, Select
 		{
 			ObjectList::const_iterator it2 = std::find(orig.begin(), orig.end(), *it);
 			if(it2 == orig.end())
-				this->m_selected_objs.addObject(*it);
+				orig.addObject(*it);
 		}
 	} /* else if(flags == SelectionFlags::ADD) */
 	else if(flags == SelectionFlags::REMOVE)
@@ -181,7 +181,7 @@ size_t Player::finishObjectSelection(const Coordinate &end_coord, SelectionFlags
 	return this->m_selected_objs.size();
 }
 
-size_t Player::getCurrentlySelectedObjects(ObjectList &buf, const Coordinate &crnt_coord, SelectionFlags_t flags)
+size_t Player::getCurrentlySelectedObjects(ObjectList &buf, const Coordinate &crnt_coord, SelectionFlags_t flags) const
 {
 	ObjectList cur_selected_objs;
 	int max_objs = 16;
@@ -195,7 +195,6 @@ size_t Player::getCurrentlySelectedObjects(ObjectList &buf, const Coordinate &cr
 	this->filterCurSelectedObjects(cur_selected_objs, max_objs);
 	this->mergeObjectList(buf, cur_selected_objs, flags);
 	
-	this->m_selection_in_progress = false;
 	return buf.size();
 }
 
