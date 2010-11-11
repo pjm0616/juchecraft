@@ -9,7 +9,7 @@
 #ifndef SCObject_H_
 #define SCObject_H_
 
-#include "SCUnitActionList.h" // tmp
+#include "SCUnitActionList.h" // FIXME: move this to elsewhere
 
 namespace SC {
 
