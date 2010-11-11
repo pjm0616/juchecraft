@@ -76,19 +76,7 @@ ObjectList::const_iterator ObjectList::find(const ObjectPtr &obj) const
 
 void ObjectList::clear()
 {
-#ifdef DEBUG
-	for(ObjectList::iterator it = this->m_objects.begin(); 
-		it != this->m_objects.end(); )
-	{
-		if(it->use_count() != 1)
-		{
-			std::cout << "Warning: ObjectList::clear: " << it->get()->getObjectName() << ": " << it->use_count() <<std::endl;
-		}
-		this->m_objects.erase(it++);
-	}
-#else
 	this->getObjects().clear();
-#endif
 }
 
 

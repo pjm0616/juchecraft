@@ -19,7 +19,7 @@ namespace SC {
  *  
  *  Warning: don't use ObjectPtr in Object. use ObjectWeakPtr instead.
  */
-class Object
+class Object: public WeakPtrOwner<Object>
 {
 	friend class ObjectFactory;
 	friend class UnitAction;
@@ -48,12 +48,6 @@ public:
 	void cleanup();
 	//@}
 	
-	/** Creates and returns a new shared_ptr<Object> object.
-	 *  This function must be called only once, immediately after the construction.
-	 */
-	ObjectPtr makeThisPtr();
-	ObjectPtr getPtr() const { return ObjectPtr(this->m_this); }
-	
 	/** @brief checks if this object is removed from the game.
 	 *  @return true if this object is removed from game.
 	 */
@@ -70,12 +64,12 @@ public:
 	 *
 	 *  @return A pointer to SC::Player that owns this object
 	 */
-	const PlayerPtr &getOwner() { return this->m_owner; }
+	Player *getOwner() const { return this->m_owner; }
 	/** @brief Changes owner of the object.
 	 *
 	 *  @param[in] new_owner A pointer to SC::Player
 	 */
-	void changeOwner(const PlayerPtr &new_owner);
+	void changeOwner(Player *new_owner);
 	//@}
 	
 	// Uncomment this if you need a public accessor for m_game.
@@ -218,7 +212,7 @@ public:
 	//@{
 	void move(const Coordinate &pos, UnitAction_Move::MovementFlags_t flags = UnitAction_Move::MovementFlags::None)
 	{
-		this->setAction(UnitActionPtr(new UnitAction_Move(this->getPtr(), pos, flags)));
+		this->setAction(UnitActionPtr(new UnitAction_Move(pos, flags)));
 	}
 	void cmd_move(const Coordinate &pos, UnitAction_Move::MovementFlags_t flags = UnitAction_Move::MovementFlags::None)
 	{ this->move(pos, flags); }
@@ -358,7 +352,7 @@ public: /* protected */
 private:
 	/** @name Unit owner related */
 	//@{
-	void setOwner(const PlayerPtr &new_owner) { this->m_owner = new_owner; }
+	void setOwner(Player *new_owner) { this->m_owner = new_owner; }
 	/** @brief Attaches to current owner.
 	 *  @detail updates owner's suppliy statistics, etc.
 	 */
@@ -402,9 +396,8 @@ private:
 	
 	/** @name Object owner/state/position etc. */
 	//@{
-	SC::weak_ptr<Object> m_this; // this pointer in weak shared_ptr
 	Game *m_game;
-	PlayerPtr m_owner;
+	Player *m_owner;
 	ObjectState_t m_state;
 	Coordinate m_pos;
 	float m_angle;

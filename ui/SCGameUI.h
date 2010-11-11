@@ -16,7 +16,7 @@ namespace SC {
 class GameUI
 {
 public:
-	GameUI(Game *game, const PlayerPtr &player)
+	GameUI(Game *game, Player *player)
 		: m_game(game)
 		, m_player(player)
 	{
@@ -25,6 +25,8 @@ public:
 	virtual ~GameUI() {}
 	
 	virtual bool initUI() = 0;
+	/** WARNING: Don't access m_player in this function.
+	 */
 	virtual bool cleanupUI() = 0;
 	
 	/** @brief get fps value
@@ -38,7 +40,7 @@ public:
 	// Uncomment this if you need a public accessor for m_game.
 	//Game *getGame() { return this->m_game; }
 	// Uncomment this if you need a public accessor for m_player.
-	//const PlayerPtr &getPlayer() const { return this->m_player; }
+	//Player *getPlayer() const { return this->m_player; }
 	
 protected:
 	void setFPS(unsigned int fps) { this->m_fps = fps; }
@@ -52,7 +54,7 @@ protected:
 	#endif
 	
 	Game *m_game;
-	PlayerPtr m_player;
+	Player *m_player;
 	unsigned m_fps;
 };
 

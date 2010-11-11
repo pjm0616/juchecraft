@@ -102,8 +102,7 @@ using ObjectId::ObjectId_t;
 
 typedef int PlayerId_t;
 class Player;
-typedef SC::shared_ptr<Player> PlayerPtr;
-typedef std::vector<PlayerPtr> PlayerVector;
+typedef std::vector<Player *> PlayerVector;
 
 
 class Object;

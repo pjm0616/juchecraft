@@ -39,13 +39,13 @@ using namespace SC;
 
 
 
-UnitAction_Move::UnitAction_Move(const ObjectPtr &obj, const Coordinate &dest, MovementFlags_t flags)
-	:UnitAction(obj, UnitActionId::Move)
+UnitAction_Move::UnitAction_Move(const Coordinate &dest, MovementFlags_t flags)
+	:UnitAction(UnitActionId::Move)
 {
 	this->move(dest, flags);
 }
-UnitAction_Move::UnitAction_Move(const ObjectPtr &obj, const ObjectPtr &target, float minimum_distance, MovementFlags_t flags)
-	:UnitAction(obj, UnitActionId::Move)
+UnitAction_Move::UnitAction_Move(const ObjectPtr &target, float minimum_distance, MovementFlags_t flags)
+	:UnitAction(UnitActionId::Move)
 {
 	this->move(target, minimum_distance, flags);
 }
@@ -55,12 +55,6 @@ UnitAction_Move::UnitAction_Move(const ObjectPtr &obj, const ObjectPtr &target, 
 
 bool UnitAction_Move::move(const Coordinate &dest, MovementFlags_t flags)
 {
-	ObjectPtr obj = this->getObject();
-	if(!obj->canMove())
-	{
-		return false;
-	}
-	
 	#if 0
 	Coordinate next_pos = this->calculateNextDestination();
 	#else
@@ -68,51 +62,56 @@ bool UnitAction_Move::move(const Coordinate &dest, MovementFlags_t flags)
 	#endif
 	
 	this->setMovementFlags(flags);
-	this->clearMovementTarget();
+	this->clearTarget();
 	this->setFinalDestination(dest);
 	this->setDestination(next_pos);
 	
-	obj->setAngle(this->getMovementStartPoint().calculateAngle(this->getDestination()));
-	
-	this->setAsActivated();
 	return true;
 }
 
 bool UnitAction_Move::move(const ObjectPtr &target, float minimum_distance, MovementFlags_t flags)
 {
-	ObjectPtr obj = this->getObject();
-	if(!obj->canMove())
-	{
-		return false;
-	}
-	
 	this->setMovementFlags(flags);
-	this->setMovementTarget(target, minimum_distance);
+	this->setTarget(target, minimum_distance);
 	this->setFinalDestination(Coordinate(-1.0, -1.0)); // not necessary; our final destination is `target'
-	this->setDestination(this->calculateDestination_TargetedMoving());
 	
-	obj->setAngle(this->getMovementStartPoint().calculateAngle(this->getDestination()));
-	
-	this->setAsActivated();
 	return true;
 }
 
 
-bool UnitAction_Move::process(float time)
+bool UnitAction_Move::process(const ObjectPtr &obj, float time)
 {
 	// if this function is called without being activated, return true (and remove this action in actionlist)
-	if(unlikely(!this->isActivated()))
+	if(unlikely(this->isFinished()))
 		return true;
-	ObjectPtr obj = this->getObject();
+	const ObjectPtr &mvtarget = this->getTarget();
 	
-	const ObjectPtr &mvtarget = this->getMovementTarget();
+	// perform some initializations here
+	// FIXME
+	if(unlikely(this->isStarted() == false))
+	{
+		if(!obj->canMove())
+		{
+			this->setAsFinished(true);
+			return false;
+		}
+		this->setStartPoint(obj->getPosition());
+		
+		// calculate angle if target is a coordinate
+		if(mvtarget == NULL)
+			obj->setAngle(this->getStartPoint().calculateAngle(this->getDestination()));
+		
+		this->setAsStarted(true);
+	}
+	
+	// start
 	if(mvtarget)
 	{
 	#if 0
 		this->getDestination().set(this->calculateDestination_TargetedMoving());
 	#else
-		float min_dist = this->getMovement_MinimumDistanceToTarget();
-		if(this->checkMinDistance(mvtarget, min_dist, NULL))
+		float min_dist = this->getMinimumDistanceToTarget();
+		if(this->checkMinDistance(obj, mvtarget, min_dist, NULL))
 		{
 			return true;
 		}
@@ -121,14 +120,14 @@ bool UnitAction_Move::process(float time)
 			this->getDestination().set(this->calculateDestination_TargetedMoving());
 		}
 	#endif
-		obj->setAngle(this->getMovementStartPoint().calculateAngle(this->getDestination()));
+		obj->setAngle(this->getStartPoint().calculateAngle(this->getDestination()));
 	}
 	
-	float startx = this->getMovementStartPoint().getX();
-	float starty = this->getMovementStartPoint().getY();
+	float startx = this->getStartPoint().getX();
+	float starty = this->getStartPoint().getY();
 	float destx = this->getDestination().getX();
 	float desty = this->getDestination().getY();
-	Coordinate d_move = this->calculateMovementSpeed(time);
+	Coordinate d_move = this->calculateSpeed(obj, time);
 	Coordinate newpos = d_move + obj->getPosition();
 	float newx = newpos.getX();
 	float newy = newpos.getY();
@@ -160,7 +159,7 @@ bool UnitAction_Move::process(float time)
 	
 	bool is_finished = (nfinished == 2);
 	if(is_finished)
-		this->setAsActivated(false);
+		this->setAsFinished(true);
 	
 	return is_finished;
 }
@@ -171,17 +170,20 @@ bool UnitAction_Move::process(float time)
 
 void UnitAction_Move::setDestination(const Coordinate &pos)
 {
-	ObjectPtr obj = this->getObject();
-	this->setMovementStartPoint(obj->getPosition());
 	this->m_destination = pos;
 }
 
-Coordinate UnitAction_Move::calculateMovementSpeed(float time)
+void UnitAction_Move::setTarget(const ObjectPtr &target, float minimum_distance)
 {
-	ObjectPtr obj = this->getObject();
+	this->m_target = target;
+	this->m_min_distance_to_target = minimum_distance;
+}
+
+Coordinate UnitAction_Move::calculateSpeed(const ObjectPtr &obj, float time)
+{
 	float v = obj->getNetMovingSpeed();
-	float startx = this->getMovementStartPoint().getX();
-	float starty = this->getMovementStartPoint().getY();
+	float startx = this->getStartPoint().getX();
+	float starty = this->getStartPoint().getY();
 	float destx = this->getDestination().getX();
 	float desty = this->getDestination().getY();
 	float x = obj->getX();
@@ -227,8 +229,8 @@ Coordinate UnitAction_Move::calculateMovementSpeed(float time)
 
 Coordinate UnitAction_Move::calculateDestination_TargetedMoving()
 {
-	const ObjectPtr &target = this->getMovementTarget();
-	float min_dist = this->getMovement_MinimumDistanceToTarget();
+	const ObjectPtr &target = this->getTarget();
+	float min_dist = this->getMinimumDistanceToTarget();
 	
 	// TODO: implement this
 	
@@ -246,9 +248,8 @@ static float calculate_distance(float x1, float y1, float x2, float y2)
 
 
 
-bool UnitAction_Move::checkMinDistanceOld(const ObjectPtr &target, float min_distance, Coordinate *where_to_move)
+bool UnitAction_Move::checkMinDistanceOld(const ObjectPtr &obj, const ObjectPtr &target, float min_distance, Coordinate *where_to_move)
 {
-	ObjectPtr obj = this->getObject();
 	float my_xarr[4], target_xarr[4]; // 0, 1 = left, right
 	float my_yarr[4], target_yarr[4]; // 0, 1 = top, bottom
 	my_xarr[0] = obj->getX(); my_xarr[1] = obj->getX() + obj->getWidth();
@@ -320,9 +321,8 @@ bool UnitAction_Move::checkMinDistanceOld(const ObjectPtr &target, float min_dis
 	}
 }
 
-bool UnitAction_Move::checkMinDistance(const ObjectPtr &target, float min_distance, Coordinate *where_to_move)
+bool UnitAction_Move::checkMinDistance(const ObjectPtr &obj, const ObjectPtr &target, float min_distance, Coordinate *where_to_move)
 {
-	ObjectPtr obj = this->getObject();
 	float cx = obj->getX(), w = obj->getWidth(), target_cx = target->getX(), target_w = target->getWidth();
 	float cy = obj->getY(), h = obj->getHeight(), target_cy = target->getY(), target_h = target->getHeight();
 	float x = cx - w/2, y = cy - h/2;

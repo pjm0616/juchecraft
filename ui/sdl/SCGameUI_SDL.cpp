@@ -230,7 +230,7 @@ static void render_jcimg_obj_to_screen(const ObjectPtr &obj, JucheImage *img, SD
 ///////
 
 
-GameUI_SDL::GameUI_SDL(Game *game, const PlayerPtr &player)
+GameUI_SDL::GameUI_SDL(Game *game, Player *player)
 	:GameUI(game, player)
 {
 	this->setFPS(100); // i want to set to 30 fps, but..
@@ -372,7 +372,7 @@ void GameUI_SDL::processFrame()
 			int x = this->m_gamescr_left_pos + ev.button.x;
 			int y = this->m_gamescr_top_pos + ev.button.y;
 			this->m_mouse_pos_in_gamescr.set(x, y);
-			if(ev.button.button == 3)
+			if(ev.button.button == 3) // right button
 			{
 				//fprintf(stderr, "move: %d, %d\n", ev.button.x, ev.button.y);
 				
@@ -392,7 +392,7 @@ void GameUI_SDL::processFrame()
 					(*it)->cmd_move(Coordinate(x, y));
 				}
 			}
-			else if(ev.button.button == 1)
+			else if(ev.button.button == 1) // left button
 			{
 				if(this->m_player->getFirstCommandInQueue().getCommandID() == UnitCommandId::Attack)
 				{
@@ -430,7 +430,7 @@ void GameUI_SDL::processFrame()
 			int x = this->m_gamescr_left_pos + ev.button.x;
 			int y = this->m_gamescr_top_pos + ev.button.y;
 			this->m_mouse_pos_in_gamescr.set(x, y);
-			if(ev.button.button == 1)
+			if(ev.button.button == 1) // left button
 			{
 				if(this->m_player->isSelectionInProgress())
 				{
@@ -489,7 +489,7 @@ void GameUI_SDL::drawUI()
 {
 	char buf[512];
 	Game *game = this->m_game;
-	const PlayerPtr &me = this->m_player;
+	Player *me = this->m_player;
 	RaceId_t my_raceid = me->getRaceId();
 	
 	// 640-572=68
@@ -710,10 +710,10 @@ static int calculate_unit_framenum(const ObjectPtr &obj, int start, int end)
 
 void GameUI_SDL::drawObject(const ObjectPtr &obj)
 {
-	const PlayerPtr &player = this->m_player;
+	Player *player = this->m_player;
 	int x, y, w, h;
 	ObjectId_t objid = obj->getObjectId();
-	const PlayerPtr &owner = obj->getOwner();
+	Player *owner = obj->getOwner();
 	obj->getPosition(&x, &y);
 	obj->getSize(&w, &h);
 	

@@ -43,6 +43,7 @@
 #include "SCGame.h"
 
 #include "ui/SCGameUI.h"
+#include "ui/dummy/SCGameUI_dummy.h"
 #include "ui/ncurses/SCGameUI_ncurses.h"
 #include "ui/sdl/SCGameUI_SDL.h"
 
@@ -70,10 +71,15 @@ int main(int argc, char *argv[])
 		game.setMapSize(640*2, 480*2);
 		game.loadGameData(GAME_ROOT_DIR "./res/game/");
 		
-		const SC::PlayerPtr &my_player = game.getPlayer(1);
+		SC::Player *my_player = game.getPlayer(1);
 		
 		fprintf(stderr, "Initializing UI...\n");
 		SC::GameUI *game_ui;
+		if(argc >= 2 && !strcmp(argv[1], "dummy"))
+		{
+			game_ui = new SC::GameUI_dummy(&game, my_player);
+		}
+		else
 		#ifndef NO_NCURSES_UI
 		if(argc >= 2 && !strcmp(argv[1], "ncurses"))
 		{

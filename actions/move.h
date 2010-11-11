@@ -24,11 +24,11 @@ public:
 	};
 	typedef unsigned int MovementFlags_t;
 	
-	UnitAction_Move(const ObjectPtr &obj, const Coordinate &dest, MovementFlags_t flags = MovementFlags::None);
-	UnitAction_Move(const ObjectPtr &obj, const ObjectPtr &target, float minimum_distance = 0.0, MovementFlags_t flags = MovementFlags::None);
+	UnitAction_Move(const Coordinate &dest, MovementFlags_t flags = MovementFlags::None);
+	UnitAction_Move(const ObjectPtr &target, float minimum_distance = 0.0, MovementFlags_t flags = MovementFlags::None);
 	virtual ~UnitAction_Move(){}
 	
-	virtual bool process(float time);
+	virtual bool process(const ObjectPtr &obj, float time);
 private:
 	/** this is the main action function. this action is activated in this function.
 	 */
@@ -38,27 +38,26 @@ private:
 	//@}
 	
 	//@{
-	void setMovement_MinimumDistanceToTarget(float distance) { this->m_min_distance_to_target = distance; }
-	float getMovement_MinimumDistanceToTarget() const { return this->m_min_distance_to_target; }
-	void setMovementTarget(const ObjectPtr &target, float minimum_distance = 0.0)
-		{ this->m_target = target; this->setMovement_MinimumDistanceToTarget(minimum_distance); }
-	void clearMovementTarget() { this->m_target.reset(); }
-	const ObjectPtr &getMovementTarget() const { return this->m_target; }
-	void setMovementStartPoint(const Coordinate &pos) { this->m_start_point = pos; }
-	const Coordinate &getMovementStartPoint() const { return this->m_start_point; }
+	void setTarget(const ObjectPtr &target, float minimum_distance = 0.0);
+	void clearTarget() { this->m_target.reset(); }
+	const ObjectPtr &getTarget() const { return this->m_target; }
+	float getMinimumDistanceToTarget() const { return this->m_min_distance_to_target; }
 	
-	Coordinate calculateDestination_TargetedMoving();
-	Coordinate calculateMovementSpeed(float time);
+	void setStartPoint(const Coordinate &pos) { this->m_start_point = pos; }
+	const Coordinate &getStartPoint() const { return this->m_start_point; }
 	//@}
 	
+	Coordinate calculateDestination_TargetedMoving();
+	Coordinate calculateSpeed(const ObjectPtr &obj, float time);
+	
 	//@{
-	bool checkMinDistanceOld(const ObjectPtr &target, float min_distance, Coordinate *where_to_move);
+	bool checkMinDistanceOld(const ObjectPtr &obj, const ObjectPtr &target, float min_distance, Coordinate *where_to_move);
 	/** @brief checks the distance between `this' and `dest'
 	 *  @detail Checks if the distance if less(or equal) than `min_distance'.
 	 *  @detail if not, stores the coordinate to move in order to attack target in `where_to_move'.
 	 *  @return true if the distance if less(or equal) than `min_distance'. Otherwise false.
 	 */
-	bool checkMinDistance(const ObjectPtr &target, float min_distance, Coordinate *where_to_move);
+	bool checkMinDistance(const ObjectPtr &obj, const ObjectPtr &target, float min_distance, Coordinate *where_to_move);
 	//@}
 	
 	//@{
@@ -81,6 +80,7 @@ private:
 	MovementFlags_t m_flags;
 	
 	// if target is set, object moves to target. is target is not set, object moves to coordinate.
+	// m_target != this
 	ObjectPtr m_target;
 	
 	// if movement_target is set and movement_min_distance_to_target is set, 

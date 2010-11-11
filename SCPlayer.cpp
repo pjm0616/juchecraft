@@ -17,6 +17,7 @@
 #include <cassert>
 
 #ifdef DEBUG
+#include <iostream>
 #include <cstdio>
 #include <cstdlib>
 #endif
@@ -69,6 +70,9 @@ Player::Player(Game *game)
 	this->m_selection_in_progress = false;
 }
 
+Player::~Player()
+{
+}
 
 bool Player::isSelectedObject(const ObjectPtr &obj) const
 {
@@ -89,7 +93,7 @@ void Player::filterCurSelectedObjects(ObjectList &selected_objs, int select_cnt_
 	{
 		const ObjectPtr &obj = *it;
 		stats[obj->getObjectType()]++;
-		if(obj->getOwner().get() == this)
+		if(obj->getOwner() == this)
 			my_unit_cnt++;
 	}
 
@@ -108,7 +112,7 @@ void Player::filterCurSelectedObjects(ObjectList &selected_objs, int select_cnt_
 		}
 		else if(my_unit_cnt != 0)
 		{
-			if(obj->getOwner().get() != this)
+			if(obj->getOwner() != this)
 				selected_objs.erase(it++);
 			else
 				++it;

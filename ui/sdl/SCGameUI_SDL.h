@@ -21,7 +21,7 @@ public:
 	// dirpath: "./res/ui/sdl/object/"
 	static void load_resources(const char *dirpath);
 	
-	GameUI_SDL(Game *game, const PlayerPtr &player);
+	GameUI_SDL(Game *game, Player *player);
 	virtual ~GameUI_SDL();
 	
 	virtual bool initUI();

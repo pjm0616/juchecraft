@@ -31,7 +31,6 @@ public:
 	const ObjectPtr &addObject(const ObjectPtr &obj);
 	ObjectPtr newObject(ObjectId_t objid);
 	int removeObject(const ObjectPtr &obj);
-	void removeAllObjects();
 	
 	ObjectPtr findObjectByRect(ObjectList &matched_objs, int left, int top, int right, int bottom);
 	ObjectPtr findObjectByRect(ObjectList &matched_objs, const Coordinate &top_left, const Coordinate &bottom_right);
@@ -61,12 +60,13 @@ public:
 	void endGame() { this->m_is_game_ended = true; }
 	inline bool isGameEnded() const { return this->m_is_game_ended; }
 	
-	const PlayerPtr &getPlayer(PlayerId_t player_id) const;
+	Player *getPlayer(PlayerId_t player_id) const;
 	const PlayerVector &getPlayers() const { return this->m_players; }
 	
-protected:
-	
 private:
+	void removeAllObjects();
+	void removeAllPlayers();
+	
 	void startTimer();
 	void endTimer();
 	void setStartTime(time_t t) { this->m_start_time = t; }

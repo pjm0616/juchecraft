@@ -65,7 +65,7 @@ OBJS				=$(OBJS_TMP:.cpp=.o)
 
 .PHONY:	all libs libclean tools toolclean resources resclean doc docclean clean distclean dep depclean
 
-all:	dep libs $(TARGET1) tools resources
+all:	.depend libs $(TARGET1) tools resources
 
 .SUFFIXES: .c .o
 .c.o:
@@ -109,7 +109,7 @@ clean:
 distclean: libclean resclean clean toolclean docclean
 	rm -f .depend
 
-dep:	.depend
+dep:	depclean .depend
 
 .depend:
 	$(CC) -MM $(CXXFLAGS) $(SRCS) 1>.depend

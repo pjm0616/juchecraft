@@ -9,38 +9,28 @@ namespace SC {
 
 /** An abstract class for UnitAction_*
  */
-class UnitAction
+class UnitAction: public WeakPtrOwner<UnitAction>
 {
 public:
 	/** Warning: when calling this function, you must call setObject immediately
 	 */
 	UnitAction(UnitActionId_t actid = UnitActionId::None);
-	UnitAction(const ObjectPtr &obj, UnitActionId_t actid);
 	virtual ~UnitAction();
-	
-	UnitActionPtr makeThisPtr();
-	UnitActionPtr getPtr() const { return UnitActionPtr(this->m_this); }
-	
-	/** the action is activated when you call this function
-	 */
-	void setObject(const ObjectPtr &obj);
-	ObjectPtr getObject() const { return ObjectPtr(this->m_obj); }
 	
 	UnitActionId_t getActionId() const { return this->m_actid; }
 	
-	virtual bool process(float time) {return false;}
+	virtual bool process(const ObjectPtr &obj, float time) {return false;}
 	
-	bool isActivated() const { return this->m_is_activated; }
+	bool isFinished() const { return this->m_is_finished; }
+	bool isStarted() const { return this->m_is_started; }
 protected:
-	void setAsActivated(bool onoff = true) { this->m_is_activated = onoff; }
-	
-	SC::weak_ptr<UnitAction> m_this;
+	void setAsFinished(bool onoff = true) { this->m_is_finished = onoff; }
+	void setAsStarted(bool onoff = true) { this->m_is_started = onoff; }
 	
 	UnitActionId_t m_actid;
-	ObjectWeakPtr m_obj;
 	
 private:
-	bool m_is_activated;
+	bool m_is_finished, m_is_started;
 };
 
 

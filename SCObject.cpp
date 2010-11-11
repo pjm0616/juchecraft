@@ -116,15 +116,6 @@ Object::~Object()
 {
 }
 
-ObjectPtr Object::makeThisPtr()
-{
-	assert(this->m_this.expired() == true);
-	
-	ObjectPtr ptr(this);
-	this->m_this = ptr;
-	return ptr;
-}
-
 void Object::init()
 {
 	this->setOwner(this->m_game->getPlayer(Player::NeutralPlayer));
@@ -167,7 +158,7 @@ void Object::detachFromOwner()
 	this->getOwner()->decreaseSuppliesInUse(this->getRaceId(), this->getRequiredSupplies());
 }
 
-void Object::changeOwner(const PlayerPtr &new_owner)
+void Object::changeOwner(Player *new_owner)
 {
 	this->detachFromOwner();
 	this->setOwner(new_owner);
@@ -189,10 +180,10 @@ void Object::clearActions()
 	this->m_actions.clear();
 }
 
-float Object::getArmorBonusA() const { return this->m_owner->getPlayerArmorBonusA() + this->getObjectArmorBonusA();}
-float Object::getDamageBonusA() const { return this->m_owner->getPlayerDamageBonusA() + this->getObjectDamageBonusA();}
-float Object::getMovingSpeedBonusA() const { return this->m_owner->getPlayerMovingSpeedBonusA() + this->getObjectMovingSpeedBonusA();}
-float Object::getAttackSpeedBonusA() const { return this->m_owner->getPlayerAttackSpeedBonusA() + this->getObjectAttackSpeedBonusA();}
+float Object::getArmorBonusA() const { return this->getOwner()->getPlayerArmorBonusA() + this->getObjectArmorBonusA();}
+float Object::getDamageBonusA() const { return this->getOwner()->getPlayerDamageBonusA() + this->getObjectDamageBonusA();}
+float Object::getMovingSpeedBonusA() const { return this->getOwner()->getPlayerMovingSpeedBonusA() + this->getObjectMovingSpeedBonusA();}
+float Object::getAttackSpeedBonusA() const { return this->getOwner()->getPlayerAttackSpeedBonusA() + this->getObjectAttackSpeedBonusA();}
 
 
 float Object::getNetDamage() const
@@ -344,6 +335,7 @@ bool Object::cmd_move(const ObjectPtr &target, float minimum_distance, MovementF
 
 void Object::processFrame()
 {
+	ObjectPtr thisptr = this->getPtr();
 	float deltat = this->m_game->getDelta();
 	
 	for(UnitActionTable::iterator it = this->m_actions.begin(); 
@@ -352,7 +344,7 @@ void Object::processFrame()
 		const UnitActionPtr &act = it->second;
 		if(act)
 		{
-			bool res = act->process(deltat);
+			bool res = act->process(thisptr, deltat);
 			if(res == true) // if finished then
 			{
 				this->m_actions.erase(it++);

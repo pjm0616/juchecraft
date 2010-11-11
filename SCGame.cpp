@@ -54,7 +54,13 @@ Game::Game()
 
 Game::~Game()
 {
+	// almost all objects will be freed here
 	this->removeAllObjects();
+	
+	// delete ui before removing players, because ui is associated with player.
+	this->m_ui = NULL; // now there's no game UI. UI functions must not be called from now on.
+	// some objects(selected by player) will be freed here
+	this->removeAllPlayers();
 }
 
 void Game::loadGameData(const char *dir)
@@ -82,13 +88,23 @@ int Game::removeObject(const ObjectPtr &obj)
 
 void Game::removeAllObjects()
 {
-	ObjectList &objs = this->getObjectList();
-	for(ObjectList::const_iterator it = objs.begin(); it != objs.end(); ++it)
+	for(ObjectList::const_iterator it = this->m_objects.begin(); 
+		it != this->m_objects.end(); ++it)
 	{
 		const ObjectPtr &obj = *it;
 		obj->cleanup();
 	}
-	objs.clear();
+	this->m_objects.clear();
+}
+
+void Game::removeAllPlayers()
+{
+	for(PlayerVector::const_iterator it = this->m_players.begin(); 
+		it != this->m_players.end(); ++it)
+	{
+		delete *it;
+	}
+	this->m_players.clear();
 }
 
 void Game::startTimer()
@@ -326,7 +342,7 @@ void Game::initPlayers()
 	this->m_players.clear();
 	for(int i = 0; i < Player::MAX_PLAYER + 1; i++)
 	{
-		PlayerPtr player(new Player(this));
+		Player *player = new Player(this);
 		
 		player->setPlayerId(i);
 		player->setPlayerColor(player_colors[i]);
@@ -339,7 +355,7 @@ void Game::initPlayers()
 	}
 }
 
-const PlayerPtr &Game::getPlayer(PlayerId_t player_id) const
+Player *Game::getPlayer(PlayerId_t player_id) const
 {
 	if(unlikely(player_id < 0 || player_id >= (PlayerId_t)this->m_players.size()))
 		throw new Exception("Invalid player id");

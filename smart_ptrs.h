@@ -36,6 +36,41 @@ using std::tr1::shared_ptr;
 using std::tr1::weak_ptr;
 #endif
 
+
+
+/** class T must be a WeakPtrOwner object.
+ *  The hierarchy becomes somewhat awakard, but well.. damn
+ */
+template<class T> class WeakPtrOwner
+{
+public:
+	WeakPtrOwner() {}
+	WeakPtrOwner(const SC::shared_ptr<T> &ptr)
+	{
+		assert(ptr.get() == this);
+		this->m_thisptr = ptr;
+	}
+	~WeakPtrOwner() {}
+	
+	/** Creates and returns a new shared_ptr<T> object.
+	 *  This function must be called only once, immediately after the construction.
+	 */
+	SC::shared_ptr<T> makeThisPtr()
+	{
+		assert(this->m_thisptr.expired() == true);
+		SC::shared_ptr<T> ptr(static_cast<T *>(this));
+		this->m_thisptr = ptr;
+		return ptr;
+	}
+	SC::shared_ptr<T> getPtr() const { return m_thisptr.lock(); }
+	
+private:
+	SC::weak_ptr<T> m_thisptr;
+};
+
+
+
+
 }
 
 

@@ -26,7 +26,7 @@ public:
 	};
 	
 	Player(Game *game);
-	~Player() {}
+	~Player();
 	
 	int getPlayerId() const { return this->m_player_id; }
 	unsigned int getPlayerColor() const { return this->m_player_color; }
@@ -149,16 +149,19 @@ public:
 	float getPlayerAttackSpeedBonusA() const { return this->m_added_attack_speed_bonus; }
 	//@}
 	
+	//@{
 	/** @brief Get selected objects.
 	 *  @return A constant reference to ObjectList.
 	 */
 	const ObjectList &getSelectedObjs() const { return this->m_selected_objs; }
 	//ObjectList &getSelectedObjsForWriting() { return this->m_selected_objs; }
+	
 	/** @brief Checks if the object is selecetd.
 	 *  @param[in] obj The object to check if selected
 	 *  @return true if selected, otherwise false
 	 */
 	bool isSelectedObject(const ObjectPtr &obj) const;
+	
 	/** @brief clears selected object list
 	 */
 	void clearSelectedObjectList() { this->m_selected_objs.clear(); }
@@ -176,10 +179,12 @@ public:
 	/** @brief Starts object selection
 	 */
 	void startObjectSelection(const Coordinate &start_coord);
+	
 	/** @brief Finished object selection, and updates selected object list.
 	 *  @return The number of selected objects
 	 */
 	size_t finishObjectSelection(const Coordinate &end_coord, SelectionFlags_t flags = SelectionFlags::SET);
+	
 	/** @brief Get Currently selected objects
 	 *  @detail Don't call this function if isSelectionInProgress() == false
 	 *  @detail results are stored in `buf'
@@ -188,6 +193,7 @@ public:
 	 *  @sa SelectionFlags
 	 */
 	size_t getCurrentlySelectedObjects(ObjectList &buf, const Coordinate &crnt_coord, SelectionFlags_t flags) const;
+	
 	/** @brief Selects object that are inside the rect[`coord' ~ `coord2']
 	 *  @detail internally this function calls startObjectSelection, finishObjectSelection continuously
 	 *  @return The number of selected objects.
@@ -201,6 +207,7 @@ public:
 	/** @brief Get the coordinate where the selection was started.
 	 */
 	const Coordinate &getSelectionStartCoordinate() const { return this->m_selection_start_coordinate; }
+	//@}
 	
 	// command queue related
 	void addToCommandQueue(const UnitCommand &cmd) { this->m_cmdqueue.push_back(cmd); }

@@ -25,7 +25,7 @@ public:
 	// dirpath: "./res/object/"
 	void load_resources(const char *dirpath);
 	
-	GameUI_ncurses(Game *game, const PlayerPtr &player);
+	GameUI_ncurses(Game *game, Player *player);
 	virtual ~GameUI_ncurses();
 	
 	virtual bool initUI();
