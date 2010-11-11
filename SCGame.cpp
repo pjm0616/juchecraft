@@ -224,12 +224,12 @@ void Game::test_tmp1()
 	for(int i = 0; i < 10; i++)
 	{
 		o = this->newObject(ObjectId::Resource_MineralField);
-		o->setPosition(10, 270 + i*44);
+		o->setPosition(50, 270 + i*44);
 	}
 	for(int i = 0; i < 10; i++)
 	{
 		o = this->newObject(ObjectId::Resource_MineralField);
-		o->setPosition(10 + i*64, 270 + 44*3);
+		o->setPosition(50 + i*64, 270 + 44*3);
 	}
 	#endif
 	
@@ -239,11 +239,11 @@ void Game::test_tmp1()
 	
 	o = this->newObject(ObjectId::Terran_CommandCenter);
 	o->changeOwner(players[1]);
-	o->setPosition(440, 180);
+	o->setPosition(470, 200);
 	
 	o = this->newObject(ObjectId::Terran_CommandCenter);
 	o->changeOwner(players[2]);
-	o->setPosition(260, 250);
+	o->setPosition(280, 270);
 	
 	o = this->newObject(ObjectId::Juche_AojiWorker);
 	o->changeOwner(players[1]);

@@ -204,7 +204,7 @@ static void render_jcimg_to_screen(JucheImage *img, SDL_Surface *scr, int num, i
 	
 	SDL_BlitSurface(sf.get(), &srcrect, scr, &dstrect);
 }
-static void render_jcimg_obj_to_screen(const ObjectSPtr_t &obj, JucheImage *img, SDL_Surface *scr, int num, int scr_x, int scr_y)
+static void render_jcimg_obj_to_screen(const ObjectSPtr_t &obj, JucheImage *img, SDL_Surface *scr, int num, int scr_cx, int scr_cy)
 {
 	jcimg_imginfo_t *imginfo;
 	SDL_SurfaceSPtr_t sf = img->getImage(num, &imginfo);
@@ -212,21 +212,16 @@ static void render_jcimg_obj_to_screen(const ObjectSPtr_t &obj, JucheImage *img,
 	// TODO
 	#if 1
 	//@{
-	int obj_w, obj_h;
-	obj->getSize(&obj_w, &obj_h);
-	
-	int obj_centerx = scr_x + (obj_w / 2);
-	int obj_centery = scr_y + (obj_h / 2);
-	//@}
-	
-	//@{
 	int img_centerx = (img->getMaxWidth()-1) / 2;
 	int img_centery = (img->getMaxHeight()-1) / 2;
 	//@}
+	
+	int left = scr_cx - img_centerx + imginfo->left;
+	int top = scr_cy - img_centery + imginfo->top;
 	#endif
 	
 	SDL_Rect srcrect = {imginfo->left, imginfo->top, imginfo->width, imginfo->height};
-	SDL_Rect dstrect = {obj_centerx-img_centerx+imginfo->left, obj_centery-img_centery+imginfo->top, imginfo->width, imginfo->height};
+	SDL_Rect dstrect = {left, top, imginfo->width, imginfo->height};
 	
 	SDL_BlitSurface(sf.get(), &srcrect, scr, &dstrect);
 }
@@ -745,7 +740,7 @@ void GameUI_SDL::drawObject(const ObjectSPtr_t &obj)
 		else
 			(r = 255), (g = 0), (b = 0);
 		
-		ellipseRGBA(this->m_game_scr, x+w/2, y+h/2 +4, w/2 +1, h/2 +1, r, g, b, 255);
+		ellipseRGBA(this->m_game_scr, x, y +4, w/2 +1, h/2 +1, r, g, b, 255);
 	}
 	#endif
 	
@@ -831,13 +826,15 @@ void GameUI_SDL::drawObject(const ObjectSPtr_t &obj)
 		{
 			if(img1)
 			{
+				#if 0
 				{ /* 이동시 마우스 포인터 중앙이 아래 점에 오도록 이동 */
 					jcimg_imginfo_t *imginfo;
 					img1->getImage(framenum, &imginfo);
 					int center_x = (img1->getMaxWidth()/2 - 1) - imginfo->left;
 					int center_y = (img1->getMaxHeight()/2 - 1) - imginfo->top;
 				}
-			
+				#endif
+				
 				if(img1_shad) // shadow
 					render_jcimg_obj_to_screen(obj, img1_shad, this->m_game_scr, framenum, x, y);
 				if(img1)

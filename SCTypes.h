@@ -121,7 +121,8 @@ class ObjectList;
 typedef std::map<ObjectId_t, ObjectSPtr_t> ObjectTable;
 
 
-
+class UnitAction;
+typedef std::list<UnitAction> ActionList;
 
 
 
