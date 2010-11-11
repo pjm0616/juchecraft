@@ -1,5 +1,8 @@
 #!/bin/sh
 
-find . ui ui/* libs/jcimg libs/luacpp/ res_raw/ tools/libs/libmpqgrp/ tools/grp_conv/ \
-	 -maxdepth 1 -name '*.cpp' -o -name '*.c' -o -name '*.h'|xargs wc -l
+srcs="`find ./ libs/jcimg/ libs/luacpp/ tools/libs/libmpqgrp/ tools/grp_conv/ -maxdepth 1 -name '*.cpp' -o -name '*.c' -o -name '*.h' -o -name '*.lua'`"
+srcs="$srcs `find ui/ actions/ res_raw/ -name '*.cpp' -o -name '*.c' -o -name '*.h' -o -name '*.lua'`"
+
+wc $srcs
+
 
