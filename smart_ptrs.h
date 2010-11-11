@@ -18,6 +18,7 @@
 
 #ifdef SMART_PTR_USE_BOOST
 # include <boost/shared_ptr.hpp>
+# include <boost/weak_ptr.hpp>
 #else
 //# include <memory>
 # include <tr1/memory>
@@ -29,8 +30,10 @@ namespace SC
 
 #ifdef SMART_PTR_USE_BOOST
 using boost::shared_ptr;
+using boost::weak_ptr;
 #else
 using std::tr1::shared_ptr;
+using std::tr1::weak_ptr;
 #endif
 
 }

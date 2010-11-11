@@ -194,21 +194,21 @@ static JucheImage	g_img_obj_terran_unit_marine,
 					g_img_obj_neutral_mineral01_shadow, 
 					g_img_end;
 
-//	const SDL::SDL_SurfaceSPtr_t &getImage(unsigned int n, jcimg_imginfo_t **imginfo = NULL);
+//	const SDL::SDL_SurfacePtr &getImage(unsigned int n, jcimg_imginfo_t **imginfo = NULL);
 static void render_jcimg_to_screen(JucheImage *img, SDL_Surface *scr, int num, int scr_x, int scr_y)
 {
 	jcimg_imginfo_t *imginfo;
-	SDL_SurfaceSPtr_t sf = img->getImage(num, &imginfo);
+	SDL_SurfacePtr sf = img->getImage(num, &imginfo);
 	
 	SDL_Rect srcrect = {imginfo->left, imginfo->top, imginfo->width, imginfo->height};
 	SDL_Rect dstrect = {scr_x, scr_y, imginfo->width, imginfo->height};
 	
 	SDL_BlitSurface(sf.get(), &srcrect, scr, &dstrect);
 }
-static void render_jcimg_obj_to_screen(const ObjectSPtr_t &obj, JucheImage *img, SDL_Surface *scr, int num, int scr_cx, int scr_cy)
+static void render_jcimg_obj_to_screen(const ObjectPtr &obj, JucheImage *img, SDL_Surface *scr, int num, int scr_cx, int scr_cy)
 {
 	jcimg_imginfo_t *imginfo;
-	SDL_SurfaceSPtr_t sf = img->getImage(num, &imginfo);
+	SDL_SurfacePtr sf = img->getImage(num, &imginfo);
 	
 	// TODO
 	#if 1
@@ -230,7 +230,7 @@ static void render_jcimg_obj_to_screen(const ObjectSPtr_t &obj, JucheImage *img,
 ///////
 
 
-GameUI_SDL::GameUI_SDL(Game *game, const PlayerSPtr_t &player)
+GameUI_SDL::GameUI_SDL(Game *game, const PlayerPtr &player)
 	:GameUI(game, player)
 {
 	this->setFPS(100); // i want to set to 30 fps, but..
@@ -397,7 +397,7 @@ void GameUI_SDL::processFrame()
 				if(this->m_player->getFirstCommandInQueue().getCommandID() == UnitCommandId::Attack)
 				{
 					ObjectList dummy;
-					ObjectSPtr_t first = this->m_game->findObjectByRect(dummy, x, y, x+10, y+10);
+					ObjectPtr first = this->m_game->findObjectByRect(dummy, x, y, x+10, y+10);
 					const ObjectList &selected_objs = this->m_player->getSelectedObjs();
 				
 					if(first)
@@ -489,7 +489,7 @@ void GameUI_SDL::drawUI()
 {
 	char buf[512];
 	Game *game = this->m_game;
-	const PlayerSPtr_t &me = this->m_player;
+	const PlayerPtr &me = this->m_player;
 	RaceId_t my_raceid = me->getRaceId();
 	
 	// 640-572=68
@@ -603,7 +603,7 @@ void GameUI_SDL::drawUI_MinimapWnd()
 	ObjectList &objs = this->m_game->getObjectList();
 	for(ObjectList::const_iterator it = objs.begin(); it != objs.end(); it++)
 	{
-		const ObjectSPtr_t &obj = *it;
+		const ObjectPtr &obj = *it;
 		float unit_x = obj->getX(), unit_y = obj->getY();
 		int unit_w = obj->getWidth(), unit_h = obj->getHeight();
 		
@@ -620,7 +620,7 @@ void GameUI_SDL::drawUI_UnitStatWnd()
 	SC::ObjectList::const_iterator it = selected_objs.begin();
 	while(it != selected_objs.end())
 	{
-		const ObjectSPtr_t &obj = *it++;
+		const ObjectPtr &obj = *it++;
 		if(obj->isRemovedFromGame() == true) // warning: hack
 			continue;
 		
@@ -676,7 +676,7 @@ static int convertAngleToDirection(float angle)
 	return direction;
 }
 
-static int calculate_unit_framenum(const ObjectSPtr_t &obj, int start, int end)
+static int calculate_unit_framenum(const ObjectPtr &obj, int start, int end)
 {
 	int col, row;
 	
@@ -708,12 +708,12 @@ static int calculate_unit_framenum(const ObjectSPtr_t &obj, int start, int end)
 	return framenum;
 }
 
-void GameUI_SDL::drawObject(const ObjectSPtr_t &obj)
+void GameUI_SDL::drawObject(const ObjectPtr &obj)
 {
-	const PlayerSPtr_t &player = this->m_player;
+	const PlayerPtr &player = this->m_player;
 	int x, y, w, h;
 	ObjectId_t objid = obj->getObjectId();
-	const PlayerSPtr_t &owner = obj->getOwner();
+	const PlayerPtr &owner = obj->getOwner();
 	obj->getPosition(&x, &y);
 	obj->getSize(&w, &h);
 	

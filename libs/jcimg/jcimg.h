@@ -94,7 +94,7 @@ public:
 	void clear();
 	void reset(const jcimg_info_t *fileinfo);
 	
-	void insertNewImage(jcimg_imginfo_t *imginfo, SDL::SDL_SurfaceSPtr_t sf);
+	void insertNewImage(jcimg_imginfo_t *imginfo, SDL::SDL_SurfacePtr sf);
 	void insertNewImage(jcimg_imginfo_t *imginfo, uint32_t *pixels, uint32_t sf_flags = SDL_SWSURFACE);
 	
 	bool load(const char *filename, uint32_t sf_flags = SDL_SWSURFACE);
@@ -102,7 +102,7 @@ public:
 	bool save(const char *filename);
 #endif
 	
-	const SDL::SDL_SurfaceSPtr_t &getImage(unsigned int n, jcimg_imginfo_t **imginfo = NULL);
+	const SDL::SDL_SurfacePtr &getImage(unsigned int n, jcimg_imginfo_t **imginfo = NULL);
 	
 	size_t numOfImages() const { return this->m_images.size(); }
 	size_t getMaxWidth() const { return this->m_info.max_width; }
@@ -128,7 +128,7 @@ private:
 	};
 	
 	jcimg_info_t m_info;
-	std::vector<std::pair<JucheImage::ImageInfo, SDL::SDL_SurfaceSPtr_t> > m_images;
+	std::vector<std::pair<JucheImage::ImageInfo, SDL::SDL_SurfacePtr> > m_images;
 };
 
 

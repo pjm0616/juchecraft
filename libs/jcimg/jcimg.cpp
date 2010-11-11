@@ -139,10 +139,10 @@ void JucheImage::setFileInfo(const jcimg_info_t *fileinfo)
 	memcpy(&this->m_info, fileinfo, sizeof(this->m_info));
 }
 
-void JucheImage::insertNewImage(jcimg_imginfo_t *imginfo, SDL::SDL_SurfaceSPtr_t sf)
+void JucheImage::insertNewImage(jcimg_imginfo_t *imginfo, SDL::SDL_SurfacePtr sf)
 {
 	this->m_images.push_back(
-		std::pair<JucheImage::ImageInfo, SDL::SDL_SurfaceSPtr_t>(
+		std::pair<JucheImage::ImageInfo, SDL::SDL_SurfacePtr>(
 			JucheImage::ImageInfo(imginfo), sf
 		));
 	this->m_info.nimages = this->numOfImages();
@@ -154,7 +154,7 @@ void JucheImage::insertNewImage(jcimg_imginfo_t *imginfo, uint32_t *pixels, uint
 	size_t pixels_size = sf->w * sf->h * 4;
 	memcpy(sf->pixels, pixels, pixels_size);
 	
-	this->insertNewImage(imginfo, SDL::SDL_SurfaceSPtr_t(sf));
+	this->insertNewImage(imginfo, SDL::SDL_SurfacePtr(sf));
 }
 
 void JucheImage::insertNewImage(jcimg_img_t *img, uint32_t sf_flags)
@@ -207,7 +207,7 @@ bool JucheImage::save(const char *filename)
 	size_t pos = 0;
 	for(int i = 0; i < this->m_info.nimages; i++)
 	{
-		const SDL::SDL_SurfaceSPtr_t &sf = this->m_images[i].second;
+		const SDL::SDL_SurfacePtr &sf = this->m_images[i].second;
 		size_t pixels_size = sf->w * sf->h * 4;
 		pos += sizeof(jcimg_imginfo_t) + pixels_size;
 	}
@@ -224,7 +224,7 @@ bool JucheImage::save(const char *filename)
 	for(int i = 0; i < this->m_info.nimages; i++)
 	{
 		const jcimg_imginfo_t *info = this->m_images[i].first.get();
-		const SDL::SDL_SurfaceSPtr_t &sf = this->m_images[i].second;
+		const SDL::SDL_SurfacePtr &sf = this->m_images[i].second;
 		size_t pixels_size = sf->w * sf->h * 4;
 		
 		img_index[i] = pos ^ 0xbeefdead;
@@ -259,13 +259,13 @@ bool JucheImage::save(const char *filename)
 }
 #endif
 
-const SDL::SDL_SurfaceSPtr_t &JucheImage::getImage(unsigned int n, jcimg_imginfo_t **imginfo)
+const SDL::SDL_SurfacePtr &JucheImage::getImage(unsigned int n, jcimg_imginfo_t **imginfo)
 {
-	static SDL::SDL_SurfaceSPtr_t null_sf;
+	static SDL::SDL_SurfacePtr null_sf;
 	if(unlikely(n > this->numOfImages()))
 		return null_sf;
 	
-	std::pair<JucheImage::ImageInfo, SDL::SDL_SurfaceSPtr_t> &img = this->m_images[n];
+	std::pair<JucheImage::ImageInfo, SDL::SDL_SurfacePtr> &img = this->m_images[n];
 	
 	if(imginfo)
 		*imginfo = img.first.get();

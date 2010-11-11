@@ -16,9 +16,9 @@ namespace SC {
 class GameUI
 {
 public:
-	GameUI(Game *game, const PlayerSPtr_t &player)
-		:m_game(game), 
-		m_player(player)
+	GameUI(Game *game, const PlayerPtr &player)
+		: m_game(game)
+		, m_player(player)
 	{
 		this->setFPS(20);
 	}
@@ -38,13 +38,13 @@ public:
 	// Uncomment this if you need a public accessor for m_game.
 	//Game *getGame() { return this->m_game; }
 	// Uncomment this if you need a public accessor for m_player.
-	//const PlayerSPtr_t &getPlayer() const { return this->m_player; }
+	//const PlayerPtr &getPlayer() const { return this->m_player; }
 	
 protected:
 	void setFPS(unsigned int fps) { this->m_fps = fps; }
 	
 	#ifdef DRAW_OBJECTS_WITH_VIRTUAL_FXNS
-	virtual void drawObject(const ObjectSPtr_t &obj) = 0;
+	virtual void drawObject(const ObjectPtr &obj) = 0;
 	void drawObjects();
 	#else
 	void drawObject(Object &obj) { throw SC::Exception("BUG!!! w8cmoaeyr8myncafo"); }
@@ -52,7 +52,7 @@ protected:
 	#endif
 	
 	Game *m_game;
-	PlayerSPtr_t m_player;
+	PlayerPtr m_player;
 	unsigned m_fps;
 };
 

@@ -158,7 +158,7 @@ public:
 	 *  @param[in] obj The object to check if selected
 	 *  @return true if selected, otherwise false
 	 */
-	bool isSelectedObject(const ObjectSPtr_t &obj) const;
+	bool isSelectedObject(const ObjectPtr &obj) const;
 	/** @brief clears selected object list
 	 */
 	void clearSelectedObjectList() { this->m_selected_objs.clear(); }

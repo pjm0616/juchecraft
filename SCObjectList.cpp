@@ -10,6 +10,9 @@
 #include <map>
 #include <vector>
 #include <deque>
+#ifdef DEBUG
+# include <iostream>
+#endif
 
 #include "defs.h"
 #include "SCTypes.h"
@@ -24,14 +27,14 @@
 using namespace SC;
 
 
-const ObjectSPtr_t &ObjectList::addObject(const ObjectSPtr_t &obj)
+const ObjectPtr &ObjectList::addObject(const ObjectPtr &obj)
 {
 	this->getObjects().push_back(obj);
 	this->setIteratorAsInvalidated();
 	return obj;
 }
 
-int ObjectList::removeObject(const ObjectSPtr_t &obj)
+int ObjectList::removeObject(const ObjectPtr &obj)
 {
 	ObjectList::objlist_t &objs = this->getObjects();
 	int nremoved = 0;
@@ -61,16 +64,32 @@ void ObjectList::erase(iterator it)
 }
 
 
-ObjectList::iterator ObjectList::find(const ObjectSPtr_t &obj)
+ObjectList::iterator ObjectList::find(const ObjectPtr &obj)
 {
 	return std::find(this->begin(), this->end(), obj);
 }
 
-ObjectList::const_iterator ObjectList::find(const ObjectSPtr_t &obj) const
+ObjectList::const_iterator ObjectList::find(const ObjectPtr &obj) const
 {
 	return std::find(this->begin(), this->end(), obj);
 }
 
+void ObjectList::clear()
+{
+#ifdef DEBUG
+	for(ObjectList::iterator it = this->m_objects.begin(); 
+		it != this->m_objects.end(); )
+	{
+		if(it->use_count() != 1)
+		{
+			std::cout << "Warning: ObjectList::clear: " << it->get()->getObjectName() << ": " << it->use_count() <<std::endl;
+		}
+		this->m_objects.erase(it++);
+	}
+#else
+	this->getObjects().clear();
+#endif
+}
 
 
 

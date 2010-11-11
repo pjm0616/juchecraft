@@ -34,7 +34,7 @@ using namespace SC;
 
 
 ObjectFactory::ObjectFactory(Game *game)
-	:m_game(game)
+	: m_game(game)
 {
 }
 
@@ -69,8 +69,9 @@ bool ObjectFactory::load(const char *listfile)
 		Object *obj = new Object(this->m_game);
 		this->parseObjectData(obj, objdata_idx);
 		
-		this->m_obj_prototypes.addObject(obj->getSPtr());
-		this->m_obj_protos_by_id[obj->getObjectId()] = obj->getSPtr();
+		ObjectPtr ptr = obj->makeThisPtr();
+		this->m_obj_prototypes.addObject(ptr);
+		this->m_obj_protos_by_id[obj->getObjectId()] = ptr;
 		
 		lua_pop(L, 1);
 	}
@@ -138,13 +139,13 @@ void ObjectFactory::parseObjectData(Object *obj, int stack_idx)
 
 
 
-ObjectSPtr_t ObjectFactory::newObjectById(ObjectId_t id)
+ObjectPtr ObjectFactory::newObjectById(ObjectId_t id)
 {
-	const ObjectSPtr_t &proto = this->findObjectById(id);
+	const ObjectPtr &proto = this->findObjectById(id);
 	if(!proto)
 		throw new Exception("Cannot find object prototype");
 	// return shared_ptr of newly created(cloned) object
-	return proto->clone()->getSPtr();
+	return proto->clone()->getPtr();
 }
 
 

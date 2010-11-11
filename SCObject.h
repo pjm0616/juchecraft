@@ -9,11 +9,15 @@
 #ifndef SCObject_H_
 #define SCObject_H_
 
+#include "SCUnitActionList.h" // tmp
+
 namespace SC {
 
 
 
 /** @brief Abstract object class
+ *  
+ *  Warning: don't use ObjectPtr in Object. use ObjectWeakPtr instead.
  */
 class Object
 {
@@ -23,7 +27,8 @@ class Object
 public:
 	/** @name Constructor/destructor */
 	//@{
-	/** @details You MUST call SC::Object::init() IMMEDIATELY after construction.
+	/** @details You MUST call Object::makeThisPtr() and store the pointer somewhere IMMEDIATELY after the construction.
+	 *  @details You MUST call Object::init() before using this object.
 	 *
 	 *  @param[in] game A pointer to SC::Game object.
 	 */
@@ -43,7 +48,11 @@ public:
 	void cleanup();
 	//@}
 	
-	const ObjectSPtr_t &getSPtr() const { return this->m_this; }
+	/** Creates and returns a new shared_ptr<Object> object.
+	 *  This function must be called only once, immediately after the construction.
+	 */
+	ObjectPtr makeThisPtr();
+	ObjectPtr getPtr() const { return ObjectPtr(this->m_this); }
 	
 	/** @brief checks if this object is removed from the game.
 	 *  @return true if this object is removed from game.
@@ -61,12 +70,12 @@ public:
 	 *
 	 *  @return A pointer to SC::Player that owns this object
 	 */
-	const PlayerSPtr_t &getOwner() { return this->m_owner; }
+	const PlayerPtr &getOwner() { return this->m_owner; }
 	/** @brief Changes owner of the object.
 	 *
 	 *  @param[in] new_owner A pointer to SC::Player
 	 */
-	void changeOwner(const PlayerSPtr_t &new_owner);
+	void changeOwner(const PlayerPtr &new_owner);
 	//@}
 	
 	// Uncomment this if you need a public accessor for m_game.
@@ -111,7 +120,7 @@ public:
 	/** @brief Calculates angle from object to destination object.
 	 *  @return The angle in degrees
 	 */
-	float calculateAngle(const ObjectSPtr_t &dest) const { return this->calculateAngle(dest->getPosition()); }
+	float calculateAngle(const ObjectPtr &dest) const { return this->calculateAngle(dest->getPosition()); }
 	//@}
 	
 	/** @brief Checks if this object is inside the rect
@@ -119,7 +128,6 @@ public:
 	bool insideRect(int left, int top, int right, int bottom);
 	bool insideRect(const Coordinate &top_left, const Coordinate &bottom_right);
 	
-	void clearActions();
 	#if 0
 	/** @name Movement methods */
 	//@{
@@ -141,7 +149,7 @@ public:
 	 *  @return true if succeeded. false if there's an error.
 	 *  @sa MovementFlags
 	 */
-	bool move(const ObjectSPtr_t &target, float minumum_distance = 0.0, MovementFlags_t flags = MovementFlags::None);
+	bool move(const ObjectPtr &target, float minumum_distance = 0.0, MovementFlags_t flags = MovementFlags::None);
 	/** @brief Stops any other commands, and moves to coordinate. Coordinate is corrected to unit's center.
 	 *
 	 *  @param[in] dest Coordinate to destination
@@ -158,7 +166,7 @@ public:
 	 *  @return true if succeeded. false if there's an error.
 	 *  @sa MovementFlags
 	 */
-	bool cmd_move(const ObjectSPtr_t &target, float minumum_distance = 0.0, MovementFlags_t flags = MovementFlags::None);
+	bool cmd_move(const ObjectPtr &target, float minumum_distance = 0.0, MovementFlags_t flags = MovementFlags::None);
 	//@}
 	#endif
 	
@@ -171,16 +179,16 @@ public:
 	 *  @param[in] target The object to attack
 	 *  @return true if succeeded. false if there's an error.
 	 */
-	bool attack(const ObjectSPtr_t &target);
+	bool attack(const ObjectPtr &target);
 	/** @brief Stops any other commands, and attacks target object.
 	 *  @details If the distance to target is out of range, object moves to target.
 	 *
 	 *  @param[in] target The object to attack
 	 *  @return true if succeeded. false if there's an error.
 	 */
-	bool cmd_attack(const ObjectSPtr_t &target);
+	bool cmd_attack(const ObjectPtr &target);
 	
-	const ObjectSPtr_t &getAttackTarget() const { return this->m_attack.target; }
+	const ObjectPtr &getAttackTarget() const { return this->m_attack.target; }
 	double getLastAttackTime() const { return this->m_attack.last_attack_time; }
 	//@}
 	#endif
@@ -199,16 +207,18 @@ public:
 	//@{
 	
 	//@{
-	const UnitActionSPtr_t &getAction(UnitActionId_t action_id) const;
+	void clearActions();
+	void setAction(const UnitActionPtr &action);
+	
+	const UnitActionPtr &getAction(UnitActionId_t action_id) const;
 	bool isActivatedAction(UnitActionId_t action_id) const { return (this->getAction(action_id) != NULL); }
 	
-	UnitActionSPtr_t &getActionForWriting(UnitActionId_t action_id);
-	void setAction(const UnitActionSPtr_t &action);
+	//UnitActionPtr &getActionForWriting(UnitActionId_t action_id);
 	//@}
 	//@{
 	void move(const Coordinate &pos, UnitAction_Move::MovementFlags_t flags = UnitAction_Move::MovementFlags::None)
 	{
-		this->setAction(UnitActionSPtr_t(new UnitAction_Move(this->m_this, pos, flags)));
+		this->setAction(UnitActionPtr(new UnitAction_Move(this->getPtr(), pos, flags)));
 	}
 	void cmd_move(const Coordinate &pos, UnitAction_Move::MovementFlags_t flags = UnitAction_Move::MovementFlags::None)
 	{ this->move(pos, flags); }
@@ -348,7 +358,7 @@ public: /* protected */
 private:
 	/** @name Unit owner related */
 	//@{
-	void setOwner(const PlayerSPtr_t &new_owner) { this->m_owner = new_owner; }
+	void setOwner(const PlayerPtr &new_owner) { this->m_owner = new_owner; }
 	/** @brief Attaches to current owner.
 	 *  @detail updates owner's suppliy statistics, etc.
 	 */
@@ -362,7 +372,7 @@ private:
 	#if 0
 	/** @name Attack related */
 	//@{
-	void setAttackTarget(const ObjectSPtr_t &target) { this->m_attack.target = target; }
+	void setAttackTarget(const ObjectPtr &target) { this->m_attack.target = target; }
 	void clearAttackTarget() { this->m_attack.target.reset(); }
 	void setLastAttackTime(double time) { this->m_attack.last_attack_time = time; }
 	/** @brief Processes attack.
@@ -392,9 +402,9 @@ private:
 	
 	/** @name Object owner/state/position etc. */
 	//@{
-	ObjectSPtr_t m_this; // this pointer in shared_ptr
+	SC::weak_ptr<Object> m_this; // this pointer in weak shared_ptr
 	Game *m_game;
-	PlayerSPtr_t m_owner;
+	PlayerPtr m_owner;
 	ObjectState_t m_state;
 	Coordinate m_pos;
 	float m_angle;
@@ -419,7 +429,7 @@ private:
 		double last_attack_time; /**< last attack time */
 		
 		// if(this->m_isMoving() && this->getAttackTarget()) then this object is moving to attack target
-		ObjectSPtr_t target; // not null if attack target is set.
+		ObjectPtr target; // not null if attack target is set.
 	} m_attack;
 	#endif
 	
@@ -498,7 +508,7 @@ public:
 	 *  @return Pointer to newly created object.
 	 *  @sa SC::ObjectFactory
 	 */
-	ObjectSPtr_t clone();
+	ObjectPtr clone();
 	
 protected:
 	/** @name Constant object attributes */

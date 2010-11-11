@@ -102,18 +102,19 @@ using ObjectId::ObjectId_t;
 
 typedef int PlayerId_t;
 class Player;
-typedef SC::shared_ptr<Player> PlayerSPtr_t;
-typedef std::vector<PlayerSPtr_t> PlayerVector;
+typedef SC::shared_ptr<Player> PlayerPtr;
+typedef std::vector<PlayerPtr> PlayerVector;
 
 
 class Object;
-typedef SC::shared_ptr<Object> ObjectSPtr_t;
+typedef SC::shared_ptr<Object> ObjectPtr;
+typedef SC::weak_ptr<Object> ObjectWeakPtr;
 class Game;
 class ObjectFactory;
 
 //typedef std::list<ObjectSPtr> ObjectList;
 class ObjectList;
-typedef std::map<ObjectId_t, ObjectSPtr_t> ObjectTable;
+typedef std::map<ObjectId_t, ObjectPtr> ObjectTable;
 
 
 namespace UnitActionId
@@ -132,8 +133,8 @@ namespace UnitActionId // FIXME
 }
 using UnitActionId::UnitActionId_t;
 class UnitAction;
-typedef SC::shared_ptr<UnitAction> UnitActionSPtr_t;
-typedef std::map<UnitActionId_t, UnitActionSPtr_t> UnitActionTable;
+typedef SC::shared_ptr<UnitAction> UnitActionPtr;
+typedef std::map<UnitActionId_t, UnitActionPtr> UnitActionTable;
 
 
 namespace UnitCommandId

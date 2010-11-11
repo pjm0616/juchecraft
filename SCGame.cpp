@@ -45,9 +45,9 @@ using namespace SC;
 
 
 Game::Game()
-	:m_obj_factory(this), 
-	m_start_time(0.0), 
-	m_is_game_ended(false)
+	: m_obj_factory(this)
+	, m_start_time(0.0)
+	, m_is_game_ended(false)
 {
 	this->initPlayers();
 }
@@ -63,18 +63,18 @@ void Game::loadGameData(const char *dir)
 	this->m_obj_factory.load(std::string(basedir + "./object_data/objects.dat").c_str());
 }
 
-const ObjectSPtr_t &Game::addObject(const ObjectSPtr_t &obj)
+const ObjectPtr &Game::addObject(const ObjectPtr &obj)
 {
 	obj->init();
 	return this->m_objects.addObject(obj);
 }
 
-ObjectSPtr_t Game::newObject(ObjectId_t objid)
+ObjectPtr Game::newObject(ObjectId_t objid)
 {
 	return this->addObject(this->m_obj_factory.newObjectById(objid));
 }
 
-int Game::removeObject(const ObjectSPtr_t &obj)
+int Game::removeObject(const ObjectPtr &obj)
 {
 	obj->cleanup();
 	return this->m_objects.removeObject(obj);
@@ -85,7 +85,7 @@ void Game::removeAllObjects()
 	ObjectList &objs = this->getObjectList();
 	for(ObjectList::const_iterator it = objs.begin(); it != objs.end(); ++it)
 	{
-		const ObjectSPtr_t &obj = *it;
+		const ObjectPtr &obj = *it;
 		obj->cleanup();
 	}
 	objs.clear();
@@ -139,7 +139,7 @@ void Game::processObjects()
 	objs.resetIteratorChecker();
 	for(ObjectList::const_iterator it = objs.begin(); it != objs.end(); )
 	{
-		const ObjectSPtr_t &obj = *it;
+		const ObjectPtr &obj = *it;
 		obj->processFrame();
 		if(objs.isIteratorInvalidated())
 		{
@@ -213,7 +213,7 @@ void Game::run()
 
 void Game::test_tmp1()
 {
-	ObjectSPtr_t o;
+	ObjectPtr o;
 	
 	const PlayerVector &players = this->getPlayers();
 	players[1]->setRace(RaceId::Juche);
@@ -274,14 +274,14 @@ void Game::test_tmp1()
 
 
 
-ObjectSPtr_t Game::findObjectByRect(ObjectList &matched_objs, int left, int top, int right, int bottom)
+ObjectPtr Game::findObjectByRect(ObjectList &matched_objs, int left, int top, int right, int bottom)
 {
 	ObjectList &objs = this->getObjectList();
 	
 	matched_objs.clear();
 	for(ObjectList::const_iterator it = objs.begin(); it != objs.end(); ++it)
 	{
-		const ObjectSPtr_t &obj = *it;
+		const ObjectPtr &obj = *it;
 		if(obj->insideRect(left, top, right, bottom))
 		{
 			//fprintf(stderr, "adding object %s\n", obj->getObjectName());
@@ -290,11 +290,11 @@ ObjectSPtr_t Game::findObjectByRect(ObjectList &matched_objs, int left, int top,
 	}
 	
 	if(matched_objs.empty())
-		return ObjectSPtr_t();
+		return ObjectPtr();
 	else
 		return *matched_objs.begin();
 }
-ObjectSPtr_t Game::findObjectByRect(ObjectList &matched_objs, const Coordinate &top_left, const Coordinate &bottom_right)
+ObjectPtr Game::findObjectByRect(ObjectList &matched_objs, const Coordinate &top_left, const Coordinate &bottom_right)
 {
 	Coordinate top_left2(top_left), bottom_right2(bottom_right);
 	Coordinate::normalizeTopLeftCoordinate(top_left2, bottom_right2);
@@ -326,7 +326,7 @@ void Game::initPlayers()
 	this->m_players.clear();
 	for(int i = 0; i < Player::MAX_PLAYER + 1; i++)
 	{
-		PlayerSPtr_t player(new Player(this));
+		PlayerPtr player(new Player(this));
 		
 		player->setPlayerId(i);
 		player->setPlayerColor(player_colors[i]);
@@ -339,7 +339,7 @@ void Game::initPlayers()
 	}
 }
 
-const PlayerSPtr_t &Game::getPlayer(PlayerId_t player_id) const
+const PlayerPtr &Game::getPlayer(PlayerId_t player_id) const
 {
 	if(unlikely(player_id < 0 || player_id >= (PlayerId_t)this->m_players.size()))
 		throw new Exception("Invalid player id");

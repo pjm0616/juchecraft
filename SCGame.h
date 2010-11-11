@@ -28,13 +28,13 @@ public:
 	
 	// adds/removes an object.
 	// DO NOT call this function while iterating ObjectList.
-	const ObjectSPtr_t &addObject(const ObjectSPtr_t &obj);
-	ObjectSPtr_t newObject(ObjectId_t objid);
-	int removeObject(const ObjectSPtr_t &obj);
+	const ObjectPtr &addObject(const ObjectPtr &obj);
+	ObjectPtr newObject(ObjectId_t objid);
+	int removeObject(const ObjectPtr &obj);
 	void removeAllObjects();
 	
-	ObjectSPtr_t findObjectByRect(ObjectList &matched_objs, int left, int top, int right, int bottom);
-	ObjectSPtr_t findObjectByRect(ObjectList &matched_objs, const Coordinate &top_left, const Coordinate &bottom_right);
+	ObjectPtr findObjectByRect(ObjectList &matched_objs, int left, int top, int right, int bottom);
+	ObjectPtr findObjectByRect(ObjectList &matched_objs, const Coordinate &top_left, const Coordinate &bottom_right);
 	
 	double getElapsedTime() const;
 	double getCachedElapsedTime() const { return this->m_cached_elapsed_time; }
@@ -61,7 +61,7 @@ public:
 	void endGame() { this->m_is_game_ended = true; }
 	inline bool isGameEnded() const { return this->m_is_game_ended; }
 	
-	const PlayerSPtr_t &getPlayer(PlayerId_t player_id) const;
+	const PlayerPtr &getPlayer(PlayerId_t player_id) const;
 	const PlayerVector &getPlayers() const { return this->m_players; }
 	
 protected:

@@ -28,7 +28,7 @@ class UnitCommandInfo
 {
 public:
 	UnitCommandInfo(UnitCommandId_t cmdid)
-		:m_cmdid(cmdid)
+		: m_cmdid(cmdid)
 	{
 	}
 	~UnitCommandInfo()
@@ -78,7 +78,7 @@ public:
 	{
 	}
 	UnitCommand(UnitCommandId_t cmdid)
-		:m_cmdid(cmdid)
+		: m_cmdid(cmdid)
 	{
 	}
 	~UnitCommand()
@@ -102,7 +102,7 @@ private:
 	{
 		int type; // coordinate or object
 		Coordinate coord;
-		ObjectSPtr_t obj;
+		ObjectPtr obj;
 	} m_target;
 };
 

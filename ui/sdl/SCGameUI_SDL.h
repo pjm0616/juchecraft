@@ -21,7 +21,7 @@ public:
 	// dirpath: "./res/ui/sdl/object/"
 	static void load_resources(const char *dirpath);
 	
-	GameUI_SDL(Game *game, const PlayerSPtr_t &player);
+	GameUI_SDL(Game *game, const PlayerPtr &player);
 	virtual ~GameUI_SDL();
 	
 	virtual bool initUI();
@@ -38,7 +38,7 @@ protected:
 	#ifdef DRAW_OBJECTS_WITH_VIRTUAL_FXNS
 	virtual void drawObject(Object *obj);
 	#else
-	void drawObject(const ObjectSPtr_t &obj);
+	void drawObject(const ObjectPtr &obj);
 	void drawObjects();
 	#endif
 	

@@ -47,7 +47,7 @@ using namespace SC;
 
 
 Player::Player(Game *game)
-	:m_game(game)
+	: m_game(game)
 {
 	this->setPlayerId(-1);
 	this->setPlayerColor(0x000000);
@@ -70,7 +70,7 @@ Player::Player(Game *game)
 }
 
 
-bool Player::isSelectedObject(const ObjectSPtr_t &obj) const
+bool Player::isSelectedObject(const ObjectPtr &obj) const
 {
 	ObjectList::const_iterator it = std::find(this->m_selected_objs.begin(), 
 		this->m_selected_objs.end(), obj);
@@ -87,7 +87,7 @@ void Player::filterCurSelectedObjects(ObjectList &selected_objs, int select_cnt_
 	for(ObjectList::const_iterator it = selected_objs.begin(); 
 		it != selected_objs.end(); ++it)
 	{
-		const ObjectSPtr_t &obj = *it;
+		const ObjectPtr &obj = *it;
 		stats[obj->getObjectType()]++;
 		if(obj->getOwner().get() == this)
 			my_unit_cnt++;
@@ -96,7 +96,7 @@ void Player::filterCurSelectedObjects(ObjectList &selected_objs, int select_cnt_
 	for(ObjectList::iterator it = selected_objs.begin(); 
 		it != selected_objs.end(); )
 	{
-		const ObjectSPtr_t &obj = *it;
+		const ObjectPtr &obj = *it;
 		
 		// if there are at least one selected unit, deselect non-unit objects.
 		if(stats[ObjectType::Unit] > 0)

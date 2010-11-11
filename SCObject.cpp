@@ -89,8 +89,7 @@ void Object::ConstantAttributes::operator=(const ConstantAttributes &o)
 
 
 Object::Object(Game *game)
-	:m_this(this), 
-	m_game(game)
+	:m_game(game)
 {
 	this->setState(ObjectState::None);
 	
@@ -117,6 +116,15 @@ Object::~Object()
 {
 }
 
+ObjectPtr Object::makeThisPtr()
+{
+	assert(this->m_this.expired() == true);
+	
+	ObjectPtr ptr(this);
+	this->m_this = ptr;
+	return ptr;
+}
+
 void Object::init()
 {
 	this->setOwner(this->m_game->getPlayer(Player::NeutralPlayer));
@@ -138,6 +146,14 @@ void Object::cleanup()
 	}
 }
 
+ObjectPtr Object::clone()
+{
+	Object *obj = new Object(this->m_game);
+	obj->m_constattrs = this->m_constattrs;
+	
+	return obj->makeThisPtr();
+}
+
 
 void Object::attachToOwner()
 {
@@ -151,7 +167,7 @@ void Object::detachFromOwner()
 	this->getOwner()->decreaseSuppliesInUse(this->getRaceId(), this->getRequiredSupplies());
 }
 
-void Object::changeOwner(const PlayerSPtr_t &new_owner)
+void Object::changeOwner(const PlayerPtr &new_owner)
 {
 	this->detachFromOwner();
 	this->setOwner(new_owner);
@@ -166,15 +182,6 @@ void Object::setState(ObjectState_t state, bool onoff)
 		this->m_state |= state;
 	else
 		this->m_state &= ~state;
-}
-
-
-ObjectSPtr_t Object::clone()
-{
-	Object *obj = new Object(this->m_game);
-	obj->m_constattrs = this->m_constattrs;
-	
-	return obj->getSPtr();
 }
 
 void Object::clearActions()
@@ -217,7 +224,7 @@ bool Object::doAttack(float time)
 	assert(this->isAttacking() == true);
 	assert(this->getAttackTarget() != NULL);
 	
-	const ObjectSPtr_t &target = this->getAttackTarget();
+	const ObjectPtr &target = this->getAttackTarget();
 	Coordinate where_to_move;
 	if(this->checkMinDistance(target, this->getNetAttackRange(), &where_to_move))
 	{
@@ -280,7 +287,7 @@ void Object::stopAttacking()
 	//this->setLastAttackTime(this->m_game->getCachedElapsedTime()); // not necessary
 }
 
-bool Object::attack(const ObjectSPtr_t &target)
+bool Object::attack(const ObjectPtr &target)
 {
 	if(!this->canAttack() || target->isInvincible() || target.get() == this)
 	{
@@ -313,7 +320,7 @@ bool Object::attack(const ObjectSPtr_t &target)
 	return true;
 }
 
-bool Object::cmd_attack(const ObjectSPtr_t &target)
+bool Object::cmd_attack(const ObjectPtr &target)
 {
 	this->stopMoving();
 	return this->attack(target);
@@ -324,7 +331,7 @@ bool Object::cmd_move(const Coordinate &dest, MovementFlags_t flags)
 	this->stopAttacking();
 	return this->move(dest, flags);
 }
-bool Object::cmd_move(const ObjectSPtr_t &target, float minimum_distance, MovementFlags_t flags)
+bool Object::cmd_move(const ObjectPtr &target, float minimum_distance, MovementFlags_t flags)
 {
 	this->stopAttacking();
 	return this->move(target, minimum_distance, flags);
@@ -340,13 +347,20 @@ void Object::processFrame()
 	float deltat = this->m_game->getDelta();
 	
 	for(UnitActionTable::iterator it = this->m_actions.begin(); 
-		it != this->m_actions.end(); 
-		it++)
+		it != this->m_actions.end(); )
 	{
-		const UnitActionSPtr_t &act = it->second;
+		const UnitActionPtr &act = it->second;
 		if(act)
 		{
 			bool res = act->process(deltat);
+			if(res == true) // if finished then
+			{
+				this->m_actions.erase(it++);
+			}
+			else
+			{
+				++it;
+			}
 		}
 	}
 	#if 0
@@ -422,17 +436,18 @@ bool Object::insideRect(const Coordinate &top_left, const Coordinate &bottom_rig
 
 
 
-
-UnitActionSPtr_t &Object::getActionForWriting(UnitActionId_t action_id)
+#if 0
+UnitActionPtr &Object::getActionForWriting(UnitActionId_t action_id)
 {
-	UnitActionSPtr_t &action = this->m_actions[action_id];
+	UnitActionPtr &action = this->m_actions[action_id];
 	if(!action->getObject())
-		action->setObject(this->getSPtr());
+		action->setObject(this->ptr());
 	return action;
 }
-const UnitActionSPtr_t &Object::getAction(UnitActionId_t action_id) const
+#endif
+const UnitActionPtr &Object::getAction(UnitActionId_t action_id) const
 {
-	static UnitActionSPtr_t null_obj;
+	static UnitActionPtr null_obj;
 	UnitActionTable::const_iterator it = this->m_actions.find(action_id);
 	if(it == this->m_actions.end())
 		return null_obj;
@@ -440,7 +455,7 @@ const UnitActionSPtr_t &Object::getAction(UnitActionId_t action_id) const
 		return it->second;
 }
 
-void Object::setAction(const UnitActionSPtr_t &action)
+void Object::setAction(const UnitActionPtr &action)
 {
 	this->m_actions[action->getActionId()] = action;
 }

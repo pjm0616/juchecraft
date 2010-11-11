@@ -70,7 +70,7 @@ int main(int argc, char *argv[])
 		game.setMapSize(640*2, 480*2);
 		game.loadGameData(GAME_ROOT_DIR "./res/game/");
 		
-		const SC::PlayerSPtr_t &my_player = game.getPlayer(1);
+		const SC::PlayerPtr &my_player = game.getPlayer(1);
 		
 		fprintf(stderr, "Initializing UI...\n");
 		SC::GameUI *game_ui;

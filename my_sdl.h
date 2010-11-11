@@ -11,8 +11,8 @@ namespace SDL
 //#include <SDL/SDL_gfxBlitFunc.h>
 
 
-//typedef SC::shared_ptr<SDL_Surface> SDL_SurfaceSPtr_t;
-class SDL_SurfaceSPtr_t: public SC::shared_ptr<SDL_Surface>
+//typedef SC::shared_ptr<SDL_Surface> SDL_SurfacePtr;
+class SDL_SurfacePtr: public SC::shared_ptr<SDL_Surface>
 {
 public:
 	struct SDL_Surface_deleter
@@ -23,10 +23,10 @@ public:
 		}
 	};
 	
-	SDL_SurfaceSPtr_t()
+	SDL_SurfacePtr()
 	{
 	}
-	SDL_SurfaceSPtr_t(SDL_Surface *sf)
+	SDL_SurfacePtr(SDL_Surface *sf)
 		:SC::shared_ptr<SDL_Surface>(sf, SDL_Surface_deleter())
 	{
 	}

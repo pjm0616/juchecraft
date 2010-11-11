@@ -159,7 +159,7 @@ void GameUI_ncurses::load_resources(const char *dirpath)
 #define SC_NCURSES_UNIT_COLOR_PAIR_BASE 20
 
 
-GameUI_ncurses::GameUI_ncurses(Game *game, const PlayerSPtr_t &player)
+GameUI_ncurses::GameUI_ncurses(Game *game, const PlayerPtr &player)
 	:GameUI(game, player)
 {
 	
@@ -318,7 +318,7 @@ void GameUI_ncurses::draw()
 void GameUI_ncurses::drawUI()
 {
 	Game *game = this->m_game;
-	const PlayerSPtr_t &me = this->m_player;
+	const PlayerPtr &me = this->m_player;
 	
 	//ncurses::mvwprintw(this->m_wnd_stat, 0, 0, 
 	//	"Minerals: %d | Supplies: %d/%d", 
@@ -370,7 +370,7 @@ const std::string *GameUI_ncurses::getObjectImg(ObjectId_t id) const
 		return &it->second;
 }
 
-void GameUI_ncurses::drawObject(const ObjectSPtr_t &obj)
+void GameUI_ncurses::drawObject(const ObjectPtr &obj)
 {
 	int cx, cy, w, h;
 	int owner_id = obj->getOwner()->getPlayerId();
