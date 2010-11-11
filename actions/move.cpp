@@ -90,7 +90,9 @@ bool UnitAction_Move::process(const ObjectPtr &obj, float time)
 	// FIXME
 	if(unlikely(this->isStarted() == false))
 	{
-		if(!obj->canMove())
+		if(	!obj->canMove() || 
+			(obj->getPosition() == this->getDestination())
+			)
 		{
 			this->setAsFinished(true);
 			return false;

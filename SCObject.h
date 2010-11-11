@@ -15,7 +15,8 @@ namespace SC {
 
 
 
-/** @brief Abstract object class
+/** 
+ *  Abstract object class
  *  
  *  Warning: don't use ObjectPtr in Object. use ObjectWeakPtr instead.
  */
@@ -27,48 +28,44 @@ class Object: public WeakPtrOwner<Object>
 public:
 	/** @name Constructor/destructor */
 	//@{
-	/** @details You MUST call Object::makeThisPtr() and store the pointer somewhere IMMEDIATELY after the construction.
-	 *  @details You MUST call Object::init() before using this object.
+	/** 
+	 *  You MUST call Object::makeThisPtr() and store the pointer somewhere IMMEDIATELY after the construction.
+	 *  You MUST call Object::init() before using this object.
 	 *
 	 *  @param[in] game A pointer to SC::Game object.
 	 */
 	Object(Game *game);
-	/** @details You MUST call SC::Object::cleanup() before destruction.
+	/** 
+	 *  You MUST call SC::Object::cleanup() before destruction.
 	 */
 	virtual ~Object();
 	
 	/** @brief initializes the object after ctor.
-	 *  @details init() performs some initialization that uses virtual functions or variables that initialized at derived classes.
-	 *  @details this->m_game must be fully initialized before calling this function.
+	 *  
+	 *  init() performs some initialization that uses virtual functions or variables that initialized at derived classes.
+	 *  this->m_game must be fully initialized before calling this function.
 	 */
 	void init();
 	/** @brief cleans up the object before dtor.
-	 *  @details cleanup() performs some initialization that uses virtual functions.
+	 *  
+	 *  cleanup() performs some initialization that uses virtual functions.
 	 */
 	void cleanup();
 	//@}
 	
-	/** @brief checks if this object is removed from the game.
+	/** checks if this object is removed from the game.
 	 *  @return true if this object is removed from game.
 	 */
 	bool isRemovedFromGame() const { return this->m_cleanup_called; }
 	
-	/** @brief processes current frame.
+	/** processes current frame.
 	 *  @details This function is called from game main loop, in SC::Game.
 	 */
 	void processFrame();
 	
 	/** @name Unit owner related */
 	//@{
-	/** @brief Get player that owns this object.
-	 *
-	 *  @return A pointer to SC::Player that owns this object
-	 */
 	Player *getOwner() const { return this->m_owner; }
-	/** @brief Changes owner of the object.
-	 *
-	 *  @param[in] new_owner A pointer to SC::Player
-	 */
 	void changeOwner(Player *new_owner);
 	//@}
 	
@@ -96,14 +93,7 @@ public:
 	void addPosition(float x, float y) { this->m_pos.add(x, y); } /**< Increase object's coordinate */
 	//@}
 	
-	/** @brief Get object's current angle.
-	 *  @return The angle in degrees
-	 */
 	float getAngle() const { return this->m_angle; }
-	
-	/** @brief Set object's current angle.
-	 *  @return The angle in degrees
-	 */
 	void setAngle(float angle) { this->m_angle = angle; }
 	
 	//@{
