@@ -157,9 +157,9 @@ public:
 		return this->doAction(new UnitAction::Attack(target));
 	}
 	bool cmd_move(const Coordinate &pos, UnitAction::Move::MovementFlags_t flags = UnitAction::Move::MovementFlags::None)
-	{ return this->move(pos, flags); }
+	{ this->clearActions(); return this->move(pos, flags); }
 	bool cmd_attack(const ObjectPtr &target)
-	{ return this->attack(target); }
+	{ this->clearActions(); return this->attack(target); }
 	//@}
 	
 	//@{

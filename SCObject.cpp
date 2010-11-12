@@ -16,6 +16,7 @@
 
 #ifdef DEBUG
 #include <stdio.h>
+#include <iostream>
 #endif
 
 #include "defs.h"
@@ -414,12 +415,10 @@ bool Object::checkMinDistance(const ObjectPtr &target, float min_distance, Coord
 	Object *obj = this;
 	float cx = obj->getX(), w = obj->getWidth(), target_cx = target->getX(), target_w = target->getWidth();
 	float cy = obj->getY(), h = obj->getHeight(), target_cy = target->getY(), target_h = target->getHeight();
-	float x = cx - w/2, y = cy - h/2;
-	float target_x = target_cy - target_w/2, target_y = target_cy - target_h/2;
-	float x_center = x + w/2, target_x_center = target_x + target_w/2;
-	float y_center = y + h/2, target_y_center = target_y + target_h/2;
-	float dx_center = target_x_center - x_center;
-	float dy_center = target_y_center - y_center;
+	float x = cx - w/2, target_x = target_cx - target_w/2;
+	float y = cy - h/2, target_y = target_cy - target_h/2;
+	float dx_center = target_cx - cx;
+	float dy_center = target_cy - cy;
 	
 	Coordinate me_pnt;
 	Coordinate target_pnt;
@@ -468,15 +467,6 @@ bool Object::checkMinDistance(const ObjectPtr &target, float min_distance, Coord
 
 
 
-#if 0
-UnitActionPtr &Object::getActionForWriting(UnitActionId_t action_id)
-{
-	UnitActionPtr &action = this->m_actions[action_id];
-	if(!action->getObject())
-		action->setObject(this->ptr());
-	return action;
-}
-#endif
 const UnitAction::ActionPtr &Object::getAction(UnitAction::ActionId_t action_id) const
 {
 	static UnitAction::ActionPtr null_obj;

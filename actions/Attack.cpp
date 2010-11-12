@@ -41,6 +41,7 @@ using namespace SC::UnitAction;
 
 
 Attack::Attack(const ObjectPtr &target)
+	:Action(UnitAction::ActionId::Attack)
 {
 	this->setTarget(target);
 }
@@ -116,6 +117,11 @@ bool Attack::process(const ObjectPtr &obj, float time)
 				}
 			}
 		} /* if(this->checkMinDistance(target, this->getNetAttackRange(), &where_to_move)) */
+		else
+		{
+			// out of range
+			is_finished = true;
+		}
 	}
 	
 	if(is_finished)
