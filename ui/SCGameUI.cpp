@@ -17,7 +17,7 @@
 #include "SCException.h"
 #include "SCCoordinate.h"
 #include "SCObjectIdList.h"
-#include "SCUnitAction.h"
+#include "actions/UnitAction.h"
 #include "SCUnitCommand.h"
 #include "SCObject.h"
 #include "SCObjectList.h"
