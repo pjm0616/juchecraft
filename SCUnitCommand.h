@@ -5,12 +5,12 @@
 #define SCUnitCommand_H_
 
 namespace SC {
+namespace UnitCommand {
 
 
-
-namespace UnitCommandId
+namespace CommandId
 {
-	enum UnitCommandId
+	enum CommandId
 	{
 		None, 
 		Move, 
@@ -21,24 +21,24 @@ namespace UnitCommandId
 /** @brief An abstract class that describes unit orders
  *  @detail
  *  This class describes the constant information about the commands that user orders.
- *  For details, see UnitCommand.
- *  @sa UnitCommand
+ *  For details, see Command.
+ *  @sa Command
  */
-class UnitCommandInfo
+class CommandInfo
 {
 public:
-	UnitCommandInfo(UnitCommandId_t cmdid)
+	CommandInfo(CommandId_t cmdid)
 		: m_cmdid(cmdid)
 	{
 	}
-	~UnitCommandInfo()
+	~CommandInfo()
 	{
 	}
 	
-	UnitCommandId_t getCommandID() const { return this->m_cmdid; }
+	CommandId_t getCommandID() const { return this->m_cmdid; }
 	
 private:
-	UnitCommandId_t m_cmdid;
+	CommandId_t m_cmdid;
 	
 	/** @brief The requirements in order to execute this command
 	 */
@@ -61,38 +61,38 @@ private:
 /** @brief An abstract class that describes unit orders
  *  @detail
  *  This class describes commands that user orders.
- *  Basically a UnitCommand consists of a list of actions, command parameters, and 
+ *  Basically a Command consists of a list of actions, command parameters, and 
  *  required resources, upgrades, buildings, etc.
- *  Constant information is stored in UnitCommandInfo class.
+ *  Constant information is stored in CommandInfo class.
  *  Once a command is assigned to an object, 
  *  firstly the object checks if the conditions complies with the requirements.
  *  Then the actions specified in m_actionlist will be sequentially executed.
  *  When the final action is finished, the whole command is finished and, 
  *  SC::Object will execute next command in the queue.
- *  @sa UnitCommandInfo
+ *  @sa CommandInfo
  */
-class UnitCommand
+class Command
 {
 public:
-	UnitCommand()
+	Command()
 	{
 	}
-	UnitCommand(UnitCommandId_t cmdid)
+	Command(CommandId_t cmdid)
 		: m_cmdid(cmdid)
 	{
 	}
-	~UnitCommand()
+	~Command()
 	{
 	}
 	
-	UnitCommandId_t getCommandID() const { return this->m_cmdid; }
+	CommandId_t getCommandID() const { return this->m_cmdid; }
 	
 private:
-	UnitCommandId_t m_cmdid;
-	const UnitCommandInfo *m_info;
+	CommandId_t m_cmdid;
+	const CommandInfo *m_info;
 };
 
-class TargetedUnitCommand: public UnitCommand
+class TargetedCommand: public Command
 {
 public:
 
@@ -107,7 +107,7 @@ private:
 };
 
 
-
+} /* END OF namespace UnitCommand */
 } /* END OF namespace SC */
 
 #endif

@@ -25,7 +25,7 @@
 #include "SCException.h"
 #include "SCCoordinate.h"
 #include "SCObjectIdList.h"
-#include "SCUnitAction.h"
+#include "actions/UnitAction.h"
 #include "SCUnitCommand.h"
 #include "SCObject.h"
 #include "SCObjectList.h"
@@ -34,17 +34,17 @@
 #include "SCGame.h"
 
 using namespace SC;
+using namespace SC::UnitAction;
 
 
 
-
-UnitAction::UnitAction(UnitActionId_t actid)
+Action::Action(ActionId_t actid)
 	: m_actid(actid)
 	, m_is_finished(false)
 	, m_is_started(false)
 {
 }
-UnitAction::~UnitAction()
+Action::~Action()
 {
 }
 

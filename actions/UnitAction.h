@@ -5,21 +5,22 @@
 #define SCUnitAction_H_
 
 namespace SC {
+namespace UnitAction {
 
-
-/** An abstract class for UnitAction_*
+/** An abstract class for UnitAction::*
  */
-class UnitAction: public WeakPtrOwner<UnitAction>
+class Action: public WeakPtrOwner<Action>
 {
 public:
 	/** Warning: when calling this function, you must call setObject immediately
 	 */
-	UnitAction(UnitActionId_t actid = UnitActionId::None);
-	virtual ~UnitAction();
+	Action(ActionId_t actid = ActionId::None);
+	virtual ~Action();
 	
-	UnitActionId_t getActionId() const { return this->m_actid; }
+	ActionId_t getActionId() const { return this->m_actid; }
 	
-	virtual bool process(const ObjectPtr &obj, float time) {return false;}
+	virtual bool initAction(const ObjectPtr &obj) = 0;
+	virtual bool process(const ObjectPtr &obj, float time) = 0;
 	
 	bool isFinished() const { return this->m_is_finished; }
 	bool isStarted() const { return this->m_is_started; }
@@ -27,7 +28,7 @@ protected:
 	void setAsFinished(bool onoff = true) { this->m_is_finished = onoff; }
 	void setAsStarted(bool onoff = true) { this->m_is_started = onoff; }
 	
-	UnitActionId_t m_actid;
+	ActionId_t m_actid;
 	
 private:
 	bool m_is_finished, m_is_started;
@@ -35,7 +36,7 @@ private:
 
 
 
-
+} /* END OF namespace UnitAction */
 } /* END OF namespace SC */
 
 #endif

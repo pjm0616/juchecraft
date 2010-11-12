@@ -33,7 +33,7 @@
 #include "SCException.h"
 #include "SCCoordinate.h"
 #include "SCObjectIdList.h"
-#include "SCUnitAction.h"
+#include "actions/UnitAction.h"
 #include "SCUnitCommand.h"
 #include "SCObject.h"
 #include "SCObjectList.h"
@@ -211,9 +211,9 @@ size_t Player::selectObjects(const Coordinate &coord1, const Coordinate &coord2,
 
 
 
-const UnitCommand &Player::getFirstCommandInQueue() const
+const UnitCommand::Command &Player::getFirstCommandInQueue() const
 {
-	static UnitCommand no_command(UnitCommandId::None);
+	static UnitCommand::Command no_command(UnitCommand::CommandId::None);
 	if(!this->m_cmdqueue.empty())
 		return this->m_cmdqueue.front();
 	else

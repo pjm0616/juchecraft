@@ -5,9 +5,9 @@
 #define SCUnitAction_Move_H_
 
 namespace SC {
+namespace UnitAction {
 
-
-class UnitAction_Move: public UnitAction
+class Move: public Action
 {
 public:
 	/** @brief Defines movement options.
@@ -24,18 +24,13 @@ public:
 	};
 	typedef unsigned int MovementFlags_t;
 	
-	UnitAction_Move(const Coordinate &dest, MovementFlags_t flags = MovementFlags::None);
-	UnitAction_Move(const ObjectPtr &target, float minimum_distance = 0.0, MovementFlags_t flags = MovementFlags::None);
-	virtual ~UnitAction_Move(){}
+	Move(const Coordinate &dest, MovementFlags_t flags = MovementFlags::None);
+	Move(const ObjectPtr &target, float minimum_distance = 0.0, MovementFlags_t flags = MovementFlags::None);
+	virtual ~Move(){}
 	
+	virtual bool initAction(const ObjectPtr &obj);
 	virtual bool process(const ObjectPtr &obj, float time);
 private:
-	/** this is the main action function. this action is activated in this function.
-	 */
-	//@{
-	bool move(const Coordinate &dest, MovementFlags_t flags = MovementFlags::None);
-	bool move(const ObjectPtr &target, float minimum_distance = 0.0, MovementFlags_t flags = MovementFlags::None);
-	//@}
 	
 	//@{
 	void setTarget(const ObjectPtr &target, float minimum_distance = 0.0);
@@ -49,16 +44,6 @@ private:
 	
 	Coordinate calculateDestination_TargetedMoving();
 	Coordinate calculateSpeed(const ObjectPtr &obj, float time);
-	
-	//@{
-	bool checkMinDistanceOld(const ObjectPtr &obj, const ObjectPtr &target, float min_distance, Coordinate *where_to_move);
-	/** @brief checks the distance between `this' and `dest'
-	 *  @detail Checks if the distance if less(or equal) than `min_distance'.
-	 *  @detail if not, stores the coordinate to move in order to attack target in `where_to_move'.
-	 *  @return true if the distance if less(or equal) than `min_distance'. Otherwise false.
-	 */
-	bool checkMinDistance(const ObjectPtr &obj, const ObjectPtr &target, float min_distance, Coordinate *where_to_move);
-	//@}
 	
 	//@{
 	void setFinalDestination(const Coordinate &pos) { this->m_final_destination = pos; }
@@ -91,7 +76,7 @@ private:
 
 
 
-
+} /* END OF namespace UnitAction */
 } /* END OF namespace SC */
 
 #endif

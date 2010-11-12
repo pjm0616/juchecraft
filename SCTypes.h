@@ -116,33 +116,36 @@ class ObjectList;
 typedef std::map<ObjectId_t, ObjectPtr> ObjectTable;
 
 
-namespace UnitActionId
-{
-	typedef unsigned int UnitActionId_t;
-	// enum UnitActionId: see SCUnitActionIdList.h
-}
-namespace UnitActionId // FIXME
-{
-	enum UnitActionId
+namespace UnitAction {
+	namespace ActionId
 	{
-		None, 
-		Move, 
-		Attack, 
-	};
+		typedef unsigned int ActionId_t;
+		// enum ActionId: see actions/ActionIdList.h
+	}
+	namespace ActionId // FIXME
+	{
+		enum ActionId
+		{
+			None, 
+			Move, 
+			Attack, 
+		};
+	}
+	using ActionId::ActionId_t;
+	class Action;
+	typedef SC::shared_ptr<Action> ActionPtr;
+	typedef std::map<ActionId_t, ActionPtr> ActionTable;
 }
-using UnitActionId::UnitActionId_t;
-class UnitAction;
-typedef SC::shared_ptr<UnitAction> UnitActionPtr;
-typedef std::map<UnitActionId_t, UnitActionPtr> UnitActionTable;
 
-
-namespace UnitCommandId
-{
-	typedef unsigned int UnitCommandId_t;
-	// enum UnitCommandId: see SCUnitCommand.h
+namespace UnitCommand {
+	namespace CommandId
+	{
+		typedef unsigned int CommandId_t;
+		// enum CommandId: see commands/CommandIdList.h
+	}
+	using CommandId::CommandId_t;
+	class Command;
 }
-using UnitCommandId::UnitCommandId_t;
-class UnitCommand;
 
 ////// 
 

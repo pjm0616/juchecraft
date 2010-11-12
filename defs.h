@@ -11,12 +11,14 @@
 # define prefetch_read(addr_) __builtin_prefetch((addr_), 0)
 # define prefetch_write(addr_) __builtin_prefetch((addr_), 1)
 # define ATTRIBUTE_UNUSED __attribute__((unused))
+# define ATTRIBUTE_ALWAYS_INLINE __attribute__((always_inline))
 #else
 # define likely(expr_) (expr_r)
 # define unlikely(expr_) (expr_)
 # define prefetch_read(addr_) do{}while(0)
 # define prefetch_write(addr_) do{}while(0)
 # define ATTRIBUTE_UNUSED
+# define ATTRIBUTE_ALWAYS_INLINE
 #endif
 
 

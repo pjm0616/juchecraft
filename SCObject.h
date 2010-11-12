@@ -9,7 +9,7 @@
 #ifndef SCObject_H_
 #define SCObject_H_
 
-#include "SCUnitActionList.h" // FIXME: move this to elsewhere
+#include "actions/UnitActionList.h" // FIXME: move this to elsewhere
 
 namespace SC {
 
@@ -23,7 +23,7 @@ namespace SC {
 class Object: public WeakPtrOwner<Object>
 {
 	friend class ObjectFactory;
-	friend class UnitAction;
+	friend class UnitAction::Action;
 	
 public:
 	/** @name Constructor/destructor */
@@ -69,7 +69,6 @@ public:
 	void changeOwner(Player *new_owner);
 	//@}
 	
-	// Uncomment this if you need a public accessor for m_game.
 	Game *getGame() { return this->m_game; }
 	
 	/** @name Unit position */
@@ -112,70 +111,16 @@ public:
 	bool insideRect(int left, int top, int right, int bottom);
 	bool insideRect(const Coordinate &top_left, const Coordinate &bottom_right);
 	
-	#if 0
-	/** @name Movement methods */
+	
 	//@{
-	
-	
-	/** @brief Moves to coordinate, coordinate is corrected to unit's center.
-	 *
-	 *  @param[in] dest Coordinate to destination
-	 *  @param[in] flags Attack options. see MovementFlags.
-	 *  @return true if succeeded. false if there's an error.
-	 *  @sa MovementFlags
+	bool checkMinDistanceOld(const ObjectPtr &target, float min_distance, Coordinate *where_to_move);
+	/** @brief checks the distance between `this' and `dest'
+	 *  @detail Checks if the distance if less(or equal) than `min_distance'.
+	 *  @detail if not, stores the coordinate to move in order to reach target in `where_to_move'.
+	 *  @return true if the distance if less(or equal) than `min_distance'. Otherwise false.
 	 */
-	bool move(const Coordinate &dest, MovementFlags_t flags = MovementFlags::None);
-	/** @brief Moves to target object.
-	 *
-	 *  @param[in] target The destination object to move to
-	 *  @param[in] minimum_distance Minimum distance to target
-	 *  @param[in] flags Attack options. see MovementFlags.
-	 *  @return true if succeeded. false if there's an error.
-	 *  @sa MovementFlags
-	 */
-	bool move(const ObjectPtr &target, float minumum_distance = 0.0, MovementFlags_t flags = MovementFlags::None);
-	/** @brief Stops any other commands, and moves to coordinate. Coordinate is corrected to unit's center.
-	 *
-	 *  @param[in] dest Coordinate to destination
-	 *  @param[in] flags Attack options. see MovementFlags.
-	 *  @return true if succeeded. false if there's an error.
-	 *  @sa MovementFlags
-	 */
-	bool cmd_move(const Coordinate &dest, MovementFlags_t flags = MovementFlags::None);
-	/** @brief Stops any other commands, and moves to target object.
-	 *
-	 *  @param[in] target The destination object to move to
-	 *  @param[in] minimum_distance Minimum distance to target
-	 *  @param[in] flags Attack options. see MovementFlags.
-	 *  @return true if succeeded. false if there's an error.
-	 *  @sa MovementFlags
-	 */
-	bool cmd_move(const ObjectPtr &target, float minumum_distance = 0.0, MovementFlags_t flags = MovementFlags::None);
+	bool checkMinDistance(const ObjectPtr &target, float min_distance, Coordinate *where_to_move);
 	//@}
-	#endif
-	
-	#if 0
-	/** @name Attack methods */
-	//@{
-	/** @brief Attacks target object.
-	 *  @details If the distance to target is out of range, object moves to target.
-	 *
-	 *  @param[in] target The object to attack
-	 *  @return true if succeeded. false if there's an error.
-	 */
-	bool attack(const ObjectPtr &target);
-	/** @brief Stops any other commands, and attacks target object.
-	 *  @details If the distance to target is out of range, object moves to target.
-	 *
-	 *  @param[in] target The object to attack
-	 *  @return true if succeeded. false if there's an error.
-	 */
-	bool cmd_attack(const ObjectPtr &target);
-	
-	const ObjectPtr &getAttackTarget() const { return this->m_attack.target; }
-	double getLastAttackTime() const { return this->m_attack.last_attack_time; }
-	//@}
-	#endif
 	
 	/** @name Unit states */
 	//@{
@@ -192,25 +137,35 @@ public:
 	
 	//@{
 	void clearActions();
-	void setAction(const UnitActionPtr &action);
+private:
+	void setAction(const UnitAction::ActionPtr &action);
+public:
+	bool doAction(const UnitAction::ActionPtr &action);
+	bool doAction(UnitAction::Action *action) { return this->doAction(UnitAction::ActionPtr(action)); }
 	
-	const UnitActionPtr &getAction(UnitActionId_t action_id) const;
-	bool isActivatedAction(UnitActionId_t action_id) const { return (this->getAction(action_id) != NULL); }
-	
-	//UnitActionPtr &getActionForWriting(UnitActionId_t action_id);
+	const UnitAction::ActionPtr &getAction(UnitAction::ActionId_t action_id) const;
+	bool isActivatedAction(UnitAction::ActionId_t action_id) const { return (this->getAction(action_id) != NULL); }
 	//@}
+	
 	//@{
-	void move(const Coordinate &pos, UnitAction_Move::MovementFlags_t flags = UnitAction_Move::MovementFlags::None)
+	bool move(const Coordinate &pos, UnitAction::Move::MovementFlags_t flags = UnitAction::Move::MovementFlags::None)
 	{
-		this->setAction(UnitActionPtr(new UnitAction_Move(pos, flags)));
+		return this->doAction(new UnitAction::Move(pos, flags));
 	}
-	void cmd_move(const Coordinate &pos, UnitAction_Move::MovementFlags_t flags = UnitAction_Move::MovementFlags::None)
-	{ this->move(pos, flags); }
+	bool attack(const ObjectPtr &target)
+	{
+		return this->doAction(new UnitAction::Attack(target));
+	}
+	bool cmd_move(const Coordinate &pos, UnitAction::Move::MovementFlags_t flags = UnitAction::Move::MovementFlags::None)
+	{ return this->move(pos, flags); }
+	bool cmd_attack(const ObjectPtr &target)
+	{ return this->attack(target); }
 	//@}
+	
 	//@{
-	bool isMoving() const { return this->isActivatedAction(UnitActionId::Move); }
+	bool isMoving() const { return this->isActivatedAction(UnitAction::ActionId::Move); }
 	bool isStopped() const { return !this->isMoving(); }
-	bool isAttacking() const { return this->isActivatedAction(UnitActionId::Attack);; }
+	bool isAttacking() const { return this->isActivatedAction(UnitAction::ActionId::Attack);; }
 	//@}
 	
 	/** @name Unit abilities */
@@ -353,21 +308,6 @@ private:
 	void detachFromOwner();
 	//@}
 	
-	#if 0
-	/** @name Attack related */
-	//@{
-	void setAttackTarget(const ObjectPtr &target) { this->m_attack.target = target; }
-	void clearAttackTarget() { this->m_attack.target.reset(); }
-	void setLastAttackTime(double time) { this->m_attack.last_attack_time = time; }
-	/** @brief Processes attack.
-	 *  @detail Called by game main loop.
-	 *  @param[in] time this->game->getDelta()
-	 */
-	bool doAttack(float time);
-	void stopAttacking();
-	//@}
-	#endif
-	
 	/** @name production related */
 	//@{
 	void clearProductionQueue() { this->m_production.queue.clear(); }
@@ -403,18 +343,7 @@ private:
 	float m_mul_armor_bonus, m_mul_damage_bonus, m_mul_moving_speed_bonus, m_mul_attack_speed_bonus;
 	//@}
 	
-	UnitActionTable m_actions;
-	
-	#if 0
-	/** Attack related data */
-	struct ms_attack
-	{
-		double last_attack_time; /**< last attack time */
-		
-		// if(this->m_isMoving() && this->getAttackTarget()) then this object is moving to attack target
-		ObjectPtr target; // not null if attack target is set.
-	} m_attack;
-	#endif
+	UnitAction::ActionTable m_actions;
 	
 	/** Production related data */
 	struct ms_production

@@ -25,7 +25,7 @@
 #include "SCException.h"
 #include "SCCoordinate.h"
 #include "SCObjectIdList.h"
-#include "SCUnitAction.h"
+#include "actions/UnitAction.h"
 #include "SCUnitCommand.h"
 #include "SCObject.h"
 #include "SCObjectList.h"
@@ -210,106 +210,6 @@ float Object::getNetMovingSpeed() const
 
 
 #if 0
-bool Object::doAttack(float time)
-{
-	assert(this->isAttacking() == true);
-	assert(this->getAttackTarget() != NULL);
-	
-	const ObjectPtr &target = this->getAttackTarget();
-	Coordinate where_to_move;
-	if(this->checkMinDistance(target, this->getNetAttackRange(), &where_to_move))
-	{
-		this->setAngle(this->getPosition().calculateAngle(target->getPosition()));
-		
-		double elapsed_time = this->m_game->getCachedElapsedTime();
-		float attack_speed = this->getNetAttackSpeed(); // num_of_attacks per second
-		float last_attack = this->getLastAttackTime();
-		
-		int nattacks = (elapsed_time - last_attack) / (1.0 / attack_speed);
-		if(nattacks > 0)
-			this->setLastAttackTime(elapsed_time);
-		
-		for(; nattacks > 0; nattacks--)
-		{
-			//fprintf(stderr, "Attack!\n");
-			float t_damage = this->getNetDamage();
-			float d_armor = target->getNetArmor();
-			float net_damage = t_damage - d_armor;
-		
-			{ // debug
-				float prev_hp = target->getHP();
-				//fprintf(stderr, "Attack: damage: %f, armor: %f, netdamage: %f, hp: %f -> %f\n", 
-				//	t_damage, d_armor, net_damage, prev_hp, prev_hp - net_damage);
-			}
-		
-			target->decreaseHP(net_damage);
-			float hp = target->getHP();
-			if(hp <= 0)
-			{
-				this->m_game->removeObject(target);
-				// FIXME
-				//target->kill();
-				this->stopAttacking();
-				break;
-			}
-		}
-		return true;
-	} /* if(this->checkMinDistance(target, this->getNetAttackRange(), &where_to_move)) */
-	else
-	{
-		#if 0
-		this->stopAttacking();
-		fprintf(stderr, "Attack stopped\n");
-		#else
-		this->setState(ObjectState::Attacking, false);
-		//this->move(where_to_move);
-		this->move(target);
-		#endif
-		
-		return false;
-	} /* else */
-}
-
-void Object::stopAttacking()
-{
-	this->clearAttackTarget();
-	this->setState(ObjectState::Attacking, false);
-	
-	//this->setLastAttackTime(this->m_game->getCachedElapsedTime()); // not necessary
-}
-
-bool Object::attack(const ObjectPtr &target)
-{
-	if(!this->canAttack() || target->isInvincible() || target.get() == this)
-	{
-		return false;
-	}
-	
-	float range = this->getNetAttackRange();
-	this->setAttackTarget(target);
-	if(this->checkMinDistance(target, range, NULL) == false)
-	{
-		if(this->canMove())
-		{
-			//this->move(where_to_move);
-			this->move(target);
-			this->setMovement_MinimumDistanceToTarget(range);
-		}
-		else
-		{
-			this->clearAttackTarget();
-			return false;
-		}
-	} /* if(this->checkMinDistance(target, range, NULL) == false) */
-	else
-	{
-		this->setState(ObjectState::Attacking, true);
-		this->setLastAttackTime(this->m_game->getCachedElapsedTime());
-		//this->setAngle(this->getPosition().calculateAngle(target->getPosition()));
-	}
-	
-	return true;
-}
 
 bool Object::cmd_attack(const ObjectPtr &target)
 {
@@ -338,10 +238,10 @@ void Object::processFrame()
 	ObjectPtr thisptr = this->getPtr();
 	float deltat = this->m_game->getDelta();
 	
-	for(UnitActionTable::iterator it = this->m_actions.begin(); 
+	for(UnitAction::ActionTable::iterator it = this->m_actions.begin(); 
 		it != this->m_actions.end(); )
 	{
-		const UnitActionPtr &act = it->second;
+		const UnitAction::ActionPtr &act = it->second;
 		if(act)
 		{
 			bool res = act->process(thisptr, deltat);
@@ -427,6 +327,146 @@ bool Object::insideRect(const Coordinate &top_left, const Coordinate &bottom_rig
 }
 
 
+static float calculate_distance(float x1, float y1, float x2, float y2)
+{
+	float dx = fabs(x2 - x1);
+	float dy = fabs(y2 - y1);
+	float distance = sqrt(dx*dx + dy*dy);
+	return distance;
+}
+
+bool Object::checkMinDistanceOld(const ObjectPtr &target, float min_distance, Coordinate *where_to_move)
+{
+	Object *obj = this;
+	float my_xarr[4], target_xarr[4]; // 0, 1 = left, right
+	float my_yarr[4], target_yarr[4]; // 0, 1 = top, bottom
+	my_xarr[0] = obj->getX(); my_xarr[1] = obj->getX() + obj->getWidth();
+	my_yarr[0] = obj->getY(), my_yarr[1] = obj->getY() + obj->getHeight();
+	target_xarr[0] = target->getX(); target_xarr[1] = target->getX() + target->getWidth();
+	target_yarr[0] = target->getY(), target_yarr[1] = target->getY() + target->getHeight();
+	
+	float distances[16];
+	int idx = 0;
+	for(int i = 0; i < 2; i++)
+	{
+		for(int j = 0; j < 2; j++)
+		{
+			distances[idx++] = calculate_distance(my_xarr[j], my_yarr[i], target_xarr[j], target_yarr[i]);
+			distances[idx++] = calculate_distance(my_xarr[j], my_yarr[i], target_xarr[j], target_yarr[!i]);
+			distances[idx++] = calculate_distance(my_xarr[j], my_yarr[i], target_xarr[!j], target_yarr[i]);
+			distances[idx++] = calculate_distance(my_xarr[j], my_yarr[i], target_xarr[!j], target_yarr[!i]);
+		}
+	}
+	/*
+		// 0, 1, 2, 3 = tl, tr, bl, br
+		
+		tl, tl
+		tl, tr
+		tl, bl
+		tl, br
+		
+		tr, tl
+		tr, rl
+		tr, tb
+		tr, rb
+		
+		bl, tl
+		bl, rl
+		bl, tb
+		bl, rb
+		
+		br, tl
+		br, rl
+		br, tb
+		br, rb
+	*/
+	
+	int min = 0;
+	for(int i = 1; i < 16; i++)
+	{
+		if(distances[i] <= distances[min])
+		{
+			min = i;
+		}
+	}
+	
+	if(distances[min] <= min_distance)
+	{
+		return true;
+	}
+	else
+	{
+		float x, y;
+		
+		// 0, 1, 2, 3 = tl, tr, bl, br
+		int me_pnt = min / 4;
+		int target_pnt = min % 4;
+		
+		x = y = 0.0; // FIXME
+		
+		where_to_move->set(x, y);
+		return false;
+	}
+}
+
+bool Object::checkMinDistance(const ObjectPtr &target, float min_distance, Coordinate *where_to_move)
+{
+	Object *obj = this;
+	float cx = obj->getX(), w = obj->getWidth(), target_cx = target->getX(), target_w = target->getWidth();
+	float cy = obj->getY(), h = obj->getHeight(), target_cy = target->getY(), target_h = target->getHeight();
+	float x = cx - w/2, y = cy - h/2;
+	float target_x = target_cy - target_w/2, target_y = target_cy - target_h/2;
+	float x_center = x + w/2, target_x_center = target_x + target_w/2;
+	float y_center = y + h/2, target_y_center = target_y + target_h/2;
+	float dx_center = target_x_center - x_center;
+	float dy_center = target_y_center - y_center;
+	
+	Coordinate me_pnt;
+	Coordinate target_pnt;
+	if(dx_center < 0) // left
+	{
+		if(dy_center < 0) // top
+		{
+			me_pnt.set(x, y); // top left
+			target_pnt.set(target_x + target_w, target_y + target_h); // bottom right
+		}
+		else // bottom
+		{
+			me_pnt.set(x, y + h); // bottom left
+			target_pnt.set(target_x + target_h, target_y); // top right
+		}
+	}
+	else // right
+	{
+		if(dy_center < 0) // top
+		{
+			me_pnt.set(x + w, y); // top right
+			target_pnt.set(target_x, target_y + target_h); // bottom left
+		}
+		else // bottom
+		{
+			me_pnt.set(x + w, y + h); // bottom right
+			target_pnt.set(target_x, target_y); // top left
+		}
+	}
+	
+	float distance = me_pnt.calculateDistance(target_pnt);
+	if(distance <= min_distance)
+	{
+		return true;
+	}
+	else
+	{
+		if(where_to_move)
+		{
+			where_to_move->set(target->getPosition()); // FIXME!!
+		}
+		return false;
+	}
+}
+
+
+
 
 #if 0
 UnitActionPtr &Object::getActionForWriting(UnitActionId_t action_id)
@@ -437,19 +477,29 @@ UnitActionPtr &Object::getActionForWriting(UnitActionId_t action_id)
 	return action;
 }
 #endif
-const UnitActionPtr &Object::getAction(UnitActionId_t action_id) const
+const UnitAction::ActionPtr &Object::getAction(UnitAction::ActionId_t action_id) const
 {
-	static UnitActionPtr null_obj;
-	UnitActionTable::const_iterator it = this->m_actions.find(action_id);
+	static UnitAction::ActionPtr null_obj;
+	UnitAction::ActionTable::const_iterator it = this->m_actions.find(action_id);
 	if(it == this->m_actions.end())
 		return null_obj;
 	else
 		return it->second;
 }
 
-void Object::setAction(const UnitActionPtr &action)
+void Object::setAction(const UnitAction::ActionPtr &action)
 {
 	this->m_actions[action->getActionId()] = action;
+}
+
+bool Object::doAction(const UnitAction::ActionPtr &action)
+{
+	bool ret = action->initAction(this->getPtr());
+	if(ret)
+	{
+		this->setAction(action);
+	}
+	return ret;
 }
 
 

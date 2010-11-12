@@ -210,9 +210,9 @@ public:
 	//@}
 	
 	// command queue related
-	void addToCommandQueue(const UnitCommand &cmd) { this->m_cmdqueue.push_back(cmd); }
+	void addToCommandQueue(const UnitCommand::Command &cmd) { this->m_cmdqueue.push_back(cmd); }
 	void clearCommandQueue() { this->m_cmdqueue.clear(); }
-	const UnitCommand &getFirstCommandInQueue() const;
+	const UnitCommand::Command &getFirstCommandInQueue() const;
 	void popFirstCommandInQueue() { this->m_cmdqueue.pop_front(); }
 	bool isCommandQueueEmpty() const { return this->m_cmdqueue.empty(); }
 	
@@ -260,7 +260,7 @@ private:
 	ObjectList m_selected_objs; /**< The list of selected objects */
 	
 private:
-	std::deque<UnitCommand> m_cmdqueue;
+	std::deque<UnitCommand::Command> m_cmdqueue;
 };
 
 

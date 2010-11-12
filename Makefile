@@ -11,8 +11,8 @@ PGO_DIR			= ./tmp_profile/
 CROSSC				=
 
 SRCS_UI				= ui/SCGameUI.cpp ui/sdl/SCGameUI_SDL.cpp ui/ncurses/SCGameUI_ncurses.cpp
-SRCS_ACTIONS		= actions/move.cpp
-SRCS				= libs/etc/md5.c libs/jcimg/jcimg.cpp libs/luacpp/luacpp.cpp SCCoordinate.cpp SCObject.cpp SCUnitAction.cpp SCPlayer.cpp SCObjectList.cpp SCObjectFactory.cpp SCGame.cpp main.cpp $(SRCS_ACTIONS) $(SRCS_UI)
+SRCS_ACTIONS		= actions/UnitAction.cpp actions/Move.cpp actions/Attack.cpp
+SRCS				= libs/etc/md5.c libs/jcimg/jcimg.cpp libs/luacpp/luacpp.cpp SCCoordinate.cpp SCObject.cpp SCPlayer.cpp SCObjectList.cpp SCObjectFactory.cpp SCGame.cpp main.cpp $(SRCS_ACTIONS) $(SRCS_UI)
 TARGET1				= mini_sc
 
 DEFS				= -D_REENTRANT -fopenmp -D_FILE_OFFSET_BITS=64 -D_LARGEFILE64_SOURCE=1 -DBOOST_NO_RTTI

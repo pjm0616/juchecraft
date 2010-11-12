@@ -29,7 +29,7 @@
 #include "SCException.h"
 #include "SCCoordinate.h"
 #include "SCObjectIdList.h"
-#include "SCUnitAction.h"
+#include "actions/UnitAction.h"
 #include "SCUnitCommand.h"
 #include "SCObject.h"
 #include "SCObjectList.h"
@@ -351,7 +351,7 @@ void GameUI_SDL::processFrame()
 				this->m_gamescr_left_pos += 10;
 				break;
 			case 'a':
-				this->m_player->addToCommandQueue(UnitCommand(UnitCommandId::Attack));
+				this->m_player->addToCommandQueue(UnitCommand::Command(UnitCommand::CommandId::Attack));
 				break;
 			default:
 				break;
@@ -394,7 +394,7 @@ void GameUI_SDL::processFrame()
 			}
 			else if(ev.button.button == 1) // left button
 			{
-				if(this->m_player->getFirstCommandInQueue().getCommandID() == UnitCommandId::Attack)
+				if(this->m_player->getFirstCommandInQueue().getCommandID() == UnitCommand::CommandId::Attack)
 				{
 					ObjectList dummy;
 					ObjectPtr first = this->m_game->findObjectByRect(dummy, x, y, x+10, y+10);
@@ -405,7 +405,7 @@ void GameUI_SDL::processFrame()
 						for(ObjectList::const_iterator it = selected_objs.begin(); 
 							it != selected_objs.end(); ++it)
 						{
-							//(*it)->cmd_attack(first);
+							(*it)->cmd_attack(first);
 						}
 					}
 					else
@@ -413,7 +413,7 @@ void GameUI_SDL::processFrame()
 						for(ObjectList::const_iterator it = selected_objs.begin(); 
 							it != selected_objs.end(); ++it)
 						{
-							(*it)->cmd_move(Coordinate(x, y), UnitAction_Move::MovementFlags::AutomaticallyAttack);
+							(*it)->cmd_move(Coordinate(x, y), UnitAction::Move::MovementFlags::AutomaticallyAttack);
 						}
 					}
 					this->m_player->clearCommandQueue();
@@ -576,7 +576,7 @@ void GameUI_SDL::drawUI()
 	this->drawUI_ButtonsWnd();
 	
 	{	
-		if(this->m_player->getFirstCommandInQueue().getCommandID() == UnitCommandId::Attack)
+		if(this->m_player->getFirstCommandInQueue().getCommandID() == UnitCommand::CommandId::Attack)
 		{
 			SDL_print(this->m_font, this->m_screen, 210+50, 330, 150, 16, 0xffffffff, "Select target");
 		}

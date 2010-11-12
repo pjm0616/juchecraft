@@ -20,7 +20,7 @@
 #include "SCException.h"
 #include "SCCoordinate.h"
 #include "SCObjectIdList.h"
-#include "SCUnitAction.h"
+#include "actions/UnitAction.h"
 #include "SCUnitCommand.h"
 #include "SCObject.h"
 #include "SCObjectList.h"
@@ -63,7 +63,7 @@ bool ObjectFactory::load(const char *listfile)
 	while(lua_next(L, obj_data) != 0)
 	{
 		// stack: -2(key), -1(value)
-		int idx = luaL_checkint(L, -2);
+		//int idx = luaL_checkint(L, -2);
 		int objdata_idx = lua_gettop(L); // stack -1
 		
 		Object *obj = new Object(this->m_game);
