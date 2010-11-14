@@ -110,7 +110,7 @@ void Game::removeAllPlayers()
 void Game::startTimer()
 {
 #ifdef __WIN32__
-	timeBeginPeriod(1);
+	::timeBeginPeriod(1);
 #endif
 	this->setStartTime(this->getElapsedTime());
 }
@@ -118,25 +118,25 @@ void Game::startTimer()
 void Game::endTimer()
 {
 #ifdef __WIN32__
-	timeEndPeriod(1);
+	::timeEndPeriod(1);
 #endif
 }
 
 double Game::getElapsedTime() const
 {
 #ifdef __WIN32__
-	DWORD milisec = timeGetTime();
+	DWORD milisec = ::timeGetTime();
 	return (double)milisec / 1000;
 #else
 	// it seems that gettimeofday is faster than clock_gettime..
 # if 0
 	struct timespec tsp;
-	clock_gettime(CLOCK_MONOTONIC, &tsp);
+	::clock_gettime(CLOCK_MONOTONIC, &tsp);
 	double time = (tv.tv_sec - this->getStartTime()) + ((double)tv.tv_nsec / 1000000000);
 	return time;
 # else
 	struct timeval tv;
-	gettimeofday(&tv, NULL);
+	::gettimeofday(&tv, NULL);
 	double time = (tv.tv_sec - this->getStartTime()) + ((double)tv.tv_usec / 1000000);
 	return time;
 # endif
@@ -215,7 +215,7 @@ void Game::run()
 		}
 		
 		// limit update rate
-		usleep(sleep_time);
+		::usleep(sleep_time);
 		// calculate time
 		end_time = this->getElapsedTime();
 		this->setDelta(end_time - start_time);

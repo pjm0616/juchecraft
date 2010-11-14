@@ -243,7 +243,7 @@ void Object::processFrame()
 		it != this->m_actions.end(); )
 	{
 		const UnitAction::ActionPtr &act = it->second;
-		if(act)
+		if(likely(act))
 		{
 			bool res = act->process(thisptr, deltat);
 			if(res == true) // if finished then
@@ -255,43 +255,12 @@ void Object::processFrame()
 				++it;
 			}
 		}
-	}
-	#if 0
-	if(this->isMoving())
-	{
-		bool ret = doMovement(deltat);
-		if(ret == true) // if finished then
+		else
 		{
-		#if 0
-			if(this->getPosition() == this->getFinalDestination())
-			{
-				this->stopMoving();
-			}
-			else
-			{
-				//Coordinate next_pos = this->calculateNextDestination();
-				//this->setDestination(next_pos);
-			}
-		#else
-			
-			this->stopMoving();
-		#endif
-			
-			if(this->getAttackTarget() != NULL)
-			{
-				//this->attack(this->getAttackTarget());
-				this->setState(ObjectState::Attacking, true);
-				this->setLastAttackTime(this->m_game->getCachedElapsedTime());
-			}
+			this->m_actions.erase(it++);
+			assert(!"Should not happen. as3o4ifs83u4c09m");
 		}
 	}
-	if(this->isAttacking())
-	{
-		this->doAttack(deltat);
-	}
-	#endif
-	
-	// TODO
 }
 
 

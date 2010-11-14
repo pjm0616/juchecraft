@@ -6,15 +6,16 @@
 
 
 #ifdef __GNUC__
-# define likely(expr_) __builtin_expect((expr_), 1)
-# define unlikely(expr_) __builtin_expect((expr_), 0)
+/* `!!' resolves some issues related to boolean expression overloading */
+# define likely(expr_) __builtin_expect(!!(expr_), 1)
+# define unlikely(expr_) __builtin_expect(!!(expr_), 0)
 # define prefetch_read(addr_) __builtin_prefetch((addr_), 0)
 # define prefetch_write(addr_) __builtin_prefetch((addr_), 1)
 # define ATTRIBUTE_UNUSED __attribute__((unused))
 # define ATTRIBUTE_ALWAYS_INLINE __attribute__((always_inline))
 #else
-# define likely(expr_) (expr_r)
-# define unlikely(expr_) (expr_)
+# define likely(expr_) (!!(expr_))
+# define unlikely(expr_) (!!(expr_))
 # define prefetch_read(addr_) do{}while(0)
 # define prefetch_write(addr_) do{}while(0)
 # define ATTRIBUTE_UNUSED
