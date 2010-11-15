@@ -64,24 +64,17 @@ private:
 class Order
 {
 public:
-	Order()
-	{
-	}
-	Order(OrderId_t cmdid)
-		: m_cmdid(cmdid)
-	{
-	}
-	~Order()
-	{
-	}
+	Order();
+	Order(OrderId_t cmdid);
+	virtual ~Order();
 	
-	OrderId_t getOrderID() const { return this->m_cmdid; }
+	OrderId_t getOrderID() const { return this->m_orderid; }
 	
 	virtual bool initOrder(const ObjectPtr &obj) = 0;
 	virtual bool process(const ObjectPtr &obj, float time) = 0;
 	
 private:
-	OrderId_t m_cmdid;
+	OrderId_t m_orderid;
 	const OrderInfo *m_info;
 };
 

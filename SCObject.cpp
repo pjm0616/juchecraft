@@ -231,7 +231,6 @@ bool Object::cmd_move(const ObjectPtr &target, float minimum_distance, MovementF
 
 void Object::processFrame()
 {
-	ObjectPtr thisptr = this->getPtr();
 	float deltat = this->m_game->getDelta();
 	
 	// TODO: move these action iterator to UnitCommand class
@@ -242,7 +241,7 @@ void Object::processFrame()
 		const UnitAction::ActionPtr &act = it->second;
 		if(likely(act))
 		{
-			bool res = act->process(thisptr, deltat);
+			bool res = act->process(deltat);
 			if(res == true) // if finished then
 			{
 				this->m_actions.erase(it++);
@@ -465,14 +464,14 @@ bool Object::doAction(const UnitAction::ActionPtr &action)
 
 
 
-void Object::clearOrder()
+void Object::cancelOrder()
 {
 	this->m_order.reset();
 }
 
 bool Object::doOrder(const UnitOrder::OrderPtr &order)
 {
-	this->clearOrder();
+	this->cancelOrder();
 	bool ret = order->initOrder(this->getPtr());
 	if(ret)
 	{

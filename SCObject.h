@@ -140,8 +140,7 @@ private:
 	void clearActions();
 	void setAction(const UnitAction::ActionPtr &action);
 public:
-	//void cancelAction(UnitAction::ActionId_t actid);
-	//void cancelAllActions();
+	//void cancelAction(UnitAction::ActionId_t actid); // TODO: implement this
 	bool doAction(const UnitAction::ActionPtr &action);
 	bool doAction(UnitAction::Action *action) { return this->doAction(UnitAction::ActionPtr(action)); }
 	
@@ -150,8 +149,7 @@ public:
 	//@}
 	
 	//@{
-	void clearOrder();
-	//void cancelOrder(UnitOrder::OrderId_t ordid);
+	void cancelOrder();
 	bool doOrder(const UnitOrder::OrderPtr &cmd);
 	//@}
 	

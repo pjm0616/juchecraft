@@ -11,11 +11,13 @@ class Attack: public Action
 {
 public:
 	Attack(const ObjectPtr &target);
-	virtual ~Attack(){}
+	virtual ~Attack();
 	
 	virtual bool initAction(const ObjectPtr &obj);
-	virtual bool process(const ObjectPtr &obj, float time);
+	virtual bool process(float time);
 private:
+	void cleanup();
+	
 	void setTarget(const ObjectPtr &target) { this->m_target = target; }
 	void clearTarget() { this->m_target.reset(); }
 	const ObjectPtr &getTarget() const { return this->m_target; }

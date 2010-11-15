@@ -46,10 +46,18 @@ Attack::Attack(const ObjectPtr &target)
 	this->setTarget(target);
 }
 
+Attack::~Attack()
+{
+	this->cleanup();
+}
+
+
 
 bool Attack::initAction(const ObjectPtr &obj)
 {
 	assert(this->isStarted() == false && this->isFinished() == false);
+	this->setObject(obj);
+	
 	Game *game = obj->getGame();
 	const ObjectPtr &target = this->getTarget();
 
@@ -62,11 +70,18 @@ bool Attack::initAction(const ObjectPtr &obj)
 	return true;
 }
 
-bool Attack::process(const ObjectPtr &obj, float time)
+void Attack::cleanup()
+{
+	
+}
+
+
+bool Attack::process(float time)
 {
 	// if this function is called without being activated, return true (and remove this action in actionlist)
 	if(unlikely(this->isFinished()))
 		return true;
+	ObjectPtr obj = this->getObject();
 	Game *game = obj->getGame();
 	const ObjectPtr &target = this->getTarget();
 	bool is_finished = false;

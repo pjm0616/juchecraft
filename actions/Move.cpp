@@ -64,10 +64,18 @@ Move::Move(const ObjectPtr &target, float minimum_distance, MovementFlags_t flag
 	
 }
 
+Move::~Move()
+{
+	this->cleanup();
+}
+
+
 
 bool Move::initAction(const ObjectPtr &obj)
 {
 	assert(this->isStarted() == false && this->isFinished() == false);
+	this->setObject(obj);
+	
 	const ObjectPtr &target = this->getTarget();
 
 	if(	(obj->canMove() == false) || 
@@ -89,12 +97,17 @@ bool Move::initAction(const ObjectPtr &obj)
 	return true;
 }
 
+void Move::cleanup()
+{
+	
+}
 
 
-bool Move::process(const ObjectPtr &obj, float time)
+bool Move::process(float time)
 {
 	// if this function is called without being activated, return true (and remove this action in actionlist)
 	assert(this->isFinished() == false);
+	ObjectPtr obj = this->getObject();
 	const ObjectPtr &mvtarget = this->getTarget();
 	
 	if(mvtarget)
@@ -119,7 +132,7 @@ bool Move::process(const ObjectPtr &obj, float time)
 	float starty = this->getStartPoint().getY();
 	float destx = this->getDestination().getX();
 	float desty = this->getDestination().getY();
-	Coordinate d_move = this->calculateSpeed(obj, time);
+	Coordinate d_move = this->calculateSpeed(time);
 	Coordinate newpos = d_move + obj->getPosition();
 	float newx = newpos.getX();
 	float newy = newpos.getY();
@@ -171,8 +184,9 @@ void Move::setTarget(const ObjectPtr &target, float minimum_distance)
 	this->m_min_distance_to_target = minimum_distance;
 }
 
-Coordinate Move::calculateSpeed(const ObjectPtr &obj, float time)
+Coordinate Move::calculateSpeed(float time)
 {
+	ObjectPtr obj = this->getObject();
 	float v = obj->getNetMovingSpeed();
 	float startx = this->getStartPoint().getX();
 	float starty = this->getStartPoint().getY();

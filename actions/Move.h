@@ -26,11 +26,12 @@ public:
 	
 	Move(const Coordinate &dest, MovementFlags_t flags = MovementFlags::None);
 	Move(const ObjectPtr &target, float minimum_distance = 0.0, MovementFlags_t flags = MovementFlags::None);
-	virtual ~Move(){}
+	virtual ~Move();
 	
 	virtual bool initAction(const ObjectPtr &obj);
-	virtual bool process(const ObjectPtr &obj, float time);
+	virtual bool process(float time);
 private:
+	void cleanup();
 	
 	//@{
 	void setTarget(const ObjectPtr &target, float minimum_distance = 0.0);
@@ -43,7 +44,7 @@ private:
 	//@}
 	
 	Coordinate calculateDestination_TargetedMoving();
-	Coordinate calculateSpeed(const ObjectPtr &obj, float time);
+	Coordinate calculateSpeed(float time);
 	
 	//@{
 	void setFinalDestination(const Coordinate &pos) { this->m_final_destination = pos; }
