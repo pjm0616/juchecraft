@@ -239,6 +239,8 @@ void Object::processFrame()
 	ObjectPtr thisptr = this->getPtr();
 	float deltat = this->m_game->getDelta();
 	
+	// TODO: move these action iterator to UnitCommand class
+	// TODO: `Object' calls `this->m_command.process(thisptr, deltat)' and UnitCommand will do the job.
 	for(UnitAction::ActionTable::iterator it = this->m_actions.begin(); 
 		it != this->m_actions.end(); )
 	{
