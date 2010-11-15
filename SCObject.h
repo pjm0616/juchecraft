@@ -136,15 +136,23 @@ public:
 	//@{
 	
 	//@{
-	void clearActions();
 private:
+	void clearActions();
 	void setAction(const UnitAction::ActionPtr &action);
 public:
+	//void cancelAction(UnitAction::ActionId_t actid);
+	//void cancelAllActions();
 	bool doAction(const UnitAction::ActionPtr &action);
 	bool doAction(UnitAction::Action *action) { return this->doAction(UnitAction::ActionPtr(action)); }
 	
 	const UnitAction::ActionPtr &getAction(UnitAction::ActionId_t action_id) const;
 	bool isActivatedAction(UnitAction::ActionId_t action_id) const { return (this->getAction(action_id) != NULL); }
+	//@}
+	
+	//@{
+	void clearOrder();
+	//void cancelOrder(UnitOrder::OrderId_t ordid);
+	bool doOrder(const UnitOrder::OrderPtr &cmd);
 	//@}
 	
 	//@{
@@ -344,6 +352,7 @@ private:
 	//@}
 	
 	UnitAction::ActionTable m_actions;
+	UnitOrder::OrderPtr m_order;
 	
 	/** Production related data */
 	struct ms_production
@@ -353,7 +362,7 @@ private:
 	} m_production;
 	
 	//std::list<UpgradeId> m_upgrade_queue; /**< Currently not used; todo: implement this */
-	//std::deque<UnitOrder> m_order_queue; /**< Currently not used; todo: implement this */
+	//std::deque<UnitOrderPtr> m_order_queue; /**< Currently not used; todo: implement this */
 	
 	//RenderingContext *m_renderctx; /**< TODO: contains information about rendering states. animation frame etc. It's not used in Object class */
 	

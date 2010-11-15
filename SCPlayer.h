@@ -209,12 +209,12 @@ public:
 	const Coordinate &getSelectionStartCoordinate() const { return this->m_selection_start_coordinate; }
 	//@}
 	
-	// command queue related
-	void addToCommandQueue(const UnitCommand::Command &cmd) { this->m_cmdqueue.push_back(cmd); }
-	void clearCommandQueue() { this->m_cmdqueue.clear(); }
-	const UnitCommand::Command &getFirstCommandInQueue() const;
-	void popFirstCommandInQueue() { this->m_cmdqueue.pop_front(); }
-	bool isCommandQueueEmpty() const { return this->m_cmdqueue.empty(); }
+	// order queue related
+	void addToOrderQueue(const UnitOrder::OrderPtr &cmd) { this->m_orderqueue.push_back(cmd); }
+	void clearOrderQueue() { this->m_orderqueue.clear(); }
+	const UnitOrder::OrderPtr &getFirstOrderInQueue() const;
+	void popFirstOrderInQueue() { this->m_orderqueue.pop_front(); }
+	bool isOrderQueueEmpty() const { return this->m_orderqueue.empty(); }
 	
 public:
 	/** @brief set player id/color
@@ -260,7 +260,7 @@ private:
 	ObjectList m_selected_objs; /**< The list of selected objects */
 	
 private:
-	std::deque<UnitCommand::Command> m_cmdqueue;
+	std::deque<UnitOrder::OrderPtr> m_orderqueue;
 };
 
 

@@ -26,7 +26,7 @@
 #include "SCCoordinate.h"
 #include "SCObjectIdList.h"
 #include "actions/UnitAction.h"
-#include "SCUnitCommand.h"
+#include "orders/UnitOrder.h"
 #include "SCObject.h"
 #include "SCObjectList.h"
 #include "SCObjectFactory.h"

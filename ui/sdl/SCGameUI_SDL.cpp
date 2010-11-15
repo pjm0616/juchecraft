@@ -30,7 +30,7 @@
 #include "SCCoordinate.h"
 #include "SCObjectIdList.h"
 #include "actions/UnitAction.h"
-#include "SCUnitCommand.h"
+#include "orders/UnitOrder.h"
 #include "SCObject.h"
 #include "SCObjectList.h"
 #include "SCObjectFactory.h"
@@ -351,7 +351,7 @@ void GameUI_SDL::processFrame()
 				this->m_gamescr_left_pos += 10;
 				break;
 			case 'a':
-				this->m_player->addToCommandQueue(UnitCommand::Command(UnitCommand::CommandId::Attack));
+				this->m_player->addToOrderQueue(UnitOrder::Order(UnitOrder::OrderId::Attack));
 				break;
 			default:
 				break;
@@ -394,7 +394,7 @@ void GameUI_SDL::processFrame()
 			}
 			else if(ev.button.button == 1) // left button
 			{
-				if(this->m_player->getFirstCommandInQueue().getCommandID() == UnitCommand::CommandId::Attack)
+				if(this->m_player->getFirstOrderInQueue().getOrderID() == UnitOrder::OrderId::Attack)
 				{
 					ObjectList dummy;
 					ObjectPtr first = this->m_game->findObjectByRect(dummy, x, y, x+10, y+10);
@@ -416,7 +416,7 @@ void GameUI_SDL::processFrame()
 							(*it)->cmd_move(Coordinate(x, y), UnitAction::Move::MovementFlags::AutomaticallyAttack);
 						}
 					}
-					this->m_player->clearCommandQueue();
+					this->m_player->clearOrderQueue();
 				}
 				else
 				{
@@ -576,7 +576,7 @@ void GameUI_SDL::drawUI()
 	this->drawUI_ButtonsWnd();
 	
 	{	
-		if(this->m_player->getFirstCommandInQueue().getCommandID() == UnitCommand::CommandId::Attack)
+		if(this->m_player->getFirstOrderInQueue().getOrderID() == UnitOrder::OrderId::Attack)
 		{
 			SDL_print(this->m_font, this->m_screen, 210+50, 330, 150, 16, 0xffffffff, "Select target");
 		}

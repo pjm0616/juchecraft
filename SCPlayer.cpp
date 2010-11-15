@@ -34,7 +34,7 @@
 #include "SCCoordinate.h"
 #include "SCObjectIdList.h"
 #include "actions/UnitAction.h"
-#include "SCUnitCommand.h"
+#include "orders/UnitOrder.h"
 #include "SCObject.h"
 #include "SCObjectList.h"
 #include "SCObjectFactory.h"
@@ -211,14 +211,14 @@ size_t Player::selectObjects(const Coordinate &coord1, const Coordinate &coord2,
 
 
 
-const UnitCommand::Command &Player::getFirstCommandInQueue() const
+const UnitOrder::OrderPtr &Player::getFirstOrderInQueue() const
 {
-	static UnitCommand::Command no_command(UnitCommand::CommandId::None);
-	if(!this->m_cmdqueue.empty())
-		return this->m_cmdqueue.front();
+	static UnitOrder::OrderPtr no_order;
+	if(!this->m_orderqueue.empty())
+		return this->m_orderqueue.front();
 	else
 	{
-		return no_command;
+		return no_order;
 	}
 }
 

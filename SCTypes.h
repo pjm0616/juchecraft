@@ -131,20 +131,33 @@ namespace UnitAction {
 			Attack, 
 		};
 	}
+	
 	using ActionId::ActionId_t;
 	class Action;
 	typedef SC::shared_ptr<Action> ActionPtr;
 	typedef std::map<ActionId_t, ActionPtr> ActionTable;
 }
 
-namespace UnitCommand {
-	namespace CommandId
+namespace UnitOrder {
+	namespace OrderId
 	{
-		typedef unsigned int CommandId_t;
-		// enum CommandId: see commands/CommandIdList.h
+		typedef unsigned int OrderId_t;
+		// enum OrderId: see Orders/OrderIdList.h
 	}
-	using CommandId::CommandId_t;
-	class Command;
+	namespace OrderId
+	{
+		enum OrderId
+		{
+			None, 
+			Move, 
+			Attack, 
+		};
+	}
+	
+	using OrderId::OrderId_t;
+	class Order;
+	typedef SC::shared_ptr<Order> OrderPtr;
+	typedef std::map<OrderId_t, OrderPtr> OrderTable;
 }
 
 ////// 
@@ -155,12 +168,12 @@ namespace SpecialAbilityId
 }
 using SpecialAbilityId::SpecialAbility_t;
 
-namespace UnitCommandId
+namespace UnitOrderId
 {
-	typedef unsigned int UnitCommandId_t;
-	// enum UnitCommandId: see SCUnitCommandIdList.h
+	typedef unsigned int UnitOrderId_t;
+	// enum UnitOrderId: see SCUnitOrderIdList.h
 }
-using UnitCommandId::UnitCommandId_t;
+using UnitOrderId::UnitOrderId_t;
 
 
 

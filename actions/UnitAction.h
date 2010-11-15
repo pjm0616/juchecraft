@@ -12,8 +12,6 @@ namespace UnitAction {
 class Action: public WeakPtrOwner<Action>
 {
 public:
-	/** Warning: when calling this function, you must call setObject immediately
-	 */
 	Action(ActionId_t actid = ActionId::None);
 	virtual ~Action();
 	

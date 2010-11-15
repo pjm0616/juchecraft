@@ -27,7 +27,7 @@
 #include "SCCoordinate.h"
 #include "SCObjectIdList.h"
 #include "actions/UnitAction.h"
-#include "SCUnitCommand.h"
+#include "orders/UnitOrder.h"
 #include "SCObject.h"
 #include "SCObjectList.h"
 #include "SCObjectFactory.h"
@@ -174,11 +174,6 @@ void Object::setState(ObjectState_t state, bool onoff)
 		this->m_state |= state;
 	else
 		this->m_state &= ~state;
-}
-
-void Object::clearActions()
-{
-	this->m_actions.clear();
 }
 
 float Object::getArmorBonusA() const { return this->getOwner()->getPlayerArmorBonusA() + this->getObjectArmorBonusA();}
@@ -436,6 +431,11 @@ bool Object::checkMinDistance(const ObjectPtr &target, float min_distance, Coord
 
 
 
+void Object::clearActions()
+{
+	this->m_actions.clear();
+}
+
 const UnitAction::ActionPtr &Object::getAction(UnitAction::ActionId_t action_id) const
 {
 	static UnitAction::ActionPtr null_obj;
@@ -461,6 +461,23 @@ bool Object::doAction(const UnitAction::ActionPtr &action)
 	return ret;
 }
 
+
+
+void Object::clearOrder()
+{
+	this->m_order.reset();
+}
+
+bool Object::doOrder(const UnitOrder::OrderPtr &order)
+{
+	this->clearOrder();
+	bool ret = order->initOrder(this->getPtr());
+	if(ret)
+	{
+		this->m_order = order;
+	}
+	return ret;
+}
 
 
 
