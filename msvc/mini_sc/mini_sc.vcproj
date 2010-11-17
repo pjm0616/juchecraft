@@ -41,7 +41,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="&quot;$(SolutionDir)\..\platform_local\win32\include\&quot;;&quot;$(SolutionDir)\..\libs\boost\include\&quot;;&quot;$(SolutionDir)\..\&quot;;&quot;$(SolutionDir)\..\libs\&quot;;&quot;$(SolutionDir)\..\libs\lua\src\&quot;"
+				AdditionalIncludeDirectories="&quot;$(SolutionDir)\..\platform_local\win32\include\&quot;;&quot;$(SolutionDir)\..\libs\boost\include\&quot;;&quot;$(SolutionDir)\..\src\&quot;;&quot;$(SolutionDir)\..\libs\&quot;;&quot;$(SolutionDir)\..\libs\lua\src\&quot;"
 				PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
@@ -117,7 +117,7 @@
 				Name="VCCLCompilerTool"
 				Optimization="2"
 				EnableIntrinsicFunctions="true"
-				AdditionalIncludeDirectories="&quot;$(SolutionDir)\..\platform_local\win32\include\&quot;;&quot;$(SolutionDir)\..\libs\boost\include\&quot;;&quot;$(SolutionDir)\..\&quot;;&quot;$(SolutionDir)\..\libs\&quot;;&quot;$(SolutionDir)\..\libs\lua\src\&quot;"
+				AdditionalIncludeDirectories="&quot;$(SolutionDir)\..\platform_local\win32\include\&quot;;&quot;$(SolutionDir)\..\libs\boost\include\&quot;;&quot;$(SolutionDir)\..\src\&quot;;&quot;$(SolutionDir)\..\libs\&quot;;&quot;$(SolutionDir)\..\libs\lua\src\&quot;"
 				PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS"
 				RuntimeLibrary="2"
 				EnableFunctionLevelLinking="true"
@@ -177,45 +177,57 @@
 			UniqueIdentifier="{4FC737F1-C7A5-4376-A066-2A32D752A2FF}"
 			>
 			<File
-				RelativePath="..\..\main.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\SCCoordinate.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\SCGame.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\SCObject.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\SCObjectList.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\SCObjectFactory.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\SCPlayer.cpp"
+				RelativePath="..\..\src\main.cpp"
 				>
 			</File>
 			<Filter
-				Name="ui"
+				Name="game"
 				>
 				<File
-					RelativePath="..\..\ui\SCGameUI.cpp"
+					RelativePath="..\..\src\game\Coordinate.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\src\game\Game.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\src\game\Object.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\src\game\ObjectFactory.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\src\game\ObjectList.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\src\game\Player.cpp"
 					>
 				</File>
 				<Filter
-					Name="sdl"
+					Name="actions"
 					>
 					<File
-						RelativePath="..\..\ui\sdl\SCGameUI_SDL.cpp"
+						RelativePath="..\..\src\game\actions\Attack.cpp"
+						>
+					</File>
+					<File
+						RelativePath="..\..\src\game\actions\Move.cpp"
+						>
+					</File>
+					<File
+						RelativePath="..\..\src\game\actions\UnitAction.cpp"
+						>
+					</File>
+				</Filter>
+				<Filter
+					Name="orders"
+					>
+					<File
+						RelativePath="..\..\src\game\orders\UnitOrder.cpp"
 						>
 					</File>
 				</Filter>
@@ -376,6 +388,26 @@
 					</File>
 				</Filter>
 			</Filter>
+			<Filter
+				Name="ui"
+				>
+				<File
+					RelativePath="..\..\src\ui\GameUI.cpp"
+					>
+				</File>
+				<Filter
+					Name="sdl"
+					>
+					<File
+						RelativePath="..\..\src\ui\sdl\GameUI_SDL.cpp"
+						>
+					</File>
+				</Filter>
+				<Filter
+					Name="dummy"
+					>
+				</Filter>
+			</Filter>
 		</Filter>
 		<Filter
 			Name="헤더 파일"
@@ -383,145 +415,109 @@
 			UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}"
 			>
 			<File
-				RelativePath="..\..\compat.h"
+				RelativePath="..\..\src\compat.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\config.h"
+				RelativePath="..\..\src\config.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\defs.h"
+				RelativePath="..\..\src\defs.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\platform.h"
+				RelativePath="..\..\src\my_sdl.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\SCCoordinate.h"
+				RelativePath="..\..\src\platform.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\SCException.h"
+				RelativePath="..\..\src\smart_ptrs.h"
 				>
 			</File>
-			<File
-				RelativePath="..\..\SCGame.h"
+			<Filter
+				Name="game"
 				>
-			</File>
-			<File
-				RelativePath="..\..\SCObject.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\SCObjectIdList.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\SCObjectList.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\SCObjectFactory.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\SCPlayer.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\SCTypes.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\smart_ptrs.h"
-				>
-			</File>
+				<File
+					RelativePath="..\..\src\game\Coordinate.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\src\game\Exception.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\src\game\Game.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\src\game\Object.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\src\game\ObjectFactory.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\src\game\ObjectIdList.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\src\game\ObjectList.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\src\game\Player.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\src\game\Target.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\src\game\Types.h"
+					>
+				</File>
+				<Filter
+					Name="actions"
+					>
+					<File
+						RelativePath="..\..\src\game\actions\UnitAction.h"
+						>
+					</File>
+				</Filter>
+				<Filter
+					Name="orders"
+					>
+					<File
+						RelativePath="..\..\src\game\orders\UnitOrder.h"
+						>
+					</File>
+				</Filter>
+			</Filter>
 			<Filter
 				Name="ui"
 				>
 				<File
-					RelativePath="..\..\ui\SCGameUI.h"
+					RelativePath="..\..\src\ui\GameUI.h"
 					>
 				</File>
 				<Filter
 					Name="sdl"
 					>
 					<File
-						RelativePath="..\..\ui\sdl\SCGameUI_SDL.h"
-						>
-					</File>
-				</Filter>
-			</Filter>
-			<Filter
-				Name="objects"
-				>
-				<File
-					RelativePath="..\..\objects\SCBuildingObject.h"
-					>
-				</File>
-				<File
-					RelativePath="..\..\objects\SCBuildingObjects.h"
-					>
-				</File>
-				<File
-					RelativePath="..\..\objects\SCObjects.h"
-					>
-				</File>
-				<File
-					RelativePath="..\..\objects\SCResourceObject.h"
-					>
-				</File>
-				<File
-					RelativePath="..\..\objects\SCResourceObjects.h"
-					>
-				</File>
-				<File
-					RelativePath="..\..\objects\SCUnitObject.h"
-					>
-				</File>
-				<File
-					RelativePath="..\..\objects\SCUnitObjects.h"
-					>
-				</File>
-				<Filter
-					Name="units"
-					>
-					<File
-						RelativePath="..\..\objects\units\Juche_AojiWorker.h"
-						>
-					</File>
-					<File
-						RelativePath="..\..\objects\units\Terran_Marine.h"
-						>
-					</File>
-					<File
-						RelativePath="..\..\objects\units\Terran_SCV.h"
-						>
-					</File>
-					<File
-						RelativePath="..\..\objects\units\Zerg_Zergling.h"
+						RelativePath="..\..\src\ui\sdl\GameUI_SDL.h"
 						>
 					</File>
 				</Filter>
 				<Filter
-					Name="buildings"
+					Name="dummy"
 					>
 					<File
-						RelativePath="..\..\objects\buildings\Juche_RodongCorrectionalFacility.h"
-						>
-					</File>
-					<File
-						RelativePath="..\..\objects\buildings\Terran_CommandCenter.h"
-						>
-					</File>
-				</Filter>
-				<Filter
-					Name="resources"
-					>
-					<File
-						RelativePath="..\..\objects\resources\MineralField.h"
+						RelativePath="..\..\src\ui\dummy\GameUI_dummy.h"
 						>
 					</File>
 				</Filter>
