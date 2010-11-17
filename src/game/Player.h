@@ -211,6 +211,7 @@ public:
 	
 	// order queue related
 	void addToOrderQueue(const UnitOrder::OrderPtr &cmd) { this->m_orderqueue.push_back(cmd); }
+	void addToOrderQueue(UnitOrder::Order *cmd) { this->m_orderqueue.push_back(UnitOrder::OrderPtr(cmd)); }	// be careful when using this function
 	void clearOrderQueue() { this->m_orderqueue.clear(); }
 	const UnitOrder::OrderPtr &getFirstOrderInQueue() const;
 	void popFirstOrderInQueue() { this->m_orderqueue.pop_front(); }

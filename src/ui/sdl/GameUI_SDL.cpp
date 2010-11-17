@@ -351,7 +351,7 @@ void GameUI_SDL::processFrame()
 				this->m_gamescr_left_pos += 10;
 				break;
 			case 'a':
-				// this->m_player->addToOrderQueue(UnitOrder::Order(UnitOrder::OrderId::Attack)); // FIXME DEBUG TEMP
+				this->m_player->addToOrderQueue(new UnitOrder::Order(UnitOrder::OrderId::Attack));
 				break;
 			default:
 				break;
