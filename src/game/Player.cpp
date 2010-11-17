@@ -3,10 +3,6 @@
 
 #include "config.h"
 
-#ifdef __WIN32__
-#include <windows.h>
-#endif
-
 #include "smart_ptrs.h"
 #include <string>
 #include <list>
@@ -24,6 +20,9 @@
 
 #ifndef __WIN32__
 #include <sys/time.h>
+#endif
+#ifdef __WIN32__
+#include <windows.h>
 #endif
 
 #include "defs.h"
