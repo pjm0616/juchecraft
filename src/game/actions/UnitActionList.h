@@ -1,5 +1,5 @@
 
-#include "actions/Move.h"
-#include "actions/Attack.h"
+#include "game/actions/Move.h"
+#include "game/actions/Attack.h"
 
 

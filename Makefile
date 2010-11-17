@@ -10,14 +10,15 @@ PGO_DIR			= ./tmp_profile/
 
 CROSSC				=
 
-SRCS_UI				= ui/SCGameUI.cpp ui/sdl/SCGameUI_SDL.cpp ui/ncurses/SCGameUI_ncurses.cpp
-SRCS_ACTIONS		= actions/UnitAction.cpp actions/Move.cpp actions/Attack.cpp
-SRCS				= libs/etc/md5.c libs/jcimg/jcimg.cpp libs/luacpp/luacpp.cpp SCCoordinate.cpp SCObject.cpp SCPlayer.cpp SCObjectList.cpp SCObjectFactory.cpp SCGame.cpp main.cpp $(SRCS_ACTIONS) $(SRCS_UI)
+SRCS_UI				= src/ui/GameUI.cpp src/ui/sdl/GameUI_SDL.cpp src/ui/ncurses/GameUI_ncurses.cpp
+SRCS_ACTIONS		= src/game/actions/UnitAction.cpp src/game/actions/Move.cpp src/game/actions/Attack.cpp
+SRCS_ORDERS			= src/game/orders/UnitOrder.cpp
+SRCS				= libs/etc/md5.c libs/jcimg/jcimg.cpp libs/luacpp/luacpp.cpp src/game/Coordinate.cpp src/game/Object.cpp src/game/Player.cpp src/game/ObjectList.cpp src/game/ObjectFactory.cpp src/game/Game.cpp src/main.cpp $(SRCS_ACTIONS) $(SRCS_ORDERS) $(SRCS_UI)
 TARGET1				= mini_sc
 
 DEFS				= -D_REENTRANT -fopenmp -D_FILE_OFFSET_BITS=64 -D_LARGEFILE64_SOURCE=1 -DBOOST_NO_RTTI
 LIBS				= -fopenmp ./libs/lua/src/liblua.a -lSDL -lSDL_ttf -lSDL_image -lSDL_gfx -lz -lbz2 -lncursesw
-INCLUDEDIR			= -I. -Ilibs/lua/src -Ilibs
+INCLUDEDIR			= -Isrc -Ilibs/lua/src -Ilibs
 LIBDIR				=
 
 ifeq ($(DEBUG),1)

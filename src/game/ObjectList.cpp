@@ -15,14 +15,14 @@
 #endif
 
 #include "defs.h"
-#include "SCTypes.h"
-#include "SCCoordinate.h"
-#include "SCObjectIdList.h"
+#include "game/Types.h"
+#include "game/Coordinate.h"
+#include "game/ObjectIdList.h"
 #include "actions/UnitAction.h"
 #include "orders/UnitOrder.h"
-#include "SCObject.h"
-#include "SCObjectList.h"
-#include "SCPlayer.h"
+#include "game/Object.h"
+#include "game/ObjectList.h"
+#include "game/Player.h"
 
 using namespace SC;
 

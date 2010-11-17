@@ -12,7 +12,7 @@ TARGET1				= convert_grp
 
 DEFS				= -D_REENTRANT -D_FILE_OFFSET_BITS=64
 LIBS				= $(LIBOBJS) ./../../libs/lua/src/liblua.a -lSDL -lSDL_ttf -lSDL_image -lSDL_gfx -lz -lbz2
-INCLUDEDIR			= -I../.. -I../../libs/lua/src -I../../libs -I../libs -I../libs/libmpq/SFmpqapi
+INCLUDEDIR			= -I../../src -I../../libs/lua/src -I../../libs -I../libs -I../libs/libmpq/SFmpqapi
 LIBDIR				=
 
 ifeq ($(DEBUG),1)

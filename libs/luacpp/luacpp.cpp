@@ -29,7 +29,7 @@
 #include "defs.h"
 #include "luacpp_lua.h"
 #include "luacpp.h"
-#include "SCException.h"
+#include "game/Exception.h" // XXX
 
 
 luacpp::luacpp()

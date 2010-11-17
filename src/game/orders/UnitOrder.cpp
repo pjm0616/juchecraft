@@ -21,32 +21,32 @@
 #include "defs.h"
 #include "compat.h"
 #include "luacpp/luacpp.h"
-#include "SCTypes.h"
-#include "SCException.h"
-#include "SCCoordinate.h"
-#include "SCObjectIdList.h"
-#include "actions/UnitAction.h"
-#include "orders/UnitOrder.h"
-#include "SCObject.h"
-#include "SCObjectList.h"
-#include "SCObjectFactory.h"
-#include "SCPlayer.h"
-#include "SCGame.h"
+#include "game/Types.h"
+#include "game/Exception.h"
+#include "game/Coordinate.h"
+#include "game/ObjectIdList.h"
+#include "game/actions/UnitAction.h"
+#include "game/orders/UnitOrder.h"
+#include "game/Object.h"
+#include "game/ObjectList.h"
+#include "game/ObjectFactory.h"
+#include "game/Player.h"
+#include "game/Game.h"
 
 using namespace SC;
 using namespace SC::UnitOrder;
 
 
-Order()
+Order::Order()
 {
 }
 
-Order(OrderId_t cmdid)
-	: m_cmdid(cmdid)
+Order::Order(OrderId_t orderid)
+	: m_orderid(orderid)
 {
 }
 
-~Order()
+Order::~Order()
 {
 }
 

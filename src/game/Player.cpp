@@ -29,17 +29,17 @@
 #include "defs.h"
 #include "compat.h"
 #include "luacpp/luacpp.h"
-#include "SCTypes.h"
-#include "SCException.h"
-#include "SCCoordinate.h"
-#include "SCObjectIdList.h"
+#include "game/Types.h"
+#include "game/Exception.h"
+#include "game/Coordinate.h"
+#include "game/ObjectIdList.h"
 #include "actions/UnitAction.h"
 #include "orders/UnitOrder.h"
-#include "SCObject.h"
-#include "SCObjectList.h"
-#include "SCObjectFactory.h"
-#include "SCPlayer.h"
-#include "SCGame.h"
+#include "game/Object.h"
+#include "game/ObjectList.h"
+#include "game/ObjectFactory.h"
+#include "game/Player.h"
+#include "game/Game.h"
 
 using namespace SC;
 
@@ -213,7 +213,11 @@ size_t Player::selectObjects(const Coordinate &coord1, const Coordinate &coord2,
 
 const UnitOrder::OrderPtr &Player::getFirstOrderInQueue() const
 {
+#if 0
 	static UnitOrder::OrderPtr no_order;
+#else
+	static UnitOrder::OrderPtr no_order(new UnitOrder::Order(UnitOrder::OrderId::None));
+#endif
 	if(!this->m_orderqueue.empty())
 		return this->m_orderqueue.front();
 	else

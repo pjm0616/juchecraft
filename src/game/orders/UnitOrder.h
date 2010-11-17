@@ -65,13 +65,13 @@ class Order
 {
 public:
 	Order();
-	Order(OrderId_t cmdid);
+	Order(OrderId_t orderid);
 	virtual ~Order();
 	
 	OrderId_t getOrderID() const { return this->m_orderid; }
 	
-	virtual bool initOrder(const ObjectPtr &obj) = 0;
-	virtual bool process(const ObjectPtr &obj, float time) = 0;
+	virtual bool initOrder(const ObjectPtr &obj) {return false;} // = 0; // FIXME TODO
+	virtual bool process(const ObjectPtr &obj, float time) {return false;} // = 0; // FIXME TODO
 	
 private:
 	OrderId_t m_orderid;

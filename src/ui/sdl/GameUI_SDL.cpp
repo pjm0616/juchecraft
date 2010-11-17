@@ -25,20 +25,20 @@
 #include "defs.h"
 #include "compat.h"
 #include "luacpp/luacpp.h"
-#include "SCTypes.h"
-#include "SCException.h"
-#include "SCCoordinate.h"
-#include "SCObjectIdList.h"
-#include "actions/UnitAction.h"
-#include "orders/UnitOrder.h"
-#include "SCObject.h"
-#include "SCObjectList.h"
-#include "SCObjectFactory.h"
-#include "SCPlayer.h"
-#include "SCGame.h"
+#include "game/Types.h"
+#include "game/Exception.h"
+#include "game/Coordinate.h"
+#include "game/ObjectIdList.h"
+#include "game/actions/UnitAction.h"
+#include "game/orders/UnitOrder.h"
+#include "game/Object.h"
+#include "game/ObjectList.h"
+#include "game/ObjectFactory.h"
+#include "game/Player.h"
+#include "game/Game.h"
 
-#include "ui/SCGameUI.h"
-#include "ui/sdl/SCGameUI_SDL.h"
+#include "ui/GameUI.h"
+#include "ui/sdl/GameUI_SDL.h"
 
 #include "my_sdl.h"
 #include "jcimg/jcimg.h"
@@ -351,7 +351,7 @@ void GameUI_SDL::processFrame()
 				this->m_gamescr_left_pos += 10;
 				break;
 			case 'a':
-				this->m_player->addToOrderQueue(UnitOrder::Order(UnitOrder::OrderId::Attack));
+				// this->m_player->addToOrderQueue(UnitOrder::Order(UnitOrder::OrderId::Attack)); // FIXME DEBUG TEMP
 				break;
 			default:
 				break;
@@ -394,7 +394,7 @@ void GameUI_SDL::processFrame()
 			}
 			else if(ev.button.button == 1) // left button
 			{
-				if(this->m_player->getFirstOrderInQueue().getOrderID() == UnitOrder::OrderId::Attack)
+				if(this->m_player->getFirstOrderInQueue()->getOrderID() == UnitOrder::OrderId::Attack)
 				{
 					ObjectList dummy;
 					ObjectPtr first = this->m_game->findObjectByRect(dummy, x, y, x+10, y+10);
@@ -576,7 +576,7 @@ void GameUI_SDL::drawUI()
 	this->drawUI_ButtonsWnd();
 	
 	{	
-		if(this->m_player->getFirstOrderInQueue().getOrderID() == UnitOrder::OrderId::Attack)
+		if(this->m_player->getFirstOrderInQueue()->getOrderID() == UnitOrder::OrderId::Attack)
 		{
 			SDL_print(this->m_font, this->m_screen, 210+50, 330, 150, 16, 0xffffffff, "Select target");
 		}

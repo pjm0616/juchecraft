@@ -14,8 +14,8 @@
 #include <cassert>
 
 #include "defs.h"
-#include "SCException.h"
-#include "SCCoordinate.h"
+#include "game/Exception.h"
+#include "game/Coordinate.h"
 
 using namespace SC;
 
