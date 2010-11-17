@@ -733,7 +733,7 @@ void GameUI_SDL::drawObject(const ObjectPtr &obj)
 	//(this->m_player->isSelectionInProgress() && obj->insideRect(this->m_player->getSelectionStartCoordinate(), this->m_mouse_pos_in_gamescr))
 	if(this->m_player->isSelectedObject(obj))
 	{
-		uint8_t r, g, b;
+		Uint8 r, g, b;
 		if(owner == player)
 			(r = 0), (g = 255), (b = 0);
 		else if(owner->getRaceId() == RaceId::Neutral)

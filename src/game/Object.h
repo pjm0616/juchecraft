@@ -9,7 +9,7 @@
 #ifndef SCObject_H_
 #define SCObject_H_
 
-#include "actions/UnitActionList.h" // FIXME: move this to elsewhere
+#include "game/actions/UnitActionList.h" // FIXME: move this to elsewhere
 
 namespace SC {
 
