@@ -205,30 +205,6 @@ float Object::getNetMovingSpeed() const
 }
 
 
-#if 0
-
-bool Object::cmd_attack(const ObjectPtr &target)
-{
-	this->stopMoving();
-	return this->attack(target);
-}
-
-bool Object::cmd_move(const Coordinate &dest, MovementFlags_t flags)
-{
-	this->stopAttacking();
-	return this->move(dest, flags);
-}
-bool Object::cmd_move(const ObjectPtr &target, float minimum_distance, MovementFlags_t flags)
-{
-	this->stopAttacking();
-	return this->move(target, minimum_distance, flags);
-}
-
-
-
-#endif
-
-
 void Object::processFrame()
 {
 	float deltat = this->m_game->getDelta();

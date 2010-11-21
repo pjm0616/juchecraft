@@ -46,18 +46,15 @@ static float calculateAngle_Cartesian(float dx, float dy)
 	}
 	else
 	{
-		float m = dy / dx;
-		float rad = atan(m);
-		deg = fabs(rad2degf(rad));
+		float rad = atan2f(dy, dx);
+		deg = rad2degf(rad);
 		
-		if(dx < 0 && dy >= 0)
-			deg = 180 - deg;
-		else if(dx < 0 && dy < 0)
-			deg = 180 + deg;
-		else if(dx >= 0 && dy < 0)
-			deg = 360 - deg;
+		// 0	~ 180	deg	=>	+0	~	+pi	rad
+		// 180	~ 360	deg	=>	-pi	~	-0	rad
+		if(deg < 0)
+			deg = 360 + deg;
 		
-		//fprintf(stderr, "Angle: %f deg; dx: %f, dy: %f, m: %f\n", deg, dx, dy, m);
+		//fprintf(stderr, "Angle: %f rad, %f deg; dx: %f, dy: %f, m: %f\n", rad, deg, dx, dy, dy/dx);
 	}
 	assert(deg >= 0 && deg <= 360);
 	
