@@ -12,7 +12,6 @@
 #include <cmath>
 #include <cstdlib>
 #include <cstring>
-#include <cassert>
 
 #ifdef DEBUG
 #include <stdio.h>
@@ -24,6 +23,7 @@
 #include "game/Types.h"
 #include "game/Exception.h"
 #include "game/Coordinate.h"
+#include "game/Target.h"
 #include "game/ObjectIdList.h"
 #include "game/actions/UnitAction.h"
 #include "game/orders/UnitOrder.h"
@@ -54,11 +54,17 @@ Order::~Order()
 
 
 
+TargetedOrder::TargetedOrder()
+{
+}
 
+TargetedOrder::TargetedOrder(OrderId_t orderid)
+{
+}
 
-
-
-
+TargetedOrder::~TargetedOrder()
+{
+}
 
 
 

@@ -11,7 +11,6 @@
 namespace SC {
 
 
-class Object;
 class Coordinate
 {
 public:

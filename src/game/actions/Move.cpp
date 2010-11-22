@@ -12,7 +12,6 @@
 #include <cmath>
 #include <cstdlib>
 #include <cstring>
-#include <cassert>
 
 #ifdef DEBUG
 #include <stdio.h>
@@ -24,6 +23,7 @@
 #include "game/Types.h"
 #include "game/Exception.h"
 #include "game/Coordinate.h"
+#include "game/Target.h"
 #include "game/ObjectIdList.h"
 #include "game/actions/UnitAction.h"
 #include "game/orders/UnitOrder.h"
@@ -73,7 +73,7 @@ Move::~Move()
 
 bool Move::initAction(const ObjectPtr &obj)
 {
-	assert(this->isStarted() == false && this->isFinished() == false);
+	SCAssert(this->isStarted() == false && this->isFinished() == false);
 	this->setObject(obj);
 	
 	const ObjectPtr &target = this->getTarget();
@@ -106,7 +106,7 @@ void Move::cleanup()
 bool Move::process(float time)
 {
 	// if this function is called without being activated, return true (and remove this action in actionlist)
-	assert(this->isFinished() == false);
+	SCAssert(this->isFinished() == false);
 	ObjectPtr obj = this->getObject();
 	const ObjectPtr &mvtarget = this->getTarget();
 	

@@ -12,7 +12,6 @@
 #include <cmath>
 #include <cstdlib>
 #include <cstring>
-#include <cassert>
 
 #ifdef DEBUG
 #include <stdio.h>
@@ -24,6 +23,7 @@
 #include "game/Types.h"
 #include "game/Exception.h"
 #include "game/Coordinate.h"
+#include "game/Target.h"
 #include "game/ObjectIdList.h"
 #include "game/actions/UnitAction.h"
 #include "game/orders/UnitOrder.h"
@@ -55,7 +55,7 @@ Attack::~Attack()
 
 bool Attack::initAction(const ObjectPtr &obj)
 {
-	assert(this->isStarted() == false && this->isFinished() == false);
+	SCAssert(this->isStarted() == false && this->isFinished() == false);
 	this->setObject(obj);
 	
 	Game *game = obj->getGame();

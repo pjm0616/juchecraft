@@ -13,7 +13,7 @@ CROSSC				=
 SRCS_UI				= src/ui/GameUI.cpp src/ui/sdl/GameUI_SDL.cpp src/ui/ncurses/GameUI_ncurses.cpp
 SRCS_ACTIONS		= src/game/actions/UnitAction.cpp src/game/actions/Move.cpp src/game/actions/Attack.cpp
 SRCS_ORDERS			= src/game/orders/UnitOrder.cpp
-SRCS				= libs/etc/md5.c libs/jcimg/jcimg.cpp libs/luacpp/luacpp.cpp src/game/Coordinate.cpp src/game/Object.cpp src/game/Player.cpp src/game/ObjectList.cpp src/game/ObjectFactory.cpp src/game/Game.cpp src/main.cpp $(SRCS_ACTIONS) $(SRCS_ORDERS) $(SRCS_UI)
+SRCS				= libs/etc/md5.c libs/jcimg/jcimg.cpp libs/luacpp/luacpp.cpp src/game/Exception.cpp src/game/Coordinate.cpp src/game/Object.cpp src/game/Player.cpp src/game/ObjectList.cpp src/game/ObjectFactory.cpp src/game/Target.cpp src/game/Game.cpp src/main.cpp $(SRCS_ACTIONS) $(SRCS_ORDERS) $(SRCS_UI)
 TARGET1				= mini_sc
 
 DEFS				= -D_REENTRANT -fopenmp -D_FILE_OFFSET_BITS=64 -D_LARGEFILE64_SOURCE=1 -DBOOST_NO_RTTI
@@ -127,7 +127,7 @@ dep:	depclean .depend
 	$(CC) -MM $(CXXFLAGS) $(SRCS) 1>.depend
 
 depclean:
-	$(RM) .depend
+	$(RM) -f .depend
 
 
 

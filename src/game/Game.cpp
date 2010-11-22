@@ -9,7 +9,6 @@
 #include <map>
 #include <vector>
 #include <deque>
-#include <cassert>
 
 #ifdef DEBUG
 #include <cstdio>
@@ -31,6 +30,7 @@
 #include "game/Types.h"
 #include "game/Exception.h"
 #include "game/Coordinate.h"
+#include "game/Target.h"
 #include "game/ObjectIdList.h"
 #include "game/actions/UnitAction.h"
 #include "game/orders/UnitOrder.h"

@@ -24,6 +24,18 @@ private:
 	std::string m_errmsg;
 };
 
+#ifdef DEBUG
+void trigger_assertion_failure(const char *file, int line, const char *func, const char *expr, const char *comment);
+#define SCAssert(expr_) \
+	do { \
+		if(unlikely(!(expr_))) { \
+			trigger_assertion_failure(__FILE__, __LINE__, __func__, #expr_, NULL); \
+		} \
+	} while(0)
+#else
+#define SCAssert(expr_) do{}while(0)
+#endif
+
 
 } // end of namespace SC
 

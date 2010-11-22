@@ -12,7 +12,6 @@
 #include <cmath>
 #include <cstdlib>
 #include <cstring>
-#include <cassert>
 
 #ifdef DEBUG
 #include <stdio.h>
@@ -25,6 +24,7 @@
 #include "game/Types.h"
 #include "game/Exception.h"
 #include "game/Coordinate.h"
+#include "game/Target.h"
 #include "game/ObjectIdList.h"
 #include "game/actions/UnitAction.h"
 #include "game/orders/UnitOrder.h"
@@ -230,7 +230,7 @@ void Object::processFrame()
 		else
 		{
 			this->m_actions.erase(it++);
-			assert(!"Should not happen. as3o4ifs83u4c09m");
+			SCAssert(!"Should not happen. as3o4ifs83u4c09m");
 		}
 	}
 }

@@ -81,15 +81,15 @@ private:
 class TargetedOrder: public Order
 {
 public:
-
-private:
+	TargetedOrder();
+	TargetedOrder(OrderId_t orderid);
+	~TargetedOrder();
 	
-	struct
-	{
-		int type; // coordinate or object
-		Coordinate coord;
-		ObjectPtr obj;
-	} m_target;
+	void clearTarget() { this->m_target.clear(); }
+	void setTarget(const Target &target) { this->m_target = target; }
+	const Target &getTarget() const { return this->m_target; }
+private:
+	Target m_target;
 };
 
 

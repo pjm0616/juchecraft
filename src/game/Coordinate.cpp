@@ -11,7 +11,6 @@
 #include <string>
 #include <cmath>
 #include <cstdlib>
-#include <cassert>
 
 #include "defs.h"
 #include "game/Exception.h"
@@ -56,7 +55,7 @@ static float calculateAngle_Cartesian(float dx, float dy)
 		
 		//fprintf(stderr, "Angle: %f rad, %f deg; dx: %f, dy: %f, m: %f\n", rad, deg, dx, dy, dy/dx);
 	}
-	assert(deg >= 0 && deg <= 360);
+	SCAssert(deg >= 0 && deg <= 360);
 	
 	return deg;
 }
