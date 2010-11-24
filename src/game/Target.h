@@ -32,11 +32,15 @@ public:
 	
 	void clear();
 	int getType() const { return this->m_type; }
+	bool isClear() const { return (this->getType() == Type::None); }
+	bool isCoordinateTarget() const { return (this->getType() == Type::Coordinate); }
+	bool isObjectTarget() const { return (this->getType() == Type::Object); }
 	
 	void set(const Coordinate &coord);
 	void set(const ObjectPtr &obj);
 	const Coordinate &getCoordinate() const;
 	const ObjectPtr &getObject() const;
+	
 	
 private:
 	unsigned int m_type;

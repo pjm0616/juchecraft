@@ -99,8 +99,18 @@ void Target::set(const ObjectPtr &obj)
 
 const Coordinate &Target::getCoordinate() const
 {
-	SCAssert(this->getType() == Type::Coordinate);
-	return this->m_target.coord;
+	SCAssert(this->getType() != Type::None);
+	switch(this->getType())
+	{
+	case Type::Coordinate:
+		return this->m_target.coord;
+	case Type::Object:
+		return this->m_target.obj->getPosition();
+	default:
+		SCAssert(!"Cannot happen. ao34h093");
+		// Not reached
+		return this->m_target.coord; // make compiler happy
+	}
 }
 
 const ObjectPtr &Target::getObject() const

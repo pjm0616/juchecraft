@@ -48,5 +48,57 @@ Action::~Action()
 {
 }
 
+bool Action::initAction(const ObjectPtr &obj)
+{
+	SCAssert(this->isStarted() == false && this->isFinished() == false);
+	this->setObject(obj);
+	return true;
+}
+
+
+
+
+
+TargetedAction::TargetedAction(ActionId_t actid)
+	: Action(actid)
+{
+}
+TargetedAction::TargetedAction(const Target &target, ActionId_t actid)
+	: Action(actid), m_target(target)
+{
+}
+
+TargetedAction::~TargetedAction()
+{
+}
+
+bool TargetedAction::setTarget(const Target &target)
+{
+	if(target.isObjectTarget())
+	{
+		if(target.getObject() == this->getObject())
+			return false;
+	}
+	return true;
+}
+
+bool TargetedAction::initAction(const ObjectPtr &obj)
+{
+	if(!this->Action::initAction(obj))
+		return false;
+	
+	const Target &target = this->getTarget();
+	if(target.isObjectTarget() && target.getObject() == obj)
+		return false; // target cannot be itself
+	
+	return true;
+}
+
+
+
+
+
+
+
 
 

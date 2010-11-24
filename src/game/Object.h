@@ -139,6 +139,8 @@ public:
 private:
 	void clearActions();
 	void setAction(const UnitAction::ActionPtr &action);
+	
+	void processActions(float deltat);
 public:
 	//void cancelAction(UnitAction::ActionId_t actid); // TODO: implement this
 	bool doAction(const UnitAction::ActionPtr &action);

@@ -204,13 +204,8 @@ float Object::getNetMovingSpeed() const
 	return mvspeed;
 }
 
-
-void Object::processFrame()
+void Object::processActions(float deltat)
 {
-	float deltat = this->m_game->getDelta();
-	
-	// TODO: move these action iterator to UnitCommand class
-	// TODO: `Object' calls `this->m_command.process(thisptr, deltat)' and UnitCommand will do the job.
 	for(UnitAction::ActionTable::iterator it = this->m_actions.begin(); 
 		it != this->m_actions.end(); )
 	{
@@ -233,6 +228,15 @@ void Object::processFrame()
 			SCAssert(!"Should not happen. as3o4ifs83u4c09m");
 		}
 	}
+}
+
+void Object::processFrame()
+{
+	float deltat = this->m_game->getDelta();
+	
+	// TODO: move these action iterator to UnitCommand class
+	// TODO: `Object' calls `this->m_command.process(thisptr, deltat)' and UnitCommand will do the job.
+	this->processActions(deltat);
 }
 
 
@@ -425,6 +429,7 @@ const UnitAction::ActionPtr &Object::getAction(UnitAction::ActionId_t action_id)
 
 void Object::setAction(const UnitAction::ActionPtr &action)
 {
+	// TODO: check if action is a UnitAction::TargetedAction
 	this->m_actions[action->getActionId()] = action;
 }
 

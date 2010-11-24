@@ -41,27 +41,19 @@ using namespace SC::UnitAction;
 
 
 
-Move::Move(const Coordinate &dest, MovementFlags_t flags)
-	:Action(UnitAction::ActionId::Move)
+Move::Move(const Target &target, float minimum_distance, MovementFlags_t flags)
+	:TargetedAction(target, UnitAction::ActionId::Move)
 {
+	this->setMovementFlags(flags);
+	this->setMinimumDistanceToTarget(minimum_distance);
+	this->setFinalDestination(target.getCoordinate()); // not necessary if target is an object; our final destination is `target'
+	
 	#if 0
 	Coordinate next_pos = this->calculateNextDestination();
 	#else
-	Coordinate next_pos = dest;
+	Coordinate next_pos = target.getCoordinate();
 	#endif
-	
-	this->setMovementFlags(flags);
-	this->clearTarget();
-	this->setFinalDestination(dest);
 	this->setDestination(next_pos);
-}
-Move::Move(const ObjectPtr &target, float minimum_distance, MovementFlags_t flags)
-	:Action(UnitAction::ActionId::Move)
-{
-	this->setMovementFlags(flags);
-	this->setTarget(target, minimum_distance);
-	this->setFinalDestination(Coordinate(-1.0, -1.0)); // not necessary; our final destination is `target'
-	
 }
 
 Move::~Move()
@@ -73,13 +65,11 @@ Move::~Move()
 
 bool Move::initAction(const ObjectPtr &obj)
 {
-	SCAssert(this->isStarted() == false && this->isFinished() == false);
-	this->setObject(obj);
+	if(!this->TargetedAction::initAction(obj))
+		return false;
 	
-	const ObjectPtr &target = this->getTarget();
-
+	const Target &target = this->getTarget();
 	if(	(obj->canMove() == false) || 
-		(obj == target) || 
 		(obj->getPosition() == this->getDestination())
 		)
 	{
@@ -89,7 +79,7 @@ bool Move::initAction(const ObjectPtr &obj)
 	this->setStartPoint(obj->getPosition());
 	
 	// calculate angle if target is a coordinate
-	if(target == NULL)
+	if(target.isCoordinateTarget())
 		obj->setAngle(this->getStartPoint().calculateAngle(this->getDestination()));
 	
 	this->setAsStarted(true);
@@ -108,10 +98,11 @@ bool Move::process(float time)
 	// if this function is called without being activated, return true (and remove this action in actionlist)
 	SCAssert(this->isFinished() == false);
 	ObjectPtr obj = this->getObject();
-	const ObjectPtr &mvtarget = this->getTarget();
+	const Target &target = this->getTarget();
 	
-	if(mvtarget)
+	if(target.isObjectTarget())
 	{
+		const ObjectPtr &mvtarget = target.getObject();
 	#if 0
 		this->getDestination().set(this->calculateDestination_TargetedMoving());
 	#else
@@ -178,12 +169,6 @@ void Move::setDestination(const Coordinate &pos)
 	this->m_destination = pos;
 }
 
-void Move::setTarget(const ObjectPtr &target, float minimum_distance)
-{
-	this->m_target = target;
-	this->m_min_distance_to_target = minimum_distance;
-}
-
 Coordinate Move::calculateSpeed(float time)
 {
 	ObjectPtr obj = this->getObject();
@@ -235,12 +220,12 @@ Coordinate Move::calculateSpeed(float time)
 
 Coordinate Move::calculateDestination_TargetedMoving()
 {
-	const ObjectPtr &target = this->getTarget();
+	const Target &target = this->getTarget();
 	float min_dist = this->getMinimumDistanceToTarget();
 	
 	// TODO: implement this
 	
-	return target->getPosition();
+	return target.getObject()->getPosition();
 }
 
 

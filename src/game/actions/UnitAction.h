@@ -7,20 +7,23 @@
 namespace SC {
 namespace UnitAction {
 
+
 /** An abstract class for UnitAction::*
  */
 class Action: public WeakPtrOwner<Action>
 {
 public:
-	// initAction() must be called after ctor
+	/**
+	 *  WARNING: initAction() MUST be called immediately after the ctor call.
+	 *  Otherwise it may cause memory leak or something.
+	 */
 	Action(ActionId_t actid = ActionId::None);
 	virtual ~Action();
 	ObjectPtr getObject() { return this->m_obj.lock(); }
-	
 	ActionId_t getActionId() const { return this->m_actid; }
 	
 	// you must call setObject() in initAction
-	virtual bool initAction(const ObjectPtr &obj) = 0; // { this->setObject(obj); return true; }
+	virtual bool initAction(const ObjectPtr &obj);
 	virtual bool process(float time) = 0;
 	
 	bool isFinished() const { return this->m_is_finished; }
@@ -39,6 +42,22 @@ private:
 	bool m_is_finished, m_is_started;
 };
 
+class TargetedAction: public Action
+{
+public:
+	TargetedAction(ActionId_t actid = ActionId::None);
+	TargetedAction(const Target &target, ActionId_t actid = ActionId::None);
+	virtual ~TargetedAction();
+	
+	bool setTarget(const Target &target);
+	void clearTarget() { this->m_target.clear(); }
+	const Target &getTarget() const { return this->m_target; }
+	
+	virtual bool initAction(const ObjectPtr &obj);
+	
+private:
+	Target m_target; // assert(m_target != this->getObject());
+};
 
 
 } /* END OF namespace UnitAction */

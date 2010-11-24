@@ -7,7 +7,7 @@
 namespace SC {
 namespace UnitAction {
 
-class Move: public Action
+class Move: public TargetedAction
 {
 public:
 	/** @brief Defines movement options.
@@ -24,8 +24,7 @@ public:
 	};
 	typedef unsigned int MovementFlags_t;
 	
-	Move(const Coordinate &dest, MovementFlags_t flags = MovementFlags::None);
-	Move(const ObjectPtr &target, float minimum_distance = 0.0, MovementFlags_t flags = MovementFlags::None);
+	Move(const Target &target, float minimum_distance = 0.0, MovementFlags_t flags = MovementFlags::None);
 	virtual ~Move();
 	
 	virtual bool initAction(const ObjectPtr &obj);
@@ -34,9 +33,7 @@ private:
 	void cleanup();
 	
 	//@{
-	void setTarget(const ObjectPtr &target, float minimum_distance = 0.0);
-	void clearTarget() { this->m_target.reset(); }
-	const ObjectPtr &getTarget() const { return this->m_target; }
+	void setMinimumDistanceToTarget(float mindist) { this->m_min_distance_to_target = mindist; }
 	float getMinimumDistanceToTarget() const { return this->m_min_distance_to_target; }
 	
 	void setStartPoint(const Coordinate &pos) { this->m_start_point = pos; }
