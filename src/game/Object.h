@@ -96,17 +96,17 @@ public:
 	void setAngle(float angle) { this->m_angle = angle; }
 	
 	//@{
-	/** @brief Calculates angle from object to destination coordinate.
+	/** Calculates angle from object to destination coordinate.
 	 *  @return The angle in degrees
 	 */
 	float calculateAngle(const Coordinate &dest) const { return this->getPosition().calculateAngle(dest); }
-	/** @brief Calculates angle from object to destination object.
+	/** Calculates angle from object to destination object.
 	 *  @return The angle in degrees
 	 */
 	float calculateAngle(const ObjectPtr &dest) const { return this->calculateAngle(dest->getPosition()); }
 	//@}
 	
-	/** @brief Checks if this object is inside the rect
+	/** Checks if this object is inside the rect
 	 */
 	bool insideRect(int left, int top, int right, int bottom);
 	bool insideRect(const Coordinate &top_left, const Coordinate &bottom_right);
@@ -114,7 +114,7 @@ public:
 	
 	//@{
 	bool checkMinDistanceOld(const ObjectPtr &target, float min_distance, Coordinate *where_to_move);
-	/** @brief checks the distance between `this' and `dest'
+	/** checks the distance between `this' and `dest'
 	 *  @detail Checks if the distance if less(or equal) than `min_distance'.
 	 *  @detail if not, stores the coordinate to move in order to reach target in `where_to_move'.
 	 *  @return true if the distance if less(or equal) than `min_distance'. Otherwise false.
@@ -124,8 +124,7 @@ public:
 	
 	/** @name Unit states */
 	//@{
-	/** @brief Get current unit state.
-	 *
+	/** Get current unit state.
 	 *  @return true or false
 	 */
 	bool isBurrowed() const { return (this->getState() & ObjectState::Burrowed); }
@@ -204,20 +203,20 @@ public:
 	void increaseVespeneGas(int res) { this->m_remaining_vespene_gas += res; }
 	void decreaseVespeneGas(int res) { this->m_remaining_vespene_gas -= res; }
 	
-	/** @brief Calculates total armor of the object.
+	/** Calculates total armor of the object.
 	 *  @sa getArmor(), getArmorBonusA(), getArmorBonusM()
 	 */
 	float getNetArmor() const { return (this->getArmor() * this->getArmorBonusM()) + this->getArmorBonusA(); }
-	/** @brief Calculates total damage of the object.
+	/** Calculates total damage of the object.
 	 */
 	float getNetDamage() const;
-	/** @brief Calculates total moving speed of the object.
+	/** Calculates total moving speed of the object.
 	 */
 	float getNetMovingSpeed() const;
-	/** @brief Calculates total attack speed of the object.
+	/** Calculates total attack speed of the object.
 	 */
 	float getNetAttackSpeed() const { return (this->getAttackSpeed() * this->getAttackSpeedBonusM()) + this->getAttackSpeedBonusA(); }
-	/** @brief Calculates total attack range of the object.
+	/** Calculates total attack range of the object.
 	 */
 	float getNetAttackRange() const { return this->getAttackRange(); }
 	//@}
@@ -246,36 +245,36 @@ public:
 	//@}
 	
 	//@{
-	/** @brief Calculate total 'added armor bonuses'.
+	/** Calculate total 'added armor bonuses'.
 	 *  @sa getNetArmor()
 	 */
 	float getArmorBonusA() const;
-	/** @brief Calculate total 'added damage bonuses'.
+	/** Calculate total 'added damage bonuses'.
 	 *  @sa getNetArmor()
 	 */
 	float getDamageBonusA() const;
-	/** @brief Calculate total 'added moving speed bonuses'.
+	/** Calculate total 'added moving speed bonuses'.
 	 *  @sa getNetArmor()
 	 */
 	float getMovingSpeedBonusA() const;
-	/** @brief Calculate total 'added attack speed bonuses'.
+	/** Calculate total 'added attack speed bonuses'.
 	 *  @sa getNetArmor()
 	 */
 	float getAttackSpeedBonusA() const;
 	
-	/** @brief Calculate total 'multiplied armor bonuses'.
+	/** Calculate total 'multiplied armor bonuses'.
 	 *  @sa getNetArmor()
 	 */
 	float getArmorBonusM() const { return this->getObjectArmorBonusM();}
-	/** @brief Calculate total 'multiplied damage bonuses'.
+	/** Calculate total 'multiplied damage bonuses'.
 	 *  @sa getNetArmor()
 	 */
 	float getDamageBonusM() const { return this->getObjectDamageBonusM();}
-	/** @brief Calculate total 'multiplied moving speed bonuses'.
+	/** Calculate total 'multiplied moving speed bonuses'.
 	 *  @sa getNetArmor()
 	 */
 	float getMovingSpeedBonusM() const { return this->getObjectMovingSpeedBonusM();}
-	/** @brief Calculate total 'multiplied attack speed bonuses'.
+	/** Calculate total 'multiplied attack speed bonuses'.
 	 *  @sa getNetArmor()
 	 */
 	float getAttackSpeedBonusM() const { return this->getObjectAttackSpeedBonusM();}
@@ -284,17 +283,17 @@ public:
 public: /* protected */
 	/** @name Current unit states */
 	//@{{
-	/** @brief Get unit states.
+	/** Get unit states.
 	 *  @return unit's states
 	 *  @sa ObjectState
 	 */
 	ObjectState_t getState() const { return this->m_state; }
-	/** @brief Set unit states.
+	/** Set unit states.
 	 *  @param[in] state new unit state
 	 *  @sa ObjectState
 	 */
 	void setState(ObjectState_t state) { this->m_state = state; } // FIXME: change name
-	/** @brief Toggle specific unit state.
+	/** Toggle specific unit state.
 	 *  @param[in] state type of unit state to change
 	 *  @param[in] onoff true or false
 	 *  @sa ObjectState
@@ -306,11 +305,11 @@ private:
 	/** @name Unit owner related */
 	//@{
 	void setOwner(Player *new_owner) { this->m_owner = new_owner; }
-	/** @brief Attaches to current owner.
+	/** Attaches to current owner.
 	 *  @detail updates owner's suppliy statistics, etc.
 	 */
 	void attachToOwner();
-	/** @brief Detaches from current owner.
+	/** Detaches from current owner.
 	 *  @detail updates owner's suppliy statistics, etc.
 	 */
 	void detachFromOwner();
@@ -386,7 +385,7 @@ public:
 	int getHeight() const { return this->m_constattrs.height; }
 	void getSize(int *w, int *h) const { *w = this->getWidth(); *h = this->getHeight(); }
 	
-	/** @brief Get object's initial state.
+	/** Get object's initial state.
 	 *  @sa ObjectState
 	 */
 	ObjectState_t getInitialState() const { return this->m_constattrs.initial_state; }
@@ -397,27 +396,27 @@ public:
 	int getProvidedSupplies() const { return this->m_constattrs.provided_supplies; }
 	int getRequiredSupplies() const { return this->m_constattrs.required_supplies; }
 	
-	/** @brief Get bare armor of the object.
+	/** Get bare armor of the object.
 	 *  @detail DO NOT use this function unless you want the RAW unit attribute(without upgrades).
 	 *  @detail use getNetArmor() instead.
 	 */
 	float getArmor() const { return this->m_constattrs.armor; }
-	/** @brief Get bare damage of the object.
+	/** Get bare damage of the object.
 	 *  @detail DO NOT use this function unless you want the RAW unit attribute(without upgrades).
 	 *  @detail use getNetDamage() instead.
 	 */
 	float getDamage() const { return this->m_constattrs.damage; }
-	/** @brief Get bare moving speed of the object.
+	/** Get bare moving speed of the object.
 	 *  @detail DO NOT use this function unless you want the RAW unit attribute(without upgrades).
 	 *  @detail use getNetMovingSpeed() instead.
 	 */
 	float getMovingSpeed() const { return this->m_constattrs.moving_speed; }
-	/** @brief Get bare attack speed of the object.
+	/** Get bare attack speed of the object.
 	 *  @detail DO NOT use this function unless you want the RAW unit attribute(without upgrades).
 	 *  @detail use getNetAttackSpeed() instead.
 	 */
 	float getAttackSpeed() const { return this->m_constattrs.attack_speed; }
-	/** @brief Get bare attack range of the object.
+	/** Get bare attack range of the object.
 	 *  @detail DO NOT use this function unless you want the RAW unit attribute(without upgrades).
 	 *  @detail use getNetAttackRange() instead.
 	 */
@@ -425,7 +424,7 @@ public:
 	//@}
 	
 public:
-	/** @brief Creates a new object based on this object.
+	/** Creates a new object based on this object.
 	 *  @return Pointer to newly created object.
 	 *  @sa SC::ObjectFactory
 	 */
