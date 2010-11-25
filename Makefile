@@ -17,7 +17,7 @@ SRCS				= libs/etc/md5.c libs/jcimg/jcimg.cpp libs/luacpp/luacpp.cpp src/game/Ex
 TARGET1				= mini_sc
 
 DEFS				= -D_REENTRANT -fopenmp -D_FILE_OFFSET_BITS=64 -D_LARGEFILE64_SOURCE=1 -DBOOST_NO_RTTI
-LIBS				= -fopenmp ./libs/lua/src/liblua.a -lSDL -lSDL_ttf -lSDL_image -lSDL_gfx -lz -lbz2 -lncursesw
+LIBS				= -fopenmp ./libs/lua/src/liblua.a -lSDL -lSDL_ttf -lSDL_image -lSDL_gfx -lz -lbz2 -ldl -lncursesw
 INCLUDEDIR			= -Isrc -Ilibs/lua/src -Ilibs
 LIBDIR				=
 
@@ -46,10 +46,11 @@ endif
 endif
 
 
-
-CC					=$(CROSSC)gcc
-CXX					=$(CROSSC)g++
-LD					=$(CROSSC)g++
+#GCC_VERSION			=-4.5
+GCC_VERSION			=
+CC					=$(CROSSC)gcc$(GCC_VERSION)
+CXX					=$(CROSSC)g++$(GCC_VERSION)
+LD					=$(CROSSC)g++$(GCC_VERSION)
 AR					=$(CROSSC)ar
 AS					=$(CROSSC)as
 STRIP				=$(CROSSC)strip
