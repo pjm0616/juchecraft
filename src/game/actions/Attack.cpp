@@ -59,6 +59,9 @@ bool Attack::initAction(const ObjectPtr &obj)
 		return false;
 	if(!this->getTarget().isObjectTarget())
 		return false;
+	// copied from Attack::process, to check if we can attack before calling process(). it's not good. FIXME
+	if(!obj->canAttack() || this->getTarget().getObject()->isInvincible())
+		return false;
 	
 	Game *game = obj->getGame();
 	this->setLastAttackTime(game->getCachedElapsedTime()); // FIXME

@@ -59,8 +59,8 @@ public:
 	ObjectList &getObjectList() { return this->m_objects; }
 	const ObjectList &getObjectList() const { return this->m_objects; }
 	
-	// Uncomment this if you need a public accessor for m_ui.
-	//GameUI *getUI() { return this->m_ui; }
+	// Uncomment this if you really need a public accessor for m_ui.
+	GameUI *getUI() { return this->m_ui; }
 	
 	void endGame() { this->m_is_game_ended = true; }
 	inline bool isGameEnded() const { return this->m_is_game_ended; }

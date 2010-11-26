@@ -218,13 +218,18 @@ public:
 	void clearOrder();
 	const UnitOrder::OrderPtr &getOrder() const { return this->m_order; }
 	
-	/** set player's current order to currently selected objects
-	 *  You'll want to call clearOrder() after calling this function
+	/** set player's current order to currently selected objects and
+	 *  clears player's current order (calls clearOrder())
 	 */
 	void multiDoCurrentOrder();
-	/** clear orders of currently selected objects
+	/** clear orders of currently selected objects and
+	 *  clears player's current order (calls clearOrder())
 	 */
 	void multiCancelOrder();
+	
+	/** Sets target of player's current order. (specifically TargetedOrder)
+	 */
+	void setOrderTargetByCoord(const Coordinate &coord);
 	
 	// order queue related
 	#if 0
@@ -235,6 +240,8 @@ public:
 	void popFirstOrderInQueue() { this->m_orderqueue.pop_front(); }
 	bool isOrderQueueEmpty() const { return this->m_orderqueue.empty(); }
 	#endif
+	
+	void toast(const std::string &msg, time_t duration = -1); // FIXME: dirty hack; see Player.cpp
 	
 public:
 	/** @brief set player id/color

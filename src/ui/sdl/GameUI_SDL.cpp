@@ -379,59 +379,19 @@ void GameUI_SDL::processFrame()
 			this->m_mouse_pos_in_gamescr.set(x, y);
 			if(ev.button.button == 3) // right button
 			{
-				//fprintf(stderr, "move: %d, %d\n", ev.button.x, ev.button.y);
-				
-				this->m_player->setOrder(new UnitOrder::Move);
-				const UnitOrder::OrderPtr &order = this->m_player->getOrder();
-				UnitOrder::TargetedOrder *tgo = dynamic_cast<UnitOrder::TargetedOrder *>(order.get());
-				tgo->setTarget(Coordinate(x, y));
-				
+				this->m_player->setOrder(new UnitOrder::Move(Coordinate(x, y)));
 				this->m_player->multiDoCurrentOrder();
-				this->m_player->clearOrder();
-				
-				#if 0
-				const ObjectList &selected_objs = this->m_player->getSelectedObjs();
-				for(ObjectList::const_iterator it = selected_objs.begin(); 
-					it != selected_objs.end(); ++it)
-				{
-					#if 0
-					if(0)
-					{
-						x -= 8;
-						y -= 12;
-						(*it)->move_notAligned(Coordinate(x, y));
-					}
-					else
-					#endif
-					(*it)->cmd_move(Coordinate(x, y));
-				}
-				#endif
 			}
 			else if(ev.button.button == 1) // left button
 			{
 				const UnitOrder::OrderPtr &order = this->m_player->getOrder();
-				// there's a pending order
-				if(order && order->isStarted() == false)
+				UnitOrder::TargetedOrder *tgorder = dynamic_cast<UnitOrder::TargetedOrder *>(order.get());
+				
+				// if there's a pending targeted order
+				if(tgorder && tgorder->isStarted() == false)
 				{
-					UnitOrder::TargetedOrder *tgo = dynamic_cast<UnitOrder::TargetedOrder *>(order.get());
-					// This order is a TargetedOrder
-					if(tgo)
-					{
-						// check if there's an selectable object
-						ObjectList dummy;
-						ObjectPtr first = this->m_game->findObjectByRect(dummy, x, y, x, y);
-						if(first)
-							tgo->setTarget(first);
-						else
-							tgo->setTarget(Coordinate(x, y));
-						
-						this->m_player->multiDoCurrentOrder();
-						this->m_player->clearOrder();
-					}
-					else
-					{
-						// TODO
-					}
+					this->m_player->setOrderTargetByCoord(Coordinate(x, y));
+					this->m_player->multiDoCurrentOrder();
 				}
 				else
 				{
@@ -455,7 +415,6 @@ void GameUI_SDL::processFrame()
 			break;
 		}
 		case SDL_QUIT:
-			//std::exit(0);
 			this->m_game->endGame();
 			break;
 		default:
@@ -596,6 +555,12 @@ void GameUI_SDL::drawUI()
 		{
 			SDL_print(this->m_font, this->m_screen, 210+50, 330, 150, 16, 0xffffffff, "Select target");
 		}
+	}
+	if(!this->m_toast.msg.empty())
+	{
+		SDL_print(this->m_font, this->m_screen, 210+20, 350, 150, 16, 0xffffffff, this->m_toast.msg.data());
+		if((this->m_game->getCachedElapsedTime() - this->m_toast.started) >= this->m_toast.duration)
+			this->clearToast();
 	}
 }
 
@@ -863,6 +828,19 @@ void GameUI_SDL::drawObject(const ObjectPtr &obj)
 }
 
 
+void GameUI_SDL::toast(const std::string &msg, time_t duration)
+{
+	this->m_toast.msg = msg;
+	this->m_toast.duration = duration;
+	this->m_toast.started = this->m_game->getCachedElapsedTime();
+}
+
+void GameUI_SDL::clearToast()
+{
+	this->m_toast.msg.clear();
+	this->m_toast.duration = 0;
+	this->m_toast.started = 0;
+}
 
 
 

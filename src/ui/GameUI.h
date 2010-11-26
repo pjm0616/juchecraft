@@ -37,6 +37,15 @@ public:
 	virtual void processFrame() = 0;
 	virtual void draw() = 0;
 	
+	struct Toast
+	{
+		enum
+		{
+			DefaultDuration = 3, 
+		};
+	};
+	virtual void toast(const std::string &msg, time_t duration = GameUI::Toast::DefaultDuration) = 0;
+	
 	// Uncomment this if you need a public accessor for m_game.
 	//Game *getGame() { return this->m_game; }
 	// Uncomment this if you need a public accessor for m_player.

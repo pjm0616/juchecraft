@@ -26,6 +26,8 @@ public:
 			this->m_game->endGame();
 	}
 	virtual void draw() {}
+	
+	virtual void toast(const std::string &msg, time_t duration = GameUI::Toast::DefaultDuration) {}
 };
 
 

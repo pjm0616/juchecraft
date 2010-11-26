@@ -39,6 +39,7 @@
 #include "game/ObjectFactory.h"
 #include "game/Player.h"
 #include "game/Game.h"
+#include "ui/GameUI.h"
 
 using namespace SC;
 
@@ -229,6 +230,7 @@ void Player::multiDoCurrentOrder()
 	{
 		(*it)->doOrder(this->m_order->clone());
 	}
+	this->clearOrder();
 }
 
 void Player::multiCancelOrder()
@@ -238,6 +240,23 @@ void Player::multiCancelOrder()
 	{
 		(*it)->cancelOrder();
 	}
+	this->clearOrder();
+}
+
+void Player::setOrderTargetByCoord(const Coordinate &coord)
+{
+	UnitOrder::TargetedOrder *tgorder = dynamic_cast<UnitOrder::TargetedOrder *>(this->getOrder().get());
+	SCAssert(tgorder != NULL);
+	float x = coord.getX(), y = coord.getY();
+	
+	// check if there's an selectable object
+	ObjectList dummy;
+	ObjectPtr first = this->m_game->findObjectByRect(dummy, x, y, x, y);
+	
+	if(first)
+		tgorder->setTarget(first);
+	else
+		tgorder->setTarget(coord);
 }
 
 
@@ -258,6 +277,15 @@ const UnitOrder::OrderPtr &Player::getFirstOrderInQueue() const
 }
 #endif
 
+
+void Player::toast(const std::string &msg, time_t duration)
+{
+	// FIXME: dirty hack
+	if(duration == -1)
+		duration = GameUI::Toast::DefaultDuration;
+	
+	this->m_game->getUI()->toast(msg, duration);
+}
 
 
 

@@ -60,15 +60,21 @@ bool Attack::process(float time)
 	switch(this->m_state.step)
 	{
 	case 0: {
+		bool ret;
 		if(this->getTarget().isObjectTarget())
 		{
-			this->getObject()->doAction(new UnitAction::Attack(this->getTarget().getObject()));
+			ret = this->getObject()->doAction(new UnitAction::Attack(this->getTarget().getObject()));
 		}
 		else
 		{
-			this->getObject()->doAction(new UnitAction::Move(this->getTarget(), 
+			ret = this->getObject()->doAction(new UnitAction::Move(this->getTarget(), 
 				UnitAction::Move::MovementFlags::AutomaticallyAttack));
 		}
+		if(ret == false)
+		{
+			this->getObject()->getOwner()->toast(_("Unable to attack target"));
+		}
+		
 		this->m_state.step++;
 		
 		break; }

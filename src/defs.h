@@ -27,6 +27,9 @@
 # define M_PI 3.14159265358979323846
 #endif
 
+//#define _(str_) gettext(str_)
+#define _(str_) (str_)
+
 #ifdef __WIN32__
 # define snprintf _snprintf
 #endif
