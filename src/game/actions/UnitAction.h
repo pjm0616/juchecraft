@@ -36,10 +36,10 @@ protected:
 	// initAction() calls setObject()
 	void setObject(const ObjectPtr &obj) { this->m_obj = obj; }
 	
+private:
 	ActionId_t m_actid;
 	ObjectWeakPtr m_obj;
 	
-private:
 	bool m_is_finished, m_is_started;
 };
 

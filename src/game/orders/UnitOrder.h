@@ -81,15 +81,7 @@ protected:
 	void setAsFinished(bool onoff = true) { this->m_is_finished = onoff; }
 	void setAsStarted(bool onoff = true) { this->m_is_started = onoff; }
 	
-	OrderId_t m_orderid;
-	ObjectWeakPtr m_obj;
 	const OrderInfo *m_info;
-	
-	/** @name state information
-	 */
-	//@{
-	bool m_is_finished, m_is_started;
-	//@}
 	
 	template<class This_, class Base_>
 	inline This_ *do_clone_head(OrderPtr &cloned_order)
@@ -100,6 +92,16 @@ protected:
 		
 		return dynamic_cast<This_ *>(cloned_order.get());
 	}
+	
+private:
+	OrderId_t m_orderid;
+	ObjectWeakPtr m_obj;
+	
+	/** @name state information
+	 */
+	//@{
+	bool m_is_finished, m_is_started;
+	//@}
 };
 
 class TargetedOrder: public Order
@@ -116,7 +118,8 @@ public:
 	void clearTarget() { this->m_target.clear(); }
 	void setTarget(const Target &target) { this->m_target = target; }
 	const Target &getTarget() const { return this->m_target; }
-protected:
+	
+private:
 	Target m_target;
 };
 
