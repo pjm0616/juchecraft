@@ -121,7 +121,7 @@ protected:
 };
 
 
-/** Thid order does nothing
+/** This order does nothing
  */
 class NoOrder: public Order
 {
