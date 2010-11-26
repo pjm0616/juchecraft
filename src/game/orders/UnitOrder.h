@@ -75,10 +75,17 @@ public:
 	virtual bool process(float deltat);
 	virtual OrderPtr clone(OrderPtr cloned_order = null_order);
 	
+	bool isFinished() const { return this->m_is_finished; }
+	bool isStarted() const { return this->m_is_started; }
 protected:
+	void setAsFinished(bool onoff = true) { this->m_is_finished = onoff; }
+	void setAsStarted(bool onoff = true) { this->m_is_started = onoff; }
+	
 	OrderId_t m_orderid;
 	ObjectWeakPtr m_obj;
 	const OrderInfo *m_info;
+	
+	bool m_is_finished, m_is_started;
 	
 	template<class Base_, class This_>
 	inline This_ *do_clone_head(OrderPtr &cloned_order)

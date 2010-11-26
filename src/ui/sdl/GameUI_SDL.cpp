@@ -351,8 +351,11 @@ void GameUI_SDL::processFrame()
 			case SDLK_RIGHT:
 				this->m_gamescr_left_pos += 10;
 				break;
+			case 'm':
+				this->m_player->setOrder(new UnitOrder::Move);
+				break;
 			case 'a':
-				this->m_player->setOrder(new UnitOrder::Attack());
+				this->m_player->setOrder(new UnitOrder::Attack);
 				break;
 			default:
 				break;
@@ -377,12 +380,13 @@ void GameUI_SDL::processFrame()
 			{
 				//fprintf(stderr, "move: %d, %d\n", ev.button.x, ev.button.y);
 				
-				this->m_player->setOrder(new UnitOrder::Move());
-				const UnitOrder::OrderPtr order = this->m_player->getOrder();
+				this->m_player->setOrder(new UnitOrder::Move);
+				const UnitOrder::OrderPtr &order = this->m_player->getOrder();
 				UnitOrder::TargetedOrder *tgo = dynamic_cast<UnitOrder::TargetedOrder *>(order.get());
 				tgo->setTarget(Coordinate(x, y));
 				
 				this->m_player->multiDoCurrentOrder();
+				this->m_player->clearOrder();
 				
 				#if 0
 				const ObjectList &selected_objs = this->m_player->getSelectedObjs();
@@ -404,36 +408,29 @@ void GameUI_SDL::processFrame()
 			}
 			else if(ev.button.button == 1) // left button
 			{
-				if(this->m_player->getOrder()->getOrderID() == UnitOrder::OrderId::Attack)
+				const UnitOrder::OrderPtr &order = this->m_player->getOrder();
+				// there's a pending order
+				if(order && order->isStarted() == false)
 				{
-					ObjectList dummy;
-					ObjectPtr first = this->m_game->findObjectByRect(dummy, x, y, x+10, y+10);
-					const ObjectList &selected_objs = this->m_player->getSelectedObjs();
-				
-					if(first)
+					UnitOrder::TargetedOrder *tgo = dynamic_cast<UnitOrder::TargetedOrder *>(order.get());
+					// This order is a TargetedOrder
+					if(tgo)
 					{
-						const UnitOrder::OrderPtr order = this->m_player->getOrder();
-						UnitOrder::TargetedOrder *tgo = dynamic_cast<UnitOrder::TargetedOrder *>(order.get());
-						tgo->setTarget(first);
+						// check if there's an selectable object
+						ObjectList dummy;
+						ObjectPtr first = this->m_game->findObjectByRect(dummy, x, y, x, y);
+						if(first)
+							tgo->setTarget(first);
+						else
+							tgo->setTarget(Coordinate(x, y));
 						
 						this->m_player->multiDoCurrentOrder();
-						#if 0
-						for(ObjectList::const_iterator it = selected_objs.begin(); 
-							it != selected_objs.end(); ++it)
-						{
-							(*it)->cmd_attack(first);
-						}
-						#endif
+						this->m_player->clearOrder();
 					}
 					else
 					{
-						for(ObjectList::const_iterator it = selected_objs.begin(); 
-							it != selected_objs.end(); ++it)
-						{
-							(*it)->cmd_move(Coordinate(x, y), UnitAction::Move::MovementFlags::AutomaticallyAttack);
-						}
+						// TODO
 					}
-					this->m_player->clearOrder();
 				}
 				else
 				{
@@ -592,8 +589,9 @@ void GameUI_SDL::drawUI()
 	this->drawUI_UnitStatWnd();
 	this->drawUI_ButtonsWnd();
 	
-	{	
-		if(this->m_player->getOrder()->getOrderID() == UnitOrder::OrderId::Attack)
+	{
+		const UnitOrder::OrderPtr &order = this->m_player->getOrder();
+		if(dynamic_cast<UnitOrder::TargetedOrder *>(order.get()) != NULL && order->isStarted() == false)
 		{
 			SDL_print(this->m_font, this->m_screen, 210+50, 330, 150, 16, 0xffffffff, "Select target");
 		}

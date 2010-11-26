@@ -292,7 +292,7 @@ void Game::test_tmp1()
 
 
 
-ObjectPtr Game::findObjectByRect(ObjectList &matched_objs, int left, int top, int right, int bottom)
+ObjectPtr Game::findObjectByRect(ObjectList &matched_objs, int left, int top, int right, int bottom, unsigned int flags)
 {
 	ObjectList &objs = this->getObjectList();
 	
@@ -312,7 +312,7 @@ ObjectPtr Game::findObjectByRect(ObjectList &matched_objs, int left, int top, in
 	else
 		return *matched_objs.begin();
 }
-ObjectPtr Game::findObjectByRect(ObjectList &matched_objs, const Coordinate &top_left, const Coordinate &bottom_right)
+ObjectPtr Game::findObjectByRect(ObjectList &matched_objs, const Coordinate &top_left, const Coordinate &bottom_right, unsigned int flags)
 {
 	Coordinate top_left2(top_left), bottom_right2(bottom_right);
 	Coordinate::normalizeTopLeftCoordinate(top_left2, bottom_right2);

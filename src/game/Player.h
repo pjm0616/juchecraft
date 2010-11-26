@@ -209,13 +209,21 @@ public:
 	const Coordinate &getSelectionStartCoordinate() const { return this->m_selection_start_coordinate; }
 	//@}
 	
-	// prepare order
+	/** set player's current order
+	 */
 	void setOrder(const UnitOrder::OrderPtr &order);
 	void setOrder(UnitOrder::Order *order) { this->setOrder(UnitOrder::OrderPtr(order)); }
+	/** clear player's current order
+	 */
 	void clearOrder();
 	const UnitOrder::OrderPtr &getOrder() const { return this->m_order; }
 	
+	/** set player's current order to currently selected objects
+	 *  You'll want to call clearOrder() after calling this function
+	 */
 	void multiDoCurrentOrder();
+	/** clear orders of currently selected objects
+	 */
 	void multiCancelOrder();
 	
 	// order queue related
@@ -255,7 +263,8 @@ private:
 	float m_added_armor_bonus, m_added_damage_bonus, m_added_moving_speed_bonus, m_added_attack_speed_bonus;
 	
 private:
-	/** @brief filters objects in the list according to internal rules
+	/** filters objects in the list according to internal rules
+	 *  TODO: move to ObjectFilter.h
 	 *  @param[in] select_cnt_limit Maximum number of object to select.
 	 */
 	void filterCurSelectedObjects(ObjectList &selected_objs, int select_cnt_limit) const;

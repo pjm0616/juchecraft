@@ -40,8 +40,8 @@ using namespace SC::UnitAction;
 
 
 
-Attack::Attack(const ObjectPtr &target)
-	:Action(UnitAction::ActionId::Attack)
+Attack::Attack(const Target &target)
+	:TargetedAction(target, UnitAction::ActionId::Attack)
 {
 	this->setTarget(target);
 }
@@ -55,15 +55,12 @@ Attack::~Attack()
 
 bool Attack::initAction(const ObjectPtr &obj)
 {
-	SCAssert(this->isStarted() == false && this->isFinished() == false);
-	this->setObject(obj);
-	
-	Game *game = obj->getGame();
-	const ObjectPtr &target = this->getTarget();
-
-	if(target == obj)
+	if(!this->TargetedAction::initAction(obj))
+		return false;
+	if(!this->getTarget().isObjectTarget())
 		return false;
 	
+	Game *game = obj->getGame();
 	this->setLastAttackTime(game->getCachedElapsedTime()); // FIXME
 	this->setAsStarted(true);
 	
@@ -83,7 +80,7 @@ bool Attack::process(float time)
 		return true;
 	ObjectPtr obj = this->getObject();
 	Game *game = obj->getGame();
-	const ObjectPtr &target = this->getTarget();
+	const ObjectPtr &target = this->getTarget().getObject();
 	bool is_finished = false;
 	
 	// we put these here because unit attrs can change runtime

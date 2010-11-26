@@ -8,8 +8,11 @@
 #ifndef SCGame_H_
 #define SCGame_H_
 
-namespace SC {
+// FIXME: move this include directive to .cpp file
+#include "ObjectFilter.h"
 
+
+namespace SC {
 
 class GameUI;
 class Game
@@ -32,8 +35,10 @@ public:
 	ObjectPtr newObject(ObjectId_t objid);
 	int removeObject(const ObjectPtr &obj);
 	
-	ObjectPtr findObjectByRect(ObjectList &matched_objs, int left, int top, int right, int bottom);
-	ObjectPtr findObjectByRect(ObjectList &matched_objs, const Coordinate &top_left, const Coordinate &bottom_right);
+	ObjectPtr findObjectByRect(ObjectList &matched_objs, int left, int top, int right, int bottom, 
+		unsigned int flags = ObjectFilter::Selectable);
+	ObjectPtr findObjectByRect(ObjectList &matched_objs, const Coordinate &top_left, 
+		const Coordinate &bottom_right, unsigned int flags = ObjectFilter::Selectable);
 	
 	double getElapsedTime() const;
 	double getCachedElapsedTime() const { return this->m_cached_elapsed_time; }

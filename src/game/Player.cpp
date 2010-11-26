@@ -167,6 +167,8 @@ void Player::mergeObjectList(ObjectList &orig, const ObjectList &newobjs, Select
 
 void Player::startObjectSelection(const Coordinate &start_coord)
 {
+	this->clearOrder();
+	
 	this->m_selection_in_progress = true;
 	this->m_selection_start_coordinate = start_coord;
 }
@@ -216,7 +218,8 @@ void Player::setOrder(const UnitOrder::OrderPtr &order)
 }
 void Player::clearOrder()
 {
-	this->m_order.reset(new UnitOrder::NoOrder());
+	this->m_order.reset();
+	//this->m_order.reset(new UnitOrder::NoOrder());
 }
 
 void Player::multiDoCurrentOrder()

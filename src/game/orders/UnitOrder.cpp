@@ -40,6 +40,8 @@ using namespace SC::UnitOrder;
 Order::Order(OrderId_t orderid)
 	: m_orderid(orderid)
 {
+	this->setAsFinished(false);
+	this->setAsStarted(false);
 }
 
 Order::~Order()
@@ -49,6 +51,7 @@ Order::~Order()
 bool Order::initOrder(const ObjectPtr &obj)
 {
 	this->m_obj = obj;
+	this->setAsStarted(true);
 	return true;
 }
 

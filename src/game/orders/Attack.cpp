@@ -58,10 +58,22 @@ bool Attack::process(float time)
 	bool res = true;
 	switch(this->m_state.step)
 	{
-	case 0:
-		this->getObject()->doAction(new UnitAction::Attack(this->getTarget().getObject()));
+	case 0: {
+		if(this->getTarget().isObjectTarget())
+		{
+			this->getObject()->doAction(new UnitAction::Attack(this->getTarget().getObject()));
+		}
+		else
+		{
+			this->getObject()->doAction(new UnitAction::Move(this->getTarget(), 
+				UnitAction::Move::MovementFlags::AutomaticallyAttack));
+		}
 		this->m_state.step++;
-		break;
+		
+		break; }
+	case 1: {
+			
+		break; }
 	}
 	
 	return res;
