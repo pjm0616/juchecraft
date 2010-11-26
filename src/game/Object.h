@@ -61,7 +61,7 @@ public:
 	/** processes current frame.
 	 *  @details This function is called from game main loop, in SC::Game.
 	 */
-	void processFrame();
+	void processFrame(float deltat);
 	
 	/** @name Unit owner related */
 	//@{
@@ -140,6 +140,7 @@ private:
 	void setAction(const UnitAction::ActionPtr &action);
 	
 	void processActions(float deltat);
+	bool processOrder(float deltat);
 public:
 	//void cancelAction(UnitAction::ActionId_t actid); // TODO: implement this
 	bool doAction(const UnitAction::ActionPtr &action);

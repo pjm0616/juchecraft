@@ -145,18 +145,20 @@ double Game::getElapsedTime() const
 
 void Game::processObjects()
 {
+	float deltat = this->getDelta();
+	
 	ObjectList &objs = this->getObjectList();
 #if 0
 	for(ObjectList::iterator it = objs.begin(); it != objs.end(); ++it)
 	{
-		it->get()->processFrame();
+		it->get()->processFrame(deltat);
 	}
 #else
 	objs.resetIteratorChecker();
 	for(ObjectList::const_iterator it = objs.begin(); it != objs.end(); )
 	{
 		const ObjectPtr &obj = *it;
-		obj->processFrame();
+		obj->processFrame(deltat);
 		if(objs.isIteratorInvalidated())
 		{
 			// FIXME: this is very inefficient

@@ -19,8 +19,9 @@ public:
 	 */
 	Action(ActionId_t actid = ActionId::None);
 	virtual ~Action();
-	ObjectPtr getObject() { return this->m_obj.lock(); }
+	
 	ActionId_t getActionId() const { return this->m_actid; }
+	ObjectPtr getObject() { return this->m_obj.lock(); }
 	
 	// you must call setObject() in initAction
 	virtual bool initAction(const ObjectPtr &obj);

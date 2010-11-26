@@ -230,15 +230,25 @@ void Object::processActions(float deltat)
 	}
 }
 
-void Object::processFrame()
+bool Object::processOrder(float deltat)
 {
-	float deltat = this->m_game->getDelta();
-	
-	// TODO: move these action iterator to UnitCommand class
-	// TODO: `Object' calls `this->m_command.process(thisptr, deltat)' and UnitCommand will do the job.
-	this->processActions(deltat);
+	if(this->m_order)
+	{
+		this->m_order->process(deltat);
+		this->processActions(deltat);
+		
+		return true;
+	}
+	else
+	{
+		return false;
+	}
 }
 
+void Object::processFrame(float deltat)
+{
+	this->processOrder(deltat);
+}
 
 
 bool Object::insideRect(int left, int top, int right, int bottom)
@@ -457,6 +467,10 @@ bool Object::doOrder(const UnitOrder::OrderPtr &order)
 	if(ret)
 	{
 		this->m_order = order;
+	}
+	else
+	{
+		this->cancelOrder();
 	}
 	return ret;
 }

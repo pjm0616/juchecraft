@@ -12,7 +12,7 @@ CROSSC				=
 
 SRCS_UI				= src/ui/GameUI.cpp src/ui/sdl/GameUI_SDL.cpp src/ui/ncurses/GameUI_ncurses.cpp
 SRCS_ACTIONS		= src/game/actions/UnitAction.cpp src/game/actions/Move.cpp src/game/actions/Attack.cpp
-SRCS_ORDERS			= src/game/orders/UnitOrder.cpp
+SRCS_ORDERS			= src/game/orders/UnitOrder.cpp src/game/orders/Move.cpp src/game/orders/Attack.cpp
 SRCS				= libs/etc/md5.c libs/jcimg/jcimg.cpp libs/luacpp/luacpp.cpp src/game/Exception.cpp src/game/Coordinate.cpp src/game/Object.cpp src/game/Player.cpp src/game/ObjectList.cpp src/game/ObjectFactory.cpp src/game/Target.cpp src/game/Game.cpp src/main.cpp $(SRCS_ACTIONS) $(SRCS_ORDERS) $(SRCS_UI)
 TARGET1				= mini_sc
 
@@ -67,7 +67,7 @@ UNZIP				=unzip
 CFLAGS				= $(DEFS) $(CFLAGS_DBG) $(C_CXX_LD_FLAGS_PROF) $(C_CXX_LD_FLAGS_PGO) $(INCLUDEDIR) \
 						-std=gnu99 -finline-functions -Wall -Wextra -Wno-unused-parameter -Wshadow
 CXXFLAGS			= $(DEFS) $(CXXFLAGS_DBG) $(C_CXX_LD_FLAGS_PROF) $(C_CXX_LD_FLAGS_PGO) $(INCLUDEDIR) \
-						-std=gnu++98 -finline-functions -Wall -Wextra -Wno-unused-parameter -fno-rtti -Wshadow
+						-std=gnu++98 -finline-functions -Wall -Wextra -Wno-unused-parameter -Wshadow
 LDFLAGS				= $(LDFLAGS_DBG) $(C_CXX_LD_FLAGS_PROF) $(C_CXX_LD_FLAGS_PGO) $(LIBDIR)
 #OBJS				=$(SRCS:.cpp=.o) 
 OBJS_TMP				=$(SRCS:.c=.o) 

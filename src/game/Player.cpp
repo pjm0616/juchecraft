@@ -67,6 +67,8 @@ Player::Player(Game *game)
 	this->setPlayerAttackSpeedBonusA(0.0);
 	
 	this->m_selection_in_progress = false;
+	
+	this->clearOrder();
 }
 
 Player::~Player()
@@ -208,14 +210,41 @@ size_t Player::selectObjects(const Coordinate &coord1, const Coordinate &coord2,
 }
 
 
+void Player::setOrder(const UnitOrder::OrderPtr &order)
+{
+	this->m_order = order;
+}
+void Player::clearOrder()
+{
+	this->m_order.reset(new UnitOrder::NoOrder());
+}
+
+void Player::multiDoCurrentOrder()
+{
+	for(ObjectList::const_iterator it = this->m_selected_objs.begin(); 
+		it != this->m_selected_objs.end(); ++it)
+	{
+		(*it)->doOrder(this->m_order->clone());
+	}
+}
+
+void Player::multiCancelOrder()
+{
+	for(ObjectList::const_iterator it = this->m_selected_objs.begin(); 
+		it != this->m_selected_objs.end(); ++it)
+	{
+		(*it)->cancelOrder();
+	}
+}
 
 
+#if 0
 const UnitOrder::OrderPtr &Player::getFirstOrderInQueue() const
 {
 #if 0
 	static UnitOrder::OrderPtr no_order;
 #else
-	static UnitOrder::OrderPtr no_order(new UnitOrder::Order(UnitOrder::OrderId::None));
+	static UnitOrder::OrderPtr no_order(new UnitOrder::NoOrder());
 #endif
 	if(!this->m_orderqueue.empty())
 		return this->m_orderqueue.front();
@@ -224,7 +253,7 @@ const UnitOrder::OrderPtr &Player::getFirstOrderInQueue() const
 		return no_order;
 	}
 }
-
+#endif
 
 
 

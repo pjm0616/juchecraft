@@ -7,6 +7,7 @@
 namespace SC {
 namespace UnitOrder {
 
+static OrderPtr null_order ATTRIBUTE_UNUSED;
 
 /** @brief An abstract class that describes unit orders
  *  @detail
@@ -17,18 +18,18 @@ namespace UnitOrder {
 class OrderInfo
 {
 public:
-	OrderInfo(OrderId_t cmdid)
-		: m_cmdid(cmdid)
+	OrderInfo(OrderId_t orderid)
+		: m_orderid(orderid)
 	{
 	}
 	~OrderInfo()
 	{
 	}
 	
-	OrderId_t getOrderID() const { return this->m_cmdid; }
+	OrderId_t getOrderID() const { return this->m_orderid; }
 	
 private:
-	OrderId_t m_cmdid;
+	OrderId_t m_orderid;
 	
 	/** @brief The requirements in order to execute this Order
 	 */
@@ -64,32 +65,67 @@ private:
 class Order
 {
 public:
-	Order();
-	Order(OrderId_t orderid);
+	Order(OrderId_t orderid = OrderId::None);
 	virtual ~Order();
 	
 	OrderId_t getOrderID() const { return this->m_orderid; }
+	ObjectPtr getObject() { return this->m_obj.lock(); }
 	
-	virtual bool initOrder(const ObjectPtr &obj) {return false;} // = 0; // FIXME TODO
-	virtual bool process(const ObjectPtr &obj, float time) {return false;} // = 0; // FIXME TODO
+	virtual bool initOrder(const ObjectPtr &obj);
+	virtual bool process(float deltat);
+	virtual OrderPtr clone(OrderPtr cloned_order = null_order);
 	
-private:
+protected:
 	OrderId_t m_orderid;
+	ObjectWeakPtr m_obj;
 	const OrderInfo *m_info;
+	
+	template<class Base_, class This_>
+	inline This_ *do_clone_head(OrderPtr &cloned_order)
+	{
+		if(!cloned_order)
+			cloned_order.reset(new This_);
+		this->Base_::clone(cloned_order);
+	
+		return dynamic_cast<This_ *>(cloned_order.get());
+	}
 };
 
 class TargetedOrder: public Order
 {
 public:
-	TargetedOrder();
-	TargetedOrder(OrderId_t orderid);
-	~TargetedOrder();
+	TargetedOrder(OrderId_t orderid = OrderId::None);
+	TargetedOrder(const Target &target, OrderId_t orderid = OrderId::None);
+	virtual ~TargetedOrder();
+	
+	virtual bool initOrder(const ObjectPtr &obj);
+	virtual bool process(float deltat);
+	virtual OrderPtr clone(OrderPtr cloned_order = null_order);
 	
 	void clearTarget() { this->m_target.clear(); }
 	void setTarget(const Target &target) { this->m_target = target; }
 	const Target &getTarget() const { return this->m_target; }
-private:
+protected:
 	Target m_target;
+	
+	template<class Base_, class This_>
+	inline This_ *do_clone_head(OrderPtr &cloned_order)
+	{
+		if(!cloned_order)
+			cloned_order.reset(new This_);
+		this->Base_::clone(cloned_order);
+	
+		return dynamic_cast<This_ *>(cloned_order.get());
+	}
+};
+
+
+/** Thid order does nothing
+ */
+class NoOrder: public Order
+{
+public:
+	virtual bool process(float deltat) {return true;}
 };
 
 

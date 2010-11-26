@@ -31,6 +31,7 @@
 #include "game/ObjectIdList.h"
 #include "game/actions/UnitAction.h"
 #include "game/orders/UnitOrder.h"
+#include "game/orders/UnitOrderList.h"
 #include "game/Object.h"
 #include "game/ObjectList.h"
 #include "game/ObjectFactory.h"
@@ -351,7 +352,7 @@ void GameUI_SDL::processFrame()
 				this->m_gamescr_left_pos += 10;
 				break;
 			case 'a':
-				this->m_player->addToOrderQueue(new UnitOrder::Order(UnitOrder::OrderId::Attack));
+				this->m_player->setOrder(new UnitOrder::Attack());
 				break;
 			default:
 				break;
@@ -376,6 +377,14 @@ void GameUI_SDL::processFrame()
 			{
 				//fprintf(stderr, "move: %d, %d\n", ev.button.x, ev.button.y);
 				
+				this->m_player->setOrder(new UnitOrder::Move());
+				const UnitOrder::OrderPtr order = this->m_player->getOrder();
+				UnitOrder::TargetedOrder *tgo = dynamic_cast<UnitOrder::TargetedOrder *>(order.get());
+				tgo->setTarget(Coordinate(x, y));
+				
+				this->m_player->multiDoCurrentOrder();
+				
+				#if 0
 				const ObjectList &selected_objs = this->m_player->getSelectedObjs();
 				for(ObjectList::const_iterator it = selected_objs.begin(); 
 					it != selected_objs.end(); ++it)
@@ -391,10 +400,11 @@ void GameUI_SDL::processFrame()
 					#endif
 					(*it)->cmd_move(Coordinate(x, y));
 				}
+				#endif
 			}
 			else if(ev.button.button == 1) // left button
 			{
-				if(this->m_player->getFirstOrderInQueue()->getOrderID() == UnitOrder::OrderId::Attack)
+				if(this->m_player->getOrder()->getOrderID() == UnitOrder::OrderId::Attack)
 				{
 					ObjectList dummy;
 					ObjectPtr first = this->m_game->findObjectByRect(dummy, x, y, x+10, y+10);
@@ -402,11 +412,18 @@ void GameUI_SDL::processFrame()
 				
 					if(first)
 					{
+						const UnitOrder::OrderPtr order = this->m_player->getOrder();
+						UnitOrder::TargetedOrder *tgo = dynamic_cast<UnitOrder::TargetedOrder *>(order.get());
+						tgo->setTarget(first);
+						
+						this->m_player->multiDoCurrentOrder();
+						#if 0
 						for(ObjectList::const_iterator it = selected_objs.begin(); 
 							it != selected_objs.end(); ++it)
 						{
 							(*it)->cmd_attack(first);
 						}
+						#endif
 					}
 					else
 					{
@@ -416,7 +433,7 @@ void GameUI_SDL::processFrame()
 							(*it)->cmd_move(Coordinate(x, y), UnitAction::Move::MovementFlags::AutomaticallyAttack);
 						}
 					}
-					this->m_player->clearOrderQueue();
+					this->m_player->clearOrder();
 				}
 				else
 				{
@@ -576,7 +593,7 @@ void GameUI_SDL::drawUI()
 	this->drawUI_ButtonsWnd();
 	
 	{	
-		if(this->m_player->getFirstOrderInQueue()->getOrderID() == UnitOrder::OrderId::Attack)
+		if(this->m_player->getOrder()->getOrderID() == UnitOrder::OrderId::Attack)
 		{
 			SDL_print(this->m_font, this->m_screen, 210+50, 330, 150, 16, 0xffffffff, "Select target");
 		}

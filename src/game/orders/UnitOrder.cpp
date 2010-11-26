@@ -37,10 +37,6 @@ using namespace SC;
 using namespace SC::UnitOrder;
 
 
-Order::Order()
-{
-}
-
 Order::Order(OrderId_t orderid)
 	: m_orderid(orderid)
 {
@@ -50,20 +46,66 @@ Order::~Order()
 {
 }
 
-
-
-
-
-TargetedOrder::TargetedOrder()
+bool Order::initOrder(const ObjectPtr &obj)
 {
+	this->m_obj = obj;
+	return true;
 }
+
+bool Order::process(float deltat)
+{
+	return true;
+}
+
+OrderPtr Order::clone(OrderPtr cloned_order)
+{
+	if(!cloned_order)
+		cloned_order.reset(new Order);
+		
+	Order *p = dynamic_cast<Order *>(cloned_order.get());
+	p->m_orderid = this->m_orderid;
+	p->m_obj = this->m_obj;
+	p->m_info = this->m_info;
+	
+	return cloned_order;
+}
+
+
 
 TargetedOrder::TargetedOrder(OrderId_t orderid)
 {
 }
 
+TargetedOrder::TargetedOrder(const Target &target, OrderId_t orderid)
+{
+	this->setTarget(target);
+}
+
 TargetedOrder::~TargetedOrder()
 {
+}
+
+bool TargetedOrder::initOrder(const ObjectPtr &obj)
+{
+	return this->Order::initOrder(obj);
+}
+
+bool TargetedOrder::process(float deltat)
+{
+	return this->Order::process(deltat);
+}
+
+OrderPtr TargetedOrder::clone(OrderPtr cloned_order)
+{
+	if(!cloned_order)
+		cloned_order.reset(new TargetedOrder);
+	
+	this->Order::clone(cloned_order);
+	
+	TargetedOrder *p = dynamic_cast<TargetedOrder *>(cloned_order.get());
+	p->m_target = this->m_target;
+	
+	return cloned_order;
 }
 
 
