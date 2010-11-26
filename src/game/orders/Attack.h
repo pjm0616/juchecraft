@@ -15,16 +15,25 @@ public:
 	{
 		this->m_state.step = 0;
 	}
+	Attack(const Target &target)
+		:TargetedOrder(target, OrderId::Attack)
+	{
+		this->m_state.step = 0;
+	}
 	
 	virtual bool initOrder(const ObjectPtr &obj);
 	virtual bool process(float time);
 	virtual OrderPtr clone(OrderPtr cloned_order = null_order);
 	
 private:
+	/** @name state information
+	 */
+	//@{
 	struct
 	{
 		unsigned int step;
 	} m_state;
+	//@}
 };
 
 

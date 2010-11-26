@@ -64,8 +64,8 @@ OrderPtr Order::clone(OrderPtr cloned_order)
 {
 	if(!cloned_order)
 		cloned_order.reset(new Order);
-		
-	Order *p = dynamic_cast<Order *>(cloned_order.get());
+	
+	Order *p = cloned_order.get();
 	p->m_orderid = this->m_orderid;
 	p->m_obj = this->m_obj;
 	p->m_info = this->m_info;
@@ -100,12 +100,8 @@ bool TargetedOrder::process(float deltat)
 
 OrderPtr TargetedOrder::clone(OrderPtr cloned_order)
 {
-	if(!cloned_order)
-		cloned_order.reset(new TargetedOrder);
+	TargetedOrder *p = this->do_clone_head<TargetedOrder, Order>(cloned_order);
 	
-	this->Order::clone(cloned_order);
-	
-	TargetedOrder *p = dynamic_cast<TargetedOrder *>(cloned_order.get());
 	p->m_target = this->m_target;
 	
 	return cloned_order;

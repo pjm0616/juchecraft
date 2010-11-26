@@ -153,21 +153,16 @@ public:
 	//@{
 	void cancelOrder();
 	bool doOrder(const UnitOrder::OrderPtr &cmd);
+	bool doOrder(UnitOrder::Order *cmd) { return this->doOrder(UnitOrder::OrderPtr(cmd)); }
 	//@}
 	
 	//@{
-	bool move(const Coordinate &pos, UnitAction::Move::MovementFlags_t flags = UnitAction::Move::MovementFlags::None)
-	{
-		return this->doAction(new UnitAction::Move(pos, flags));
-	}
-	bool attack(const ObjectPtr &target)
-	{
-		return this->doAction(new UnitAction::Attack(target));
-	}
+	#ifdef SCUnitOrder_Move_H_ // FIXME HACK -_-
 	bool cmd_move(const Coordinate &pos, UnitAction::Move::MovementFlags_t flags = UnitAction::Move::MovementFlags::None)
-	{ this->clearActions(); return this->move(pos, flags); }
+	{ return this->doOrder(new UnitOrder::Move(pos)); }
 	bool cmd_attack(const ObjectPtr &target)
-	{ this->clearActions(); return this->attack(target); }
+	{ return this->doOrder(new UnitOrder::Attack(target)); }
+	#endif
 	//@}
 	
 	//@{

@@ -34,6 +34,8 @@
 #include "game/ObjectIdList.h"
 #include "game/actions/UnitAction.h"
 #include "game/orders/UnitOrder.h"
+#include "game/actions/UnitActionList.h"
+#include "game/orders/UnitOrderList.h"
 #include "game/Object.h"
 #include "game/ObjectList.h"
 #include "game/ObjectFactory.h"
@@ -268,7 +270,7 @@ void Game::test_tmp1()
 	o->changeOwner(players[1]);
 	o->setPosition(200, 100);
 	o->setObjectMovingSpeedBonusM(1.0);
-	o->move(Coordinate(210, 300));
+	o->cmd_move(Coordinate(210, 300));
 	
 	o = this->newObject(ObjectId::Zerg_Zergling);
 	o->changeOwner(players[1]);
@@ -277,7 +279,7 @@ void Game::test_tmp1()
 	o->setObjectAttackSpeedBonusM(8.0);
 	o->setObjectDamageBonusM(2.0);
 	o->setObjectArmorBonusA(3.0);
-	o->move(Coordinate(410, 250));
+	o->cmd_move(Coordinate(410, 250));
 	
 	o = this->newObject(ObjectId::Juche_DaepodongLauncher);
 	o->changeOwner(players[1]);

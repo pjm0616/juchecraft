@@ -10,8 +10,13 @@ namespace UnitOrder {
 class Move: public TargetedOrder
 {
 public:
-	Move()
+	Move(UnitAction::Move::MovementFlags_t flags = UnitAction::Move::MovementFlags::None)
 		:TargetedOrder(OrderId::Move)
+	{
+		this->m_state.step = 0;
+	}
+	Move(const Target &target)
+		:TargetedOrder(target, OrderId::Move)
 	{
 		this->m_state.step = 0;
 	}
@@ -21,10 +26,14 @@ public:
 	virtual OrderPtr clone(OrderPtr cloned_order = null_order);
 	
 private:
+	/** @name state information
+	 */
+	//@{
 	struct
 	{
 		unsigned int step;
 	} m_state;
+	//@}
 };
 
 

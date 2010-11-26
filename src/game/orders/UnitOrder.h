@@ -85,15 +85,19 @@ protected:
 	ObjectWeakPtr m_obj;
 	const OrderInfo *m_info;
 	
+	/** @name state information
+	 */
+	//@{
 	bool m_is_finished, m_is_started;
+	//@}
 	
-	template<class Base_, class This_>
+	template<class This_, class Base_>
 	inline This_ *do_clone_head(OrderPtr &cloned_order)
 	{
 		if(!cloned_order)
 			cloned_order.reset(new This_);
-		this->Base_::clone(cloned_order);
-	
+		dynamic_cast<Base_ *>(this)->Base_::clone(cloned_order);
+		
 		return dynamic_cast<This_ *>(cloned_order.get());
 	}
 };
@@ -114,16 +118,6 @@ public:
 	const Target &getTarget() const { return this->m_target; }
 protected:
 	Target m_target;
-	
-	template<class Base_, class This_>
-	inline This_ *do_clone_head(OrderPtr &cloned_order)
-	{
-		if(!cloned_order)
-			cloned_order.reset(new This_);
-		this->Base_::clone(cloned_order);
-	
-		return dynamic_cast<This_ *>(cloned_order.get());
-	}
 };
 
 

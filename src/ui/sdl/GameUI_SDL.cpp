@@ -31,6 +31,7 @@
 #include "game/ObjectIdList.h"
 #include "game/actions/UnitAction.h"
 #include "game/orders/UnitOrder.h"
+#include "game/actions/UnitActionList.h"
 #include "game/orders/UnitOrderList.h"
 #include "game/Object.h"
 #include "game/ObjectList.h"

@@ -463,6 +463,7 @@ void Object::cancelOrder()
 bool Object::doOrder(const UnitOrder::OrderPtr &order)
 {
 	this->cancelOrder();
+	this->clearActions();
 	bool ret = order->initOrder(this->getPtr());
 	if(ret)
 	{

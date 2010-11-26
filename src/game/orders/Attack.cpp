@@ -26,8 +26,9 @@
 #include "game/Target.h"
 #include "game/ObjectIdList.h"
 #include "game/actions/UnitAction.h"
-#include "game/actions/UnitActionList.h"
 #include "game/orders/UnitOrder.h"
+#include "game/actions/UnitActionList.h"
+#include "game/orders/UnitOrderList.h"
 #include "game/orders/Attack.h"
 #include "game/Object.h"
 #include "game/ObjectList.h"
@@ -42,7 +43,7 @@ using namespace SC::UnitOrder;
 
 OrderPtr Attack::clone(OrderPtr cloned_order)
 {
-	Attack *p = this->do_clone_head<TargetedOrder, Attack>(cloned_order);
+	Attack *p = this->do_clone_head<Attack, TargetedOrder>(cloned_order);
 	
 	return cloned_order;
 }
