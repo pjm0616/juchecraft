@@ -113,18 +113,7 @@ bool Attack::process(float time)
 			
 			for(; nattacks > 0; nattacks--)
 			{
-				//fprintf(stderr, "Attack!\n");
-				float t_damage = obj->getNetDamage();
-				float d_armor = target->getNetArmor();
-				float net_damage = t_damage - d_armor;
-		
-				{ // debug
-					float prev_hp = target->getHP();
-					//fprintf(stderr, "Attack: damage: %f, armor: %f, netdamage: %f, hp: %f -> %f\n", 
-					//	t_damage, d_armor, net_damage, prev_hp, prev_hp - net_damage);
-				}
-		
-				target->decreaseHP(net_damage);
+				float net_damage = target->hit(obj->getNetDamage());	
 				float hp = target->getHP();
 				if(hp <= 0)
 				{

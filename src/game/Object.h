@@ -178,6 +178,8 @@ public:
 	//@}
 	bool canAttack(const ObjectPtr &target) const;
 	
+	float hit(float damage);
+	
 	/** @name Variable object attributes */
 	//@{
 	float getHP() const { return this->m_hit_point; }

@@ -502,5 +502,13 @@ bool Object::canAttack(const ObjectPtr &target) const
 	}
 }
 
+float Object::hit(float damage)
+{
+	float d_armor = this->getNetArmor();
+	float net_damage = damage - d_armor;
+	
+	this->decreaseHP(net_damage);
+	return net_damage;
+}
 
 
