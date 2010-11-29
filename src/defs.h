@@ -30,6 +30,11 @@
 //#define _(str_) gettext(str_)
 #define _(str_) (str_)
 
+#ifdef _MSC_VER
+# pragma warning(disable: 4482)
+# pragma warning(disable: 4355 4819)
+#endif
+
 #ifdef __WIN32__
 # define snprintf _snprintf
 #endif
