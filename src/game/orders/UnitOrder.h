@@ -88,9 +88,9 @@ protected:
 	{
 		if(!cloned_order)
 			cloned_order.reset(new This_);
-		dynamic_cast<Base_ *>(this)->Base_::clone(cloned_order);
+		dynastatic_cast<Base_ *>(this)->Base_::clone(cloned_order);
 		
-		return dynamic_cast<This_ *>(cloned_order.get());
+		return dynastatic_cast<This_ *>(cloned_order.get());
 	}
 	
 private:

@@ -4,6 +4,10 @@
 #ifndef SC_DEFS_H_
 #define SC_DEFS_H_
 
+#ifndef NDEBUG
+# warning `NDEBUG' is not set, but `DEBUG' is not defined.
+# define DEBUG
+#endif
 
 #ifdef __GNUC__
 /* `!!' resolves some issues related to boolean expression overloading */
@@ -22,6 +26,11 @@
 # define ATTRIBUTE_ALWAYS_INLINE
 #endif
 
+#ifdef DEBUG
+# define dynastatic_cast dynamic_cast
+#else
+# define dynastatic_cast static_cast
+#endif
 
 #ifndef M_PI
 # define M_PI 3.14159265358979323846
