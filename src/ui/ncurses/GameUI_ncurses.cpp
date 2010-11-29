@@ -280,7 +280,7 @@ void GameUI_ncurses::processFrame()
 		case KEY_RIGHT: this->m_cur_x++; break;
 		case '\n': {
 				SC::ObjectList::iterator it = this->m_game->getObjectList().begin();
-				(*it)->cmd_move(Coordinate(this->m_cur_x * 10, (this->m_cur_y-1) * 20));
+				(*it)->doOrder(new UnitOrder::Move(Coordinate(this->m_cur_x * 10, (this->m_cur_y-1) * 20)));
 			}
 			break;
 		case 'a': {

@@ -266,12 +266,6 @@ void Game::test_tmp1()
 	o->changeOwner(players[2]);
 	o->setPosition(280, 270);
 	
-	o = this->newObject(ObjectId::Juche_AojiWorker);
-	o->changeOwner(players[1]);
-	o->setPosition(200, 100);
-	o->setObjectMovingSpeedBonusM(1.0);
-	o->cmd_move(Coordinate(210, 300));
-	
 	o = this->newObject(ObjectId::Zerg_Zergling);
 	o->changeOwner(players[1]);
 	o->setPosition(80, 50);
@@ -279,7 +273,15 @@ void Game::test_tmp1()
 	o->setObjectAttackSpeedBonusM(8.0);
 	o->setObjectDamageBonusM(2.0);
 	o->setObjectArmorBonusA(3.0);
-	o->cmd_move(Coordinate(410, 250));
+	o->doOrder(new UnitOrder::Move(Coordinate(410, 250)));
+	ObjectPtr o_zergling = o;
+	
+	o = this->newObject(ObjectId::Juche_AojiWorker);
+	o->changeOwner(players[1]);
+	o->setPosition(500, 130);
+	o->setObjectMovingSpeedBonusM(1.0);
+	//o->doOrder(new UnitOrder::Move(Coordinate(210, 300)));
+	o->doOrder(new UnitOrder::Attack(o_zergling));
 	
 	o = this->newObject(ObjectId::Juche_DaepodongLauncher);
 	o->changeOwner(players[1]);

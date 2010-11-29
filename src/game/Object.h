@@ -157,15 +157,6 @@ public:
 	//@}
 	
 	//@{
-	#ifdef SCUnitOrder_Move_H_ // FIXME HACK -_-
-	bool cmd_move(const Coordinate &pos, UnitAction::Move::MovementFlags_t flags = UnitAction::Move::MovementFlags::None)
-	{ return this->doOrder(new UnitOrder::Move(pos)); }
-	bool cmd_attack(const ObjectPtr &target)
-	{ return this->doOrder(new UnitOrder::Attack(target)); }
-	#endif
-	//@}
-	
-	//@{
 	bool isMoving() const { return this->isActivatedAction(UnitAction::ActionId::Move); }
 	bool isStopped() const { return !this->isMoving(); }
 	bool isAttacking() const { return this->isActivatedAction(UnitAction::ActionId::Attack);; }
