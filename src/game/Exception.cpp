@@ -1,3 +1,5 @@
+// Copyright (C) 2010 Park Jeongmin <pjm0616@gmail.com>
+// See LICENSE.txt for details
 
 #include "config.h"
 
