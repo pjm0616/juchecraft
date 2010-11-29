@@ -196,7 +196,6 @@ static JucheImage	g_img_obj_terran_unit_marine,
 					g_img_obj_neutral_mineral01_shadow, 
 					g_img_end;
 
-//	const SDL::SDL_SurfacePtr &getImage(unsigned int n, jcimg_imginfo_t **imginfo = NULL);
 static void render_jcimg_to_screen(JucheImage *img, SDL_Surface *scr, int num, int scr_x, int scr_y)
 {
 	jcimg_imginfo_t *imginfo;
