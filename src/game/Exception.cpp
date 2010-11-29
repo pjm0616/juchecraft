@@ -1,9 +1,12 @@
 
+#include "config.h"
+
 #include <string>
 #include <sstream>
 #include <iostream>
 #include <cstdlib>
 
+#include "defs.h"
 #include "game/Exception.h"
 
 #ifdef DEBUG
