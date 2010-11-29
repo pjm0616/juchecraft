@@ -29,7 +29,8 @@ void trigger_assertion_failure(const char *file, int line, const char *func, con
 #define SCAssert(expr_) \
 	do { \
 		if(unlikely(!(expr_))) { \
-			trigger_assertion_failure(__FILE__, __LINE__, __func__, #expr_, NULL); \
+			/*trigger_assertion_failure(__FILE__, __LINE__, __func__, #expr_, NULL);*/ \
+			trigger_assertion_failure(__FILE__, __LINE__, __FUNCTION__, #expr_, NULL); \
 		} \
 	} while(0)
 #else

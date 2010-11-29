@@ -4,10 +4,19 @@
 #ifndef SC_DEFS_H_
 #define SC_DEFS_H_
 
-#if !defined(NDEBUG) && !defined(DEBUG)
-# warning Neither `NDEBUG' nor `DEBUG' is defined. Assuming DEBUG.
+
+// for msvc
+#ifdef _DEBUG
 # define DEBUG
 #endif
+
+#if !defined(NDEBUG) && !defined(DEBUG)
+# error Neither `NDEBUG' nor `DEBUG' is defined.
+#endif
+#if defined(NDEBUG) && defined(DEBUG)
+# error Both `NDEBUG' and `DEBUG' are defined.
+#endif
+
 
 #ifdef __GNUC__
 /* `!!' resolves some issues related to boolean expression overloading */

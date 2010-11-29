@@ -188,6 +188,10 @@
 					>
 				</File>
 				<File
+					RelativePath="..\..\src\game\Exception.cpp"
+					>
+				</File>
+				<File
 					RelativePath="..\..\src\game\Game.cpp"
 					>
 				</File>
@@ -205,6 +209,10 @@
 				</File>
 				<File
 					RelativePath="..\..\src\game\Player.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\src\game\Target.cpp"
 					>
 				</File>
 				<Filter
@@ -226,6 +234,14 @@
 				<Filter
 					Name="orders"
 					>
+					<File
+						RelativePath="..\..\src\game\orders\Attack.cpp"
+						>
+					</File>
+					<File
+						RelativePath="..\..\src\game\orders\Move.cpp"
+						>
+					</File>
 					<File
 						RelativePath="..\..\src\game\orders\UnitOrder.cpp"
 						>
@@ -459,6 +475,10 @@
 				</File>
 				<File
 					RelativePath="..\..\src\game\ObjectFactory.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\src\game\ObjectFilter.h"
 					>
 				</File>
 				<File
