@@ -200,7 +200,7 @@ static JucheImage	g_img_obj_terran_unit_marine,
 static void render_jcimg_to_screen(JucheImage *img, SDL_Surface *scr, int num, int scr_x, int scr_y)
 {
 	jcimg_imginfo_t *imginfo;
-	SDL_SurfacePtr sf = img->getImage(num, &imginfo);
+	const SDL_SurfacePtr &sf = img->getImage(num, &imginfo);
 	
 	SDL_Rect srcrect = {imginfo->left, imginfo->top, imginfo->width, imginfo->height};
 	SDL_Rect dstrect = {scr_x, scr_y, imginfo->width, imginfo->height};
@@ -210,7 +210,7 @@ static void render_jcimg_to_screen(JucheImage *img, SDL_Surface *scr, int num, i
 static void render_jcimg_obj_to_screen(const ObjectPtr &obj, JucheImage *img, SDL_Surface *scr, int num, int scr_cx, int scr_cy)
 {
 	jcimg_imginfo_t *imginfo;
-	SDL_SurfacePtr sf = img->getImage(num, &imginfo);
+	const SDL_SurfacePtr &sf = img->getImage(num, &imginfo);
 	
 	// TODO
 	#if 1
