@@ -55,16 +55,30 @@ bool Move::initOrder(const ObjectPtr &obj)
 
 bool Move::process(float time)
 {
-	bool res = true;
+	bool result = true;
 	switch(this->m_state.step)
 	{
-	case 0:
-		this->getObject()->doAction(new UnitAction::Move(this->getTarget()));
-		this->m_state.step++;
-		break;
+	case 0: {
+		bool ret = this->getObject()->doAction(new UnitAction::Move(this->getTarget()));
+		if(!ret)
+		{
+			result = false;
+			this->getObject()->getOwner()->toast(_("Unable to move"));
+		}
+		else
+		{
+			this->m_state.step = 1;
+		}
+		break; }
+	case 1: {
+		if(!this->getObject()->isActivatedAction(UnitAction::ActionId::Move))
+		{
+			result = false;
+		}
+		break; }
 	}
 	
-	return res;
+	return result;
 }
 
 

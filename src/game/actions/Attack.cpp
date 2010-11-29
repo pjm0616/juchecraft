@@ -59,9 +59,14 @@ bool Attack::initAction(const ObjectPtr &obj)
 		return false;
 	if(!this->getTarget().isObjectTarget())
 		return false;
+	
 	// copied from Attack::process, to check if we can attack before calling process(). it's not good. FIXME
-	if(!obj->canAttack() || this->getTarget().getObject()->isInvincible())
+	const ObjectPtr &target = this->getTarget().getObject();
+	if(!obj->canAttack(target))
 		return false;
+	// should we do this? hmm. no.
+	//if(!obj->checkMinDistance(target, obj->getNetAttackRange(), NULL))
+	//	return false;
 	
 	Game *game = obj->getGame();
 	this->setLastAttackTime(game->getCachedElapsedTime()); // FIXME
@@ -87,7 +92,7 @@ bool Attack::process(float time)
 	bool is_finished = false;
 	
 	// we put these here because unit attrs can change runtime
-	if(unlikely(!obj->canAttack() || target->isInvincible() || obj->isRemovedFromGame()))
+	if(unlikely(!obj->canAttack(target)))
 	{
 		is_finished = true;
 	}
@@ -105,7 +110,7 @@ bool Attack::process(float time)
 			int nattacks = (elapsed_time - last_attack) / (1.0 / attack_speed);
 			if(nattacks > 0)
 				this->setLastAttackTime(elapsed_time);
-		
+			
 			for(; nattacks > 0; nattacks--)
 			{
 				//fprintf(stderr, "Attack!\n");

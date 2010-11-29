@@ -4,8 +4,8 @@
 #ifndef SC_DEFS_H_
 #define SC_DEFS_H_
 
-#ifndef NDEBUG
-# warning `NDEBUG' is not set, but `DEBUG' is not defined.
+#if !defined(NDEBUG) && !defined(DEBUG)
+# warning Neither `NDEBUG' nor `DEBUG' is defined. Assuming DEBUG.
 # define DEBUG
 #endif
 

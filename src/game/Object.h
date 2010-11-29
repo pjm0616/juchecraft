@@ -176,6 +176,7 @@ public:
 	bool canMove() const { return (this->getNetMovingSpeed() != 0.0); }
 	bool canAttack() const { return (this->getNetDamage() != 0.0); }
 	//@}
+	bool canAttack(const ObjectPtr &target) const;
 	
 	/** @name Variable object attributes */
 	//@{

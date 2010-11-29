@@ -234,8 +234,17 @@ bool Object::processOrder(float deltat)
 {
 	if(this->m_order)
 	{
-		this->m_order->process(deltat);
-		this->processActions(deltat);
+		bool ret = this->m_order->process(deltat);
+		if(!ret)
+		{
+			// order has finished
+			this->clearActions();
+			this->cancelOrder();
+		}
+		else
+		{
+			this->processActions(deltat);
+		}
 		
 		return true;
 	}
@@ -476,6 +485,22 @@ bool Object::doOrder(const UnitOrder::OrderPtr &order)
 	return ret;
 }
 
+
+
+bool Object::canAttack(const ObjectPtr &target) const
+{
+	if(this->canAttack()
+		&& !target->isInvincible()
+		&& likely(!target->isRemovedFromGame()) // should we do this?
+		)
+	{
+		return true;
+	}
+	else
+	{
+		return false;
+	}
+}
 
 
 

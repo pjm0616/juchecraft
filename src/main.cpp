@@ -107,6 +107,7 @@ int main(int argc, char *argv[])
 	catch(SC::Exception *e)
 	{
 		std::cerr << "Error: " << e->getErrorMsg() << std::endl;
+		abort();
 	}
 	
 	return 0;

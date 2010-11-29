@@ -71,8 +71,21 @@ public:
 	OrderId_t getOrderID() const { return this->m_orderid; }
 	ObjectPtr getObject() { return this->m_obj.lock(); }
 	
+	/** Initializes order.
+	 *  @return true if succeeded, false if failed.
+	 *  @return returning false will cancel the order.
+	 *  @sa Object::doOrder()
+	 */
 	virtual bool initOrder(const ObjectPtr &obj);
+	/** Processes order.
+	 *  @return if the order has finished, return false and the order will be removed
+	 *  @return otherwise return true
+	 *  @sa Object::processOrder()
+	 */
 	virtual bool process(float deltat);
+	/** Clones the order.
+	 *  This method only clones order types and parameters, not order states.
+	 */
 	virtual OrderPtr clone(OrderPtr cloned_order = null_order);
 	
 	bool isFinished() const { return this->m_is_finished; }
@@ -83,6 +96,9 @@ protected:
 	
 	const OrderInfo *m_info;
 	
+	/** recursively calls base class' clone() and returns a pointer to cloned order.
+	 *  Only to be called by Order*::clone()
+	 */
 	template<class This_, class Base_>
 	inline This_ *do_clone_head(OrderPtr &cloned_order)
 	{
