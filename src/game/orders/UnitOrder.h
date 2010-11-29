@@ -56,7 +56,7 @@ private:
  *  required resources, upgrades, buildings, etc.
  *  Constant information is stored in OrderInfo class.
  *  Once a Order is assigned to an object, 
- *  firstly the object checks if the conditions complies with the requirements.
+ *  firstly the object checks if the conditions mets with the requirements.
  *  Then the actions specified in m_actionlist will be sequentially executed.
  *  When the final action is finished, the whole Order is finished and, 
  *  SC::Object will execute next Order in the queue.
