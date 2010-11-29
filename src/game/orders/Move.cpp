@@ -39,6 +39,18 @@
 using namespace SC;
 using namespace SC::UnitOrder;
 
+
+Move::Move()
+	:TargetedOrder(OrderId::Move)
+{
+	this->m_state.step = 0;
+}
+Move::Move(const Target &target)
+	:TargetedOrder(target, OrderId::Move)
+{
+	this->m_state.step = 0;
+}
+
 OrderPtr Move::clone(OrderPtr cloned_order)
 {
 	Move *p = this->do_clone_head<Move, TargetedOrder>(cloned_order);

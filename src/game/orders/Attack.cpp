@@ -40,6 +40,16 @@ using namespace SC;
 using namespace SC::UnitOrder;
 
 
+Attack::Attack()
+	:TargetedOrder(OrderId::Attack)
+{
+	this->m_state.step = 0;
+}
+Attack::Attack(const Target &target)
+	:TargetedOrder(target, OrderId::Attack)
+{
+	this->m_state.step = 0;
+}
 
 OrderPtr Attack::clone(OrderPtr cloned_order)
 {

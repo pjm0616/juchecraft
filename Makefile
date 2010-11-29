@@ -16,7 +16,7 @@ SRCS_ORDERS			= src/game/orders/UnitOrder.cpp src/game/orders/Move.cpp src/game/
 SRCS				= libs/etc/md5.c libs/jcimg/jcimg.cpp libs/luacpp/luacpp.cpp src/game/Exception.cpp src/game/Coordinate.cpp src/game/Object.cpp src/game/Player.cpp src/game/ObjectList.cpp src/game/ObjectFactory.cpp src/game/Target.cpp src/game/Game.cpp src/main.cpp $(SRCS_ACTIONS) $(SRCS_ORDERS) $(SRCS_UI)
 TARGET1				= mini_sc
 
-DEFS				= -D_REENTRANT -fopenmp -D_FILE_OFFSET_BITS=64 -D_LARGEFILE64_SOURCE=1 -DBOOST_NO_RTTI
+DEFS				= -D_REENTRANT -fopenmp -D_FILE_OFFSET_BITS=64 -D_LARGEFILE64_SOURCE=1 #-DBOOST_NO_RTTI
 LIBS				= -fopenmp ./libs/lua/src/liblua.a -lSDL -lSDL_ttf -lSDL_image -lSDL_gfx -lz -lbz2 -ldl -lncursesw
 INCLUDEDIR			= -Isrc -Ilibs/lua/src -Ilibs
 LIBDIR				=

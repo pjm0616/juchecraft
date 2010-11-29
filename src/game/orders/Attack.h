@@ -10,16 +10,8 @@ namespace UnitOrder {
 class Attack: public TargetedOrder
 {
 public:
-	Attack()
-		:TargetedOrder(OrderId::Attack)
-	{
-		this->m_state.step = 0;
-	}
-	Attack(const Target &target)
-		:TargetedOrder(target, OrderId::Attack)
-	{
-		this->m_state.step = 0;
-	}
+	Attack();
+	Attack(const Target &target);
 	
 	virtual bool initOrder(const ObjectPtr &obj);
 	virtual bool process(float time);
