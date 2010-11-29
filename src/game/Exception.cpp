@@ -4,6 +4,7 @@
 
 #include "game/Exception.h"
 
+#ifdef DEBUG
 void SC::trigger_assertion_failure(const char *file, int line, const char *func, const char *expr, const char *comment)
 {
 	std::stringstream buf;
@@ -17,7 +18,7 @@ void SC::trigger_assertion_failure(const char *file, int line, const char *func,
 		buf << " - \"" << comment << "\"";
 	throw new SC::Exception(buf.str());
 }
-
+#endif
 
 
 
