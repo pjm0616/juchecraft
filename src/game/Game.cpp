@@ -9,6 +9,7 @@
 #include <map>
 #include <vector>
 #include <deque>
+#include <set>
 
 #ifdef DEBUG
 #include <cstdio>
@@ -146,32 +147,34 @@ double Game::getElapsedTime() const
 void Game::processObjects()
 {
 	float deltat = this->getDelta();
-	
 	ObjectList &objs = this->getObjectList();
-#if 0
-	for(ObjectList::iterator it = objs.begin(); it != objs.end(); ++it)
-	{
-		it->get()->processFrame(deltat);
-	}
-#else
+	std::set<ObjectPtr> processed_objs;
+	
+restart_loop:
 	objs.resetIteratorChecker();
 	for(ObjectList::const_iterator it = objs.begin(); it != objs.end(); )
 	{
 		const ObjectPtr &obj = *it;
-		obj->processFrame(deltat);
-		if(objs.isIteratorInvalidated())
+		if(processed_objs.find(obj) == processed_objs.end())
 		{
-			// FIXME: this is very inefficient
-			// start over
-			it = objs.begin();
-			objs.resetIteratorChecker();
+			obj->processFrame(deltat);
+			if(objs.isIteratorInvalidated())
+			{
+				// FIXME: this is very inefficient
+				// start over
+				goto restart_loop;
+			}
+			else
+			{
+				processed_objs.insert(obj);
+				++it;
+			}
 		}
 		else
 		{
 			++it;
 		}
 	}
-#endif
 }
 
 void Game::run()

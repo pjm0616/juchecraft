@@ -237,7 +237,7 @@ bool Object::processOrder(float deltat)
 		bool ret = this->m_order->process(deltat);
 		if(!ret)
 		{
-			// order has finished
+			// the order has been finished
 			this->clearActions();
 			this->cancelOrder();
 		}
