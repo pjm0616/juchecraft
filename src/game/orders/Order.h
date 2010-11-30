@@ -1,8 +1,8 @@
 // Copyright (C) 2010 Park Jeongmin <pjm0616@gmail.com>
 // See LICENSE.txt for details
 
-#ifndef SCUnitOrder_H_
-#define SCUnitOrder_H_
+#ifndef SCUnitOrder_Order_H_
+#define SCUnitOrder_Order_H_
 
 namespace SC {
 namespace UnitOrder {
@@ -118,25 +118,6 @@ private:
 	//@{
 	bool m_is_finished, m_is_started;
 	//@}
-};
-
-class TargetedOrder: public Order
-{
-public:
-	TargetedOrder(OrderId_t orderid = OrderId::None);
-	TargetedOrder(const Target &target, OrderId_t orderid = OrderId::None);
-	virtual ~TargetedOrder();
-	
-	virtual bool initOrder(const ObjectPtr &obj);
-	virtual bool process(float deltat);
-	virtual OrderPtr clone(OrderPtr cloned_order = null_order);
-	
-	void clearTarget() { this->m_target.clear(); }
-	void setTarget(const Target &target) { this->m_target = target; }
-	const Target &getTarget() const { return this->m_target; }
-	
-private:
-	Target m_target;
 };
 
 

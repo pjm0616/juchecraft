@@ -11,8 +11,8 @@ PGO_DIR			= ./tmp_profile/
 CROSSC				=
 
 SRCS_UI				= src/ui/GameUI.cpp src/ui/sdl/GameUI_SDL.cpp src/ui/ncurses/GameUI_ncurses.cpp
-SRCS_ACTIONS		= src/game/actions/UnitAction.cpp src/game/actions/Move.cpp src/game/actions/Attack.cpp
-SRCS_ORDERS			= src/game/orders/UnitOrder.cpp src/game/orders/Move.cpp src/game/orders/Attack.cpp
+SRCS_ACTIONS		= src/game/actions/Action.cpp src/game/actions/TargetedAction.cpp src/game/actions/targeted/Action_Move.cpp src/game/actions/targeted/Action_Attack.cpp
+SRCS_ORDERS			= src/game/orders/Order.cpp src/game/orders/TargetedOrder.cpp src/game/orders/targeted/Order_Move.cpp src/game/orders/targeted/Order_Attack.cpp
 SRCS				= libs/etc/md5.c libs/jcimg/jcimg.cpp libs/luacpp/luacpp.cpp src/game/Exception.cpp src/game/Coordinate.cpp src/game/Object.cpp src/game/Player.cpp src/game/ObjectList.cpp src/game/ObjectFactory.cpp src/game/Target.cpp src/game/Game.cpp src/main.cpp $(SRCS_ACTIONS) $(SRCS_ORDERS) $(SRCS_UI)
 TARGET1				= mini_sc
 
@@ -23,8 +23,8 @@ LIBDIR				=
 
 ifeq ($(DEBUG),1)
 DEFS_DBG			= -DDEBUG
-CFLAGS_DBG			= $(DEFS_DBG) -g -O0 -fstack-protector-all -fstrict-aliasing
-#CFLAGS_DBG			= $(DEFS_DBG) -g -O2 -fstack-protector-all -fno-omit-frame-pointer
+#CFLAGS_DBG			= $(DEFS_DBG) -g -O0 -fstack-protector-all -fstrict-aliasing
+CFLAGS_DBG			= $(DEFS_DBG) -g -O1 -fstack-protector-all -fstrict-aliasing -fno-omit-frame-pointer
 CXXFLAGS_DBG		= $(CFLAGS_DBG)
 LDFLAGS_DBG			=
 ifeq ($(ENABLE_PROFILING),1)

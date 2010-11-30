@@ -9,8 +9,6 @@
 #ifndef SCObject_H_
 #define SCObject_H_
 
-#include "game/actions/UnitActionList.h" // FIXME: move this to elsewhere
-
 namespace SC {
 
 

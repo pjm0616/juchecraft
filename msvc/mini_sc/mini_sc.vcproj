@@ -219,33 +219,49 @@
 					Name="actions"
 					>
 					<File
-						RelativePath="..\..\src\game\actions\Attack.cpp"
+						RelativePath="..\..\src\game\actions\Action.cpp"
 						>
 					</File>
 					<File
-						RelativePath="..\..\src\game\actions\Move.cpp"
+						RelativePath="..\..\src\game\actions\TargetedAction.cpp"
 						>
 					</File>
-					<File
-						RelativePath="..\..\src\game\actions\UnitAction.cpp"
+					<Filter
+						Name="targeted"
 						>
-					</File>
+						<File
+							RelativePath="..\..\src\game\actions\targeted\Action_Attack.cpp"
+							>
+						</File>
+						<File
+							RelativePath="..\..\src\game\actions\targeted\Action_Move.cpp"
+							>
+						</File>
+					</Filter>
 				</Filter>
 				<Filter
 					Name="orders"
 					>
 					<File
-						RelativePath="..\..\src\game\orders\Attack.cpp"
+						RelativePath="..\..\src\game\orders\Order.cpp"
 						>
 					</File>
 					<File
-						RelativePath="..\..\src\game\orders\Move.cpp"
+						RelativePath="..\..\src\game\orders\TargetedOrder.cpp"
 						>
 					</File>
-					<File
-						RelativePath="..\..\src\game\orders\UnitOrder.cpp"
+					<Filter
+						Name="targeted"
 						>
-					</File>
+						<File
+							RelativePath="..\..\src\game\orders\targeted\Order_Attack.cpp"
+							>
+						</File>
+						<File
+							RelativePath="..\..\src\game\orders\targeted\Order_Move.cpp"
+							>
+						</File>
+					</Filter>
 				</Filter>
 			</Filter>
 			<Filter
@@ -505,17 +521,49 @@
 					Name="actions"
 					>
 					<File
-						RelativePath="..\..\src\game\actions\UnitAction.h"
+						RelativePath="..\..\src\game\actions\Action.h"
 						>
 					</File>
+					<File
+						RelativePath="..\..\src\game\actions\ActionList.h"
+						>
+					</File>
+					<File
+						RelativePath="..\..\src\game\actions\Actions.h"
+						>
+					</File>
+					<File
+						RelativePath="..\..\src\game\actions\TargetedAction.h"
+						>
+					</File>
+					<Filter
+						Name="targeted"
+						>
+					</Filter>
 				</Filter>
 				<Filter
 					Name="orders"
 					>
 					<File
-						RelativePath="..\..\src\game\orders\UnitOrder.h"
+						RelativePath="..\..\src\game\orders\Order.h"
 						>
 					</File>
+					<File
+						RelativePath="..\..\src\game\orders\OrderList.h"
+						>
+					</File>
+					<File
+						RelativePath="..\..\src\game\orders\Orders.h"
+						>
+					</File>
+					<File
+						RelativePath="..\..\src\game\orders\TargetedOrder.h"
+						>
+					</File>
+					<Filter
+						Name="targeted"
+						>
+					</Filter>
 				</Filter>
 			</Filter>
 			<Filter

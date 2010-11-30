@@ -25,8 +25,8 @@
 #include "game/Coordinate.h"
 #include "game/Target.h"
 #include "game/ObjectIdList.h"
-#include "game/actions/UnitAction.h"
-#include "game/orders/UnitOrder.h"
+#include "game/actions/Actions.h"
+#include "game/orders/Orders.h"
 #include "game/Object.h"
 #include "game/ObjectList.h"
 #include "game/ObjectFactory.h"
@@ -35,26 +35,6 @@
 
 using namespace SC;
 using namespace SC::UnitAction;
-
-
-
-Action::Action(ActionId_t actid)
-	: m_actid(actid)
-	, m_is_finished(false)
-	, m_is_started(false)
-{
-}
-Action::~Action()
-{
-}
-
-bool Action::initAction(const ObjectPtr &obj)
-{
-	SCAssert(this->isStarted() == false && this->isFinished() == false);
-	this->setObject(obj);
-	return true;
-}
-
 
 
 
@@ -93,9 +73,6 @@ bool TargetedAction::initAction(const ObjectPtr &obj)
 	
 	return true;
 }
-
-
-
 
 
 

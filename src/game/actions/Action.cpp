@@ -9,6 +9,13 @@
 #include <map>
 #include <vector>
 #include <deque>
+#include <cmath>
+#include <cstdlib>
+#include <cstring>
+
+#ifdef DEBUG
+#include <stdio.h>
+#endif
 
 #include "defs.h"
 #include "compat.h"
@@ -26,22 +33,28 @@
 #include "game/Player.h"
 #include "game/Game.h"
 
-#include "ui/GameUI.h"
-
-
 using namespace SC;
+using namespace SC::UnitAction;
 
-#ifdef DRAW_OBJECTS_WITH_VIRTUAL_FXNS
-void GameUI::drawObjects()
+
+
+Action::Action(ActionId_t actid)
+	: m_actid(actid)
+	, m_is_finished(false)
+	, m_is_started(false)
 {
-	ObjectList &objs = this->m_game->getObjectList();
-	
-	for(ObjectList::const_iterator it = objs.begin(); it != objs.end(); it++)
-	{
-		this->drawObject(*it);
-	}
 }
-#endif
+Action::~Action()
+{
+}
+
+bool Action::initAction(const ObjectPtr &obj)
+{
+	SCAssert(this->isStarted() == false && this->isFinished() == false);
+	this->setObject(obj);
+	return true;
+}
+
 
 
 

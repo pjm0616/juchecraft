@@ -25,16 +25,15 @@
 #include "game/Coordinate.h"
 #include "game/Target.h"
 #include "game/ObjectIdList.h"
-#include "game/actions/UnitAction.h"
-#include "game/orders/UnitOrder.h"
-#include "game/actions/UnitActionList.h"
-#include "game/orders/UnitOrderList.h"
-#include "game/orders/Attack.h"
+#include "game/actions/Actions.h"
+#include "game/orders/Orders.h"
 #include "game/Object.h"
 #include "game/ObjectList.h"
 #include "game/ObjectFactory.h"
 #include "game/Player.h"
 #include "game/Game.h"
+
+#include "game/orders/targeted/Order_Attack.h"
 
 using namespace SC;
 using namespace SC::UnitOrder;
