@@ -23,8 +23,8 @@ LIBDIR				=
 
 ifeq ($(DEBUG),1)
 DEFS_DBG			= -DDEBUG
-#CFLAGS_DBG			= $(DEFS_DBG) -g -O0 -fstack-protector-all -fstrict-aliasing
-CFLAGS_DBG			= $(DEFS_DBG) -g -O1 -fstack-protector-all -fstrict-aliasing -fno-omit-frame-pointer
+CFLAGS_DBG			= $(DEFS_DBG) -g -O0 -fstack-protector-all -fstrict-aliasing
+#CFLAGS_DBG			= $(DEFS_DBG) -g -O1 -fstack-protector-all -fstrict-aliasing -fno-omit-frame-pointer
 CXXFLAGS_DBG		= $(CFLAGS_DBG)
 LDFLAGS_DBG			=
 ifeq ($(ENABLE_PROFILING),1)

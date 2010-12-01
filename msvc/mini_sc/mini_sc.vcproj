@@ -41,7 +41,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="&quot;$(SolutionDir)\..\platform_local\win32\include\&quot;;&quot;$(SolutionDir)\..\libs\boost\include\&quot;;&quot;$(SolutionDir)\..\src\&quot;;&quot;$(SolutionDir)\..\libs\&quot;;&quot;$(SolutionDir)\..\libs\lua\src\&quot;"
+				AdditionalIncludeDirectories="&quot;$(SolutionDir)\..\libs\zlib\&quot;;&quot;$(SolutionDir)\..\platform_local\win32\include\&quot;;&quot;$(SolutionDir)\..\libs\boost\include\&quot;;&quot;$(SolutionDir)\..\src\&quot;;&quot;$(SolutionDir)\..\libs\&quot;;&quot;$(SolutionDir)\..\libs\lua\src\&quot;"
 				PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
@@ -62,7 +62,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="winmm.lib msvcrt.lib $(SolutionDir)..\platform_local\win32\lib\zdll.lib $(SolutionDir)..\platform_local\win32\lib\SDL.lib $(SolutionDir)..\platform_local\win32\lib\SDL_ttf.lib $(SolutionDir)..\platform_local\win32\lib\SDL_image.lib $(SolutionDir)..\platform_local\win32\lib\SDL_gfx.lib"
+				AdditionalDependencies="winmm.lib msvcrt.lib $(SolutionDir)..\platform_local\win32\lib\SDL.lib $(SolutionDir)..\platform_local\win32\lib\SDL_ttf.lib $(SolutionDir)..\platform_local\win32\lib\SDL_image.lib $(SolutionDir)..\platform_local\win32\lib\SDL_gfx.lib"
 				LinkIncremental="2"
 				GenerateDebugInformation="true"
 				SubSystem="2"
@@ -117,7 +117,7 @@
 				Name="VCCLCompilerTool"
 				Optimization="2"
 				EnableIntrinsicFunctions="true"
-				AdditionalIncludeDirectories="&quot;$(SolutionDir)\..\platform_local\win32\include\&quot;;&quot;$(SolutionDir)\..\libs\boost\include\&quot;;&quot;$(SolutionDir)\..\src\&quot;;&quot;$(SolutionDir)\..\libs\&quot;;&quot;$(SolutionDir)\..\libs\lua\src\&quot;"
+				AdditionalIncludeDirectories="&quot;$(SolutionDir)\..\libs\zlib\&quot;;&quot;$(SolutionDir)\..\platform_local\win32\include\&quot;;&quot;$(SolutionDir)\..\libs\boost\include\&quot;;&quot;$(SolutionDir)\..\src\&quot;;&quot;$(SolutionDir)\..\libs\&quot;;&quot;$(SolutionDir)\..\libs\lua\src\&quot;"
 				PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS"
 				RuntimeLibrary="2"
 				EnableFunctionLevelLinking="true"
@@ -137,7 +137,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="winmm.lib msvcrt.lib $(SolutionDir)..\platform_local\win32\lib\zdll.lib $(SolutionDir)..\platform_local\win32\lib\SDL.lib $(SolutionDir)..\platform_local\win32\lib\SDL_ttf.lib $(SolutionDir)..\platform_local\win32\lib\SDL_image.lib $(SolutionDir)..\platform_local\win32\lib\SDL_gfx.lib"
+				AdditionalDependencies="winmm.lib msvcrt.lib $(SolutionDir)..\platform_local\win32\lib\SDL.lib $(SolutionDir)..\platform_local\win32\lib\SDL_ttf.lib $(SolutionDir)..\platform_local\win32\lib\SDL_image.lib $(SolutionDir)..\platform_local\win32\lib\SDL_gfx.lib"
 				LinkIncremental="1"
 				GenerateDebugInformation="true"
 				SubSystem="2"
@@ -416,6 +416,70 @@
 					>
 					<File
 						RelativePath="..\..\libs\luacpp\luacpp.cpp"
+						>
+					</File>
+				</Filter>
+				<Filter
+					Name="zlib"
+					>
+					<File
+						RelativePath="..\..\libs\zlib\adler32.c"
+						>
+					</File>
+					<File
+						RelativePath="..\..\libs\zlib\compress.c"
+						>
+					</File>
+					<File
+						RelativePath="..\..\libs\zlib\crc32.c"
+						>
+					</File>
+					<File
+						RelativePath="..\..\libs\zlib\deflate.c"
+						>
+					</File>
+					<File
+						RelativePath="..\..\libs\zlib\gzclose.c"
+						>
+					</File>
+					<File
+						RelativePath="..\..\libs\zlib\gzlib.c"
+						>
+					</File>
+					<File
+						RelativePath="..\..\libs\zlib\gzread.c"
+						>
+					</File>
+					<File
+						RelativePath="..\..\libs\zlib\gzwrite.c"
+						>
+					</File>
+					<File
+						RelativePath="..\..\libs\zlib\infback.c"
+						>
+					</File>
+					<File
+						RelativePath="..\..\libs\zlib\inffast.c"
+						>
+					</File>
+					<File
+						RelativePath="..\..\libs\zlib\inflate.c"
+						>
+					</File>
+					<File
+						RelativePath="..\..\libs\zlib\inftrees.c"
+						>
+					</File>
+					<File
+						RelativePath="..\..\libs\zlib\trees.c"
+						>
+					</File>
+					<File
+						RelativePath="..\..\libs\zlib\uncompr.c"
+						>
+					</File>
+					<File
+						RelativePath="..\..\libs\zlib\zutil.c"
 						>
 					</File>
 				</Filter>
