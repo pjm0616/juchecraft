@@ -45,4 +45,39 @@ void GameUI::drawObjects()
 
 
 
+void GameUI::toast(const std::string &msg, time_t duration)
+{
+	this->m_toast.msg = msg;
+	this->m_toast.duration = duration;
+	this->m_toast.started = this->m_game->getCachedElapsedTime();
+}
+void GameUI::clearToast()
+{
+	this->m_toast.msg.clear();
+	this->m_toast.duration = 0;
+	this->m_toast.started = 0;
+}
+bool GameUI::checkToast()
+{
+	if(this->m_toast.msg.empty())
+	{
+		return false;
+	}
+	else if((this->m_game->getCachedElapsedTime() - this->m_toast.started) >= this->m_toast.duration)
+	{
+		this->clearToast();
+		return false;
+	}
+	else
+	{
+		return true;
+	}
+}
+
+
+
+
+
+
+
 

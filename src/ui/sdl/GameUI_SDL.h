@@ -30,10 +30,6 @@ public:
 	virtual void processFrame();
 	virtual void draw();
 	
-	virtual void toast(const std::string &msg, time_t duration = GameUI::Toast::DefaultDuration);
-	virtual void clearToast();
-	
-	
 protected:
 	static std::map<ObjectId_t, std::string> obj_images;
 	static bool is_initialized;
@@ -67,13 +63,6 @@ private:
 	SDL::SDL_Surface *m_minimap_wnd, *m_unitstat_wnd, *m_buttons_wnd;
 	
 	int m_gamescr_left_pos, m_gamescr_top_pos;
-	
-	struct
-	{
-		std::string msg;
-		time_t duration;
-		time_t started;
-	} m_toast;
 };
 
 

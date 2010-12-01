@@ -550,14 +550,12 @@ void GameUI_SDL::drawUI()
 		const UnitOrder::OrderPtr &order = this->m_player->getOrder();
 		if(dynamic_cast<UnitOrder::TargetedOrder *>(order.get()) != NULL && order->isStarted() == false)
 		{
-			SDL_print(this->m_font, this->m_screen, 210+50, 330, 150, 16, 0xffffffff, "Select target");
+			SDL_print(this->m_font, this->m_screen, 210+50, 330, 150, 16, 0xffffffff, _("Select target"));
 		}
 	}
-	if(!this->m_toast.msg.empty())
+	if(this->checkToast())
 	{
 		SDL_print(this->m_font, this->m_screen, 210+20, 350, 150, 16, 0xffffffff, this->m_toast.msg.data());
-		if((this->m_game->getCachedElapsedTime() - this->m_toast.started) >= this->m_toast.duration)
-			this->clearToast();
 	}
 }
 
@@ -824,20 +822,6 @@ void GameUI_SDL::drawObject(const ObjectPtr &obj)
 	#endif
 }
 
-
-void GameUI_SDL::toast(const std::string &msg, time_t duration)
-{
-	this->m_toast.msg = msg;
-	this->m_toast.duration = duration;
-	this->m_toast.started = this->m_game->getCachedElapsedTime();
-}
-
-void GameUI_SDL::clearToast()
-{
-	this->m_toast.msg.clear();
-	this->m_toast.duration = 0;
-	this->m_toast.started = 0;
-}
 
 
 

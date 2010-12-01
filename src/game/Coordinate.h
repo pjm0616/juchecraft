@@ -34,25 +34,35 @@ public:
 	void add(const Coordinate &o) { this->addX(o.getX()); this->addY(o.getY()); }
 	void add(float x, float y) { this->addX(x); this->addY(y); }
 	
+	void mulX(float xmul) { this->m_x *= xmul; }
+	void mulY(float ymul) { this->m_y *= ymul; }
+	void mul(float n) { this->mulX(n); this->mulY(n); }
+	
 	bool isZero() const { return (this->getX() == 0.0 && this->getY() == 0.0); }
 	bool isIntegralZero() const { return ((int)this->getX() == 0 && (int)this->getY() == 0); }
 	
 	bool equals(const Coordinate &o) const { return ((int)o.getX() == (int)this->getX()) && ((int)o.getY() == (int)this->getY()); }
 	bool operator==(const Coordinate &o) const { return this->equals(o); }
 	
+	Coordinate operator-() const
+	{
+		return Coordinate(-this->getX(), -this->getY());
+	}
 	Coordinate operator+(const Coordinate &o) const
 	{
-		Coordinate coord(*this);
-		coord.addX(o.getX());
-		coord.addY(o.getY());
-		return coord;
+		return Coordinate(this->getX() + o.getX(), this->getY() + o.getY());
 	}
 	Coordinate operator-(const Coordinate &o) const
 	{
-		Coordinate coord(*this);
-		coord.addX(-o.getX());
-		coord.addY(-o.getY());
-		return coord;
+		return *this + (-o);
+	}
+	Coordinate operator*(float n) const
+	{
+		return Coordinate(this->getX() * n, this->getY() * n);
+	}
+	Coordinate operator/(float n) const
+	{
+		return *this * (1/n);
 	}
 	
 	/** @brief Calculates angle from `this' to `dest'

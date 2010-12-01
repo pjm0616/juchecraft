@@ -34,8 +34,6 @@ public:
 	virtual void processFrame();
 	virtual void draw();
 	
-	virtual void toast(const std::string &msg, time_t duration = GameUI::Toast::DefaultDuration) {}
-	
 protected:
 	static std::map<ObjectId_t, std::string> obj_images;
 	static bool is_initialized;

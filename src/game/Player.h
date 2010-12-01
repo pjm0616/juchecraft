@@ -230,6 +230,7 @@ public:
 	/** Sets target of player's current order. (specifically TargetedOrder)
 	 */
 	void setOrderTargetByCoord(const Coordinate &coord);
+	void setOrderTargetByRectCoord(Coordinate coord1, Coordinate coord2);
 	
 	// order queue related
 	#if 0

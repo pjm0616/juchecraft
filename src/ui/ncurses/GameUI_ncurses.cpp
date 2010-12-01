@@ -241,7 +241,7 @@ bool GameUI_ncurses::initUI()
 	fcntl(STDIN_FILENO, F_SETFL, fcntl(STDIN_FILENO, F_GETFL, NULL) | O_NONBLOCK);
 	//ncurses::clear();
 	//ncurses::refresh();
-	this->m_cur_y=10;this->m_cur_x=10;
+	this->m_cur_y=0;this->m_cur_x=0;
 	
 	return true;
 }
@@ -277,16 +277,29 @@ void GameUI_ncurses::processFrame()
 		case KEY_LEFT: this->m_cur_x--; break;
 		case KEY_RIGHT: this->m_cur_x++; break;
 		case '\n': {
-				SC::ObjectList::iterator it = this->m_game->getObjectList().begin();
-				(*it)->doOrder(new UnitOrder::Move(Coordinate(this->m_cur_x * 10, (this->m_cur_y-1) * 20)));
+			Coordinate cur1(this->m_cur_x*10, this->m_cur_y*20);
+			Coordinate cur2(this->m_cur_x*10 + 9, this->m_cur_y*20 + 19);
+			const UnitOrder::OrderPtr &order = this->m_player->getOrder();
+			UnitOrder::TargetedOrder *tgorder = dynamic_cast<UnitOrder::TargetedOrder *>(order.get());
+			
+			// if there's a pending targeted order
+			if(tgorder && tgorder->isStarted() == false)
+			{
+				this->m_player->setOrderTargetByRectCoord(cur1, cur2);
+				this->m_player->multiDoCurrentOrder();
+			}
+			else
+			{
+				this->m_player->startObjectSelection(cur1);
+				this->m_player->finishObjectSelection(cur2);
+			}
 			}
 			break;
-		case 'a': {
-				SC::ObjectList::iterator it = this->m_game->getObjectList().begin();
-				SC::ObjectList::iterator it2 = this->m_game->getObjectList().begin(); ++it2;
-				
-				//(*it)->cmd_attack(*it2);
-			}
+		case 'm':
+			this->m_player->setOrder(new UnitOrder::Move);
+			break;
+		case 'a':
+			this->m_player->setOrder(new UnitOrder::Attack);
 			break;
 		}
 	}
@@ -309,7 +322,7 @@ void GameUI_ncurses::draw()
 	ncurses::wnoutrefresh(this->m_wnd_minimap);
 	ncurses::wnoutrefresh(this->m_wnd_unitstat);
 	ncurses::wnoutrefresh(this->m_wnd_btns);
-	ncurses::move(this->m_cur_y, this->m_cur_x);
+	ncurses::move(this->m_cur_y+1, this->m_cur_x);
 	ncurses::wnoutrefresh(ncurses::stdscr);
 	ncurses::doupdate();
 }
@@ -323,10 +336,23 @@ void GameUI_ncurses::drawUI()
 	//ncurses::mvwprintw(this->m_wnd_stat, 0, 0, 
 	//	"Minerals: %d | Supplies: %d/%d", 
 	//	me->getMinerals(), me->getSuppliesInUse(), me->getCurrentSupplies());
-	ncurses::mvwprintw(this->m_wnd_stat, 0, 0, "FPS: %f | Frame: %u | Minerals: %d | Supplies: %d/%d", 
+	ncurses::mvwprintw(this->m_wnd_stat, 0, 0, "FPS: %f | Frame: %u | Minerals: %d | Supplies: %d/%d | pos: %dx%d", 
 		game->getCurrentFPS(), game->getFrameNumber(), 
-		me->getMinerals(), me->getSuppliesInUse(me->getRaceId()), me->getCurrentSupplies(me->getRaceId()));
+		me->getMinerals(), me->getSuppliesInUse(me->getRaceId()), me->getCurrentSupplies(me->getRaceId()), 
+		this->m_cur_x*10, this->m_cur_y*20);
 	
+	{
+		const UnitOrder::OrderPtr &order = this->m_player->getOrder();
+		if(dynamic_cast<UnitOrder::TargetedOrder *>(order.get()) != NULL && order->isStarted() == false)
+		{
+			const char *msg = _("Select target");
+			ncurses::mvwprintw(this->m_wnd_map, 23, (120 - strlen(msg))/2, "%s", msg);
+		}
+	}
+	if(this->checkToast())
+	{
+		ncurses::mvwprintw(this->m_wnd_map, 24, (120 - this->m_toast.msg.size())/2, "%s", this->m_toast.msg.data());
+	}
 	
 	//box(this->m_wnd_ctl, 0 , 0);
 	box(this->m_wnd_minimap, 0 , 0);

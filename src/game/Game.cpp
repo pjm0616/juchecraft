@@ -257,7 +257,7 @@ void Game::test_tmp1()
 	
 	o = this->newObject(ObjectId::Juche_RodongCorrectionalFacility);
 	o->changeOwner(players[1]);
-	o->setPosition(80, 80);
+	o->setPosition(80, 100);
 	
 	o = this->newObject(ObjectId::Terran_CommandCenter);
 	o->changeOwner(players[1]);

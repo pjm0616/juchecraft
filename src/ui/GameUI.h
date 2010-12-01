@@ -37,6 +37,9 @@ public:
 	virtual void processFrame() = 0;
 	virtual void draw() = 0;
 	
+	/** @name Toast
+	 */
+	//@{
 	struct Toast
 	{
 		enum
@@ -44,7 +47,9 @@ public:
 			DefaultDuration = 3, 
 		};
 	};
-	virtual void toast(const std::string &msg, time_t duration = GameUI::Toast::DefaultDuration) = 0;
+	virtual void toast(const std::string &msg, time_t duration = GameUI::Toast::DefaultDuration);
+	virtual void clearToast();
+	//@}
 	
 	// Uncomment this if you need a public accessor for m_game.
 	//Game *getGame() { return this->m_game; }
@@ -65,6 +70,18 @@ protected:
 	Game *m_game;
 	Player *m_player;
 	unsigned m_fps;
+	
+	/** @name Toast
+	 */
+	//@{
+	virtual bool checkToast();
+	struct
+	{
+		std::string msg;
+		time_t duration;
+		time_t started;
+	} m_toast;
+	//@}
 };
 
 

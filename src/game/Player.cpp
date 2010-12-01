@@ -259,6 +259,29 @@ void Player::setOrderTargetByCoord(const Coordinate &coord)
 		tgorder->setTarget(coord);
 }
 
+void Player::setOrderTargetByRectCoord(Coordinate coord1, Coordinate coord2)
+{
+	UnitOrder::TargetedOrder *tgorder = dynamic_cast<UnitOrder::TargetedOrder *>(this->getOrder().get());
+	SCAssert(tgorder != NULL);
+	Coordinate::normalizeTopLeftCoordinate(coord1, coord2);
+	float x1 = coord1.getX(), y1 = coord1.getY();
+	float x2 = coord2.getX(), y2 = coord2.getY();
+	
+	// check if there's an selectable object
+	ObjectList dummy;
+	ObjectPtr first = this->m_game->findObjectByRect(dummy, x1, y1, x2, y2);
+	
+	if(first)
+	{
+		tgorder->setTarget(first);
+	}
+	else
+	{
+		Coordinate center = (coord1 + coord2) / 2;
+		tgorder->setTarget(center);
+	}
+}
+
 
 #if 0
 const UnitOrder::OrderPtr &Player::getFirstOrderInQueue() const
