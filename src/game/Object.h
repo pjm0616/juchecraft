@@ -11,6 +11,13 @@
 
 namespace SC {
 
+// TODO: move ObjectRenderState class to elsewhere
+class ObjectRenderingState
+{
+	ObjectRenderingState();
+	virtual ~ObjectRenderingState();
+};
+typedef shared_ptr<ObjectRenderingState> ObjectRenderingStatePtr;
 
 
 /** 
@@ -288,6 +295,10 @@ public: /* protected */
 	 */
 	void setState(ObjectState_t state, bool onoff);
 	//@}}
+	
+	/** Unit rendering state
+	 */
+	ObjectRenderingStatePtr m_rendering_state;
 	
 private:
 	/** @name Unit owner related */

@@ -261,7 +261,7 @@ void Player::setOrderTargetByCoord(const Coordinate &coord)
 
 void Player::setOrderTargetByRectCoord(Coordinate coord1, Coordinate coord2)
 {
-	UnitOrder::TargetedOrder *tgorder = dynamic_cast<UnitOrder::TargetedOrder *>(this->getOrder().get());
+	UnitOrder::TargetedOrder *tgorder = dynastatic_cast<UnitOrder::TargetedOrder *>(this->getOrder().get());
 	SCAssert(tgorder != NULL);
 	Coordinate::normalizeTopLeftCoordinate(coord1, coord2);
 	float x1 = coord1.getX(), y1 = coord1.getY();

@@ -283,6 +283,11 @@ bool GameUI_SDL::initUI()
 	this->m_font = TTF_OpenFont(GAME_ROOT_DIR "./res/ui/sdl/fonts/NanumGothic.ttf", this->getFontSize());
 	TTF_SetFontStyle(this->m_font, TTF_STYLE_NORMAL);
 	
+	{
+		SDL_print(this->m_font, this->m_screen, (640-100)/2, (480-this->getFontSize())/2, 100, this->getFontSize(), 0xff00ff00, "Loading...");
+		SDL_Flip(this->m_screen);
+	}
+	
 	// color format: 0xAABBGGRR; 0xffBBGGRR
 	this->m_game_scr = SDL_CreateRGBSurface(SDL_HWSURFACE, this->m_game->getMapWidth(), this->m_game->getMapHeight(), 
 		32, 0xff, 0xff00, 0xff0000, 0xff000000);
