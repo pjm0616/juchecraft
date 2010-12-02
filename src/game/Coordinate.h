@@ -1,9 +1,12 @@
-// Copyright (C) 2010 Park Jeongmin <pjm0616@gmail.com>
-// See LICENSE.txt for details
-
-/** @file SCCoordinate.h
+/*
+ *	Copyright (C) 2010 Park Jeongmin <pjm0616@gmail.com>
+ *	This file is a part of JucheCraft. http://sigkill.kr/projects/juchecraft
+ *	
+ *	See LICENSE.txt for details.
 **/
 
+/** @file src/game/Coordinate.h
+**/
 
 #ifndef SCCoordinate_H_
 #define SCCoordinate_H_

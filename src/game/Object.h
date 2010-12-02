@@ -1,10 +1,13 @@
-// Copyright (C) 2010 Park Jeongmin <pjm0616@gmail.com>
-// See LICENSE.txt for details
-
-/** @file SCObject.h
- *  @brief Implements abstract game object
+/*
+ *	Copyright (C) 2010 Park Jeongmin <pjm0616@gmail.com>
+ *	This file is a part of JucheCraft. http://sigkill.kr/projects/juchecraft
+ *	
+ *	See LICENSE.txt for details.
 **/
 
+/** @file src/game/Object.h
+ *  Implements abstract game object
+**/
 
 #ifndef SCObject_H_
 #define SCObject_H_

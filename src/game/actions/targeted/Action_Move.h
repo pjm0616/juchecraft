@@ -1,5 +1,12 @@
-// Copyright (C) 2010 Park Jeongmin <pjm0616@gmail.com>
-// See LICENSE.txt for details
+/*
+ *	Copyright (C) 2010 Park Jeongmin <pjm0616@gmail.com>
+ *	This file is a part of JucheCraft. http://sigkill.kr/projects/juchecraft
+ *	
+ *	See LICENSE.txt for details.
+**/
+
+/** @file src/game/actions/targeted/Action_Move.h
+**/
 
 #ifndef SCUnitAction_Move_H_
 #define SCUnitAction_Move_H_

@@ -1,5 +1,12 @@
-// Copyright (C) 2010 Park Jeongmin <pjm0616@gmail.com>
-// See LICENSE.txt for details
+/*
+ *	Copyright (C) 2010 Park Jeongmin <pjm0616@gmail.com>
+ *	This file is a part of JucheCraft. http://sigkill.kr/projects/juchecraft
+ *	
+ *	See LICENSE.txt for details.
+**/
+
+/** @file src/game/orders/TargetedOrder.h
+**/
 
 #ifndef SCUnitOrder_TargetedOrder_H_
 #define SCUnitOrder_TargetedOrder_H_

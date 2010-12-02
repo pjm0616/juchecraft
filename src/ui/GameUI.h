@@ -1,10 +1,12 @@
-// Copyright (C) 2010 Park Jeongmin <pjm0616@gmail.com>
-// See LICENSE.txt for details
-
-/** @file ui/SCGameUI.h
- *  @brief Abstract user interface class
+/*
+ *	Copyright (C) 2010 Park Jeongmin <pjm0616@gmail.com>
+ *	This file is a part of JucheCraft. http://sigkill.kr/projects/juchecraft
+ *	
+ *	See LICENSE.txt for details.
 **/
 
+/** @file src/ui/GameUI.h
+**/
 
 #ifndef SCGameUI_H_
 #define SCGameUI_H_

@@ -1,5 +1,12 @@
-// Copyright (C) 2010 Park Jeongmin <pjm0616@gmail.com>
-// See LICENSE.txt for details
+/*
+ *	Copyright (C) 2010 Park Jeongmin <pjm0616@gmail.com>
+ *	This file is a part of JucheCraft. http://sigkill.kr/projects/juchecraft
+ *	
+ *	See LICENSE.txt for details.
+**/
+
+/** @file src/ui/GameUI_SDL.h
+**/
 
 #ifndef SCGameUI_SDL_H_
 #define SCGameUI_SDL_H_

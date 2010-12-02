@@ -1,11 +1,12 @@
-// Copyright (C) 2010 Park Jeongmin <pjm0616@gmail.com>
-// See LICENSE.txt for details
-
-/** @file SCPlayer.h
- *  @brief Game player object
+/*
+ *	Copyright (C) 2010 Park Jeongmin <pjm0616@gmail.com>
+ *	This file is a part of JucheCraft. http://sigkill.kr/projects/juchecraft
+ *	
+ *	See LICENSE.txt for details.
 **/
 
-
+/** @file src/game/Player.h
+**/
 
 #ifndef SCPlayer_H_
 #define SCPlayer_H_

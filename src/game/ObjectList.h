@@ -1,10 +1,13 @@
-// Copyright (C) 2010 Park Jeongmin <pjm0616@gmail.com>
-// See LICENSE.txt for details
-
-/** @file SCObjectList.h
- *  @brief Implements object list to be used in SC::Game
+/*
+ *	Copyright (C) 2010 Park Jeongmin <pjm0616@gmail.com>
+ *	This file is a part of JucheCraft. http://sigkill.kr/projects/juchecraft
+ *	
+ *	See LICENSE.txt for details.
 **/
 
+/** @file src/game/ObjectList.h
+ *  Implements object list to be used in SC::Game
+**/
 
 #ifndef SCObjectList_H_
 #define SCObjectList_H_
