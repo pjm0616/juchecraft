@@ -101,7 +101,7 @@ protected:
 	void setAsFinished(bool onoff = true) { this->m_is_finished = onoff; }
 	void setAsStarted(bool onoff = true) { this->m_is_started = onoff; }
 	
-	const OrderInfo *m_info;
+	const OrderInfo *m_info; /**< Information of the order(requirements, etc.) */
 	
 	/** recursively calls base class' clone() and returns a pointer to cloned order.
 	 *  Only to be called by Order*::clone()

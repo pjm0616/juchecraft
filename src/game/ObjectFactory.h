@@ -24,21 +24,29 @@ public:
 	
 	bool load(const char *listfile);
 	
-	// pointer returned by this functions become invalid when this object destructs.
+	/** finds object prototype by ObjectId
+	 *  pointer returned by this functions become invalid when this object destructs.
+	 *  @return constant referenct to the object prototype
+	 */
 	const ObjectPtr &findObjectById(ObjectId_t id) { return this->m_obj_protos_by_id[id]; }
 	
-	// returns a new object based on object `id'
+	/** Creates a new object based on ObjectId `id'
+	 *  @return a pointer to the newly created object
+	 */
 	ObjectPtr newObjectById(ObjectId_t id);
 	
 protected:
-	ObjectList m_obj_prototypes;
-	ObjectTable m_obj_protos_by_id;
+	ObjectList m_obj_prototypes; /**< List of object prototypes */
+	ObjectTable m_obj_protos_by_id; /**< List of object prototypes, indexed by ObjectId */
 
 private:
+	/** @name internal function
+	 *  @details parses data in `stack_idx' and stores the parsed information to `obj'
+	 */
 	void parseObjectData(Object *obj, int stack_idx);
 	
 	Game *m_game;
-	luacpp m_lua;
+	luacpp m_lua; /**< a lua_State that holds object data */
 };
 
 

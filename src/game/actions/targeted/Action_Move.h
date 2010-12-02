@@ -18,7 +18,7 @@ class Move: public TargetedAction
 {
 public:
 	/** @brief Defines movement options.
-	 *  @detail This is an enum class. C++98 does not support enum classes, damn.
+	 *  @details This is an enum class. C++98 does not support enum classes, damn.
 	 */
 	struct MovementFlags
 	{

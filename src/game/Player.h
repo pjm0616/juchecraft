@@ -26,6 +26,9 @@ public:
 		Player5, Player6, Player7, Player8
 	};
 	
+	/** 
+	 *  @param game The game that owns the player
+	 */
 	Player(Game *game);
 	~Player();
 	
@@ -187,8 +190,8 @@ public:
 	size_t finishObjectSelection(const Coordinate &end_coord, SelectionFlags_t flags = SelectionFlags::SET);
 	
 	/** @brief Get Currently selected objects
-	 *  @detail Don't call this function if isSelectionInProgress() == false
-	 *  @detail results are stored in `buf'
+	 *  @details Don't call this function if isSelectionInProgress() == false
+	 *  @details results are stored in `buf'
 	 *  @param[out] buf A referece to ObjectList to store the results in.
 	 *  @return The number of selected objects.
 	 *  @sa SelectionFlags
@@ -196,7 +199,7 @@ public:
 	size_t getCurrentlySelectedObjects(ObjectList &buf, const Coordinate &crnt_coord, SelectionFlags_t flags) const;
 	
 	/** @brief Selects object that are inside the rect[`coord' ~ `coord2']
-	 *  @detail internally this function calls startObjectSelection, finishObjectSelection continuously
+	 *  @details internally this function calls startObjectSelection, finishObjectSelection continuously
 	 *  @return The number of selected objects.
 	 *  @sa SelectionFlags
 	 */
@@ -243,7 +246,9 @@ public:
 	bool isOrderQueueEmpty() const { return this->m_orderqueue.empty(); }
 	#endif
 	
-	void toast(const std::string &msg, time_t duration = -1); // FIXME: dirty hack; see Player.cpp
+	/** Issues a `toast' message to player's screen.
+	 */
+	void toast(const std::string &msg, time_t duration = -1);
 	
 public:
 	/** @brief set player id/color

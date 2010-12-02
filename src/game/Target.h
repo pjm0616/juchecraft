@@ -51,14 +51,19 @@ public:
 		SCAssert(this->getType() == Type::Object);
 		return this->m_target.obj;
 	}
+	/** Get target as coordinate.
+	 *  @return The coordiinate.
+	 *  @retval If the target is an Object, returns current position of the object.
+	 *  @retval If the target is an Coordinate, returns itself.
+	 */
 	const Coordinate &getAsCoordinate() const;
 	
 private:
-	unsigned int m_type;
+	unsigned int m_type; /**< Type of the target */
 	struct
 	{
-		Coordinate coord;
-		ObjectPtr obj;
+		Coordinate coord; /**< Coordinate target */
+		ObjectPtr obj; /**< Object target */
 	} m_target;
 };
 

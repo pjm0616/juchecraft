@@ -122,9 +122,10 @@ public:
 	
 	//@{
 	bool checkMinDistanceOld(const ObjectPtr &target, float min_distance, Coordinate *where_to_move);
-	/** checks the distance between `this' and `dest'
-	 *  @detail Checks if the distance if less(or equal) than `min_distance'.
-	 *  @detail if not, stores the coordinate to move in order to reach target in `where_to_move'.
+	/** @brief checks the distance between `this' and `dest'
+	 * 
+	 *  Checks if the distance if less(or equal) than `min_distance'.
+	 *  if not, stores the coordinate to move in order to reach target in `where_to_move'.
 	 *  @return true if the distance if less(or equal) than `min_distance'. Otherwise false.
 	 */
 	bool checkMinDistance(const ObjectPtr &target, float min_distance, Coordinate *where_to_move);
@@ -299,20 +300,16 @@ public: /* protected */
 	void setState(ObjectState_t state, bool onoff);
 	//@}}
 	
-	/** Unit rendering state
-	 */
-	ObjectRenderingStatePtr m_rendering_state;
-	
 private:
 	/** @name Unit owner related */
 	//@{
 	void setOwner(Player *new_owner) { this->m_owner = new_owner; }
 	/** Attaches to current owner.
-	 *  @detail updates owner's suppliy statistics, etc.
+	 *  @details updates owner's supplys, etc.
 	 */
 	void attachToOwner();
 	/** Detaches from current owner.
-	 *  @detail updates owner's suppliy statistics, etc.
+	 *  @details updates owner's supplys, etc.
 	 */
 	void detachFromOwner();
 	//@}
@@ -331,46 +328,7 @@ private:
 	void popFirstSlotInProductionQueue() { this->m_production.queue.pop_front(); }
 	//@}
 	
-	//////// Now it's data part
-	
-	/** @name Object owner/state/position etc. */
-	//@{
-	Game *m_game;
-	Player *m_owner;
-	ObjectState_t m_state;
-	Coordinate m_pos;
-	float m_angle;
-	//@}
-	
-	/** @name Object attributes */
-	//@{
-	float m_hit_point; /**< Current hit point */
-	float m_energy; /**< Current energy */
-	int m_remaining_minerals; /**< Remaining minerals */
-	int m_remaining_vespene_gas; /**< Remaining vespene gas */
-	float m_added_armor_bonus, m_added_damage_bonus, m_added_moving_speed_bonus, m_added_attack_speed_bonus;
-	float m_mul_armor_bonus, m_mul_damage_bonus, m_mul_moving_speed_bonus, m_mul_attack_speed_bonus;
-	//@}
-	
-	UnitAction::ActionTable m_actions;
-	UnitOrder::OrderPtr m_order;
-	
-	/** Production related data */
-	struct ms_production
-	{
-		std::deque<ObjectId_t> queue; /**< production queue */
-		double starttime; /** the time when the first slot in the queue has begun */
-	} m_production;
-	
-	//std::list<UpgradeId> m_upgrade_queue; /**< Currently not used; todo: implement this */
-	//std::deque<UnitOrderPtr> m_order_queue; /**< Currently not used; todo: implement this */
-	
-	//RenderingContext *m_renderctx; /**< TODO: contains information about rendering states. animation frame etc. It's not used in Object class */
-	
-	/////////////////////////////////////////////////////////////////////////
-public:
-	/** @name Constant object attributes */
-	//@{
+public: // constant object attributes
 	/** @sa ObjectType
 	 */
 	ObjectType_t getObjectType() const { return this->m_constattrs.object_type; }
@@ -387,9 +345,10 @@ public:
 	int getHeight() const { return this->m_constattrs.height; }
 	void getSize(int *w, int *h) const { *w = this->getWidth(); *h = this->getHeight(); }
 	
-	/** Get object's initial state.
+	/** @name Get object's initial state.
 	 *  @sa ObjectState
 	 */
+	//@{
 	ObjectState_t getInitialState() const { return this->m_constattrs.initial_state; }
 	int getMaxHP() const { return this->m_constattrs.max_hp; }
 	int getMaxEnergy() const { return this->m_constattrs.max_energy; }
@@ -397,31 +356,17 @@ public:
 	int getInitialVespeneGas() const { return this->m_constattrs.initial_vespene_gas; }
 	int getProvidedSupplies() const { return this->m_constattrs.provided_supplies; }
 	int getRequiredSupplies() const { return this->m_constattrs.required_supplies; }
+	//@}
 	
-	/** Get bare armor of the object.
-	 *  @detail DO NOT use this function unless you want the RAW unit attribute(without upgrades).
-	 *  @detail use getNetArmor() instead.
+	/** @name Unit's bare attributes (constant)
+	 *  DO NOT use this function unless you want the RAW unit attribute(without upgrades).
+	 *  use getNet*() instead.
 	 */
+	//@{
 	float getArmor() const { return this->m_constattrs.armor; }
-	/** Get bare damage of the object.
-	 *  @detail DO NOT use this function unless you want the RAW unit attribute(without upgrades).
-	 *  @detail use getNetDamage() instead.
-	 */
 	float getDamage() const { return this->m_constattrs.damage; }
-	/** Get bare moving speed of the object.
-	 *  @detail DO NOT use this function unless you want the RAW unit attribute(without upgrades).
-	 *  @detail use getNetMovingSpeed() instead.
-	 */
 	float getMovingSpeed() const { return this->m_constattrs.moving_speed; }
-	/** Get bare attack speed of the object.
-	 *  @detail DO NOT use this function unless you want the RAW unit attribute(without upgrades).
-	 *  @detail use getNetAttackSpeed() instead.
-	 */
 	float getAttackSpeed() const { return this->m_constattrs.attack_speed; }
-	/** Get bare attack range of the object.
-	 *  @detail DO NOT use this function unless you want the RAW unit attribute(without upgrades).
-	 *  @detail use getNetAttackRange() instead.
-	 */
 	float getAttackRange() const { return this->m_constattrs.attack_range; }
 	//@}
 	
@@ -432,8 +377,49 @@ public:
 	 */
 	ObjectPtr clone();
 	
-protected:
-	/** @name Constant object attributes */
+
+	
+private:
+	bool m_cleanup_called;
+	
+	/** @name Object owner/state/position etc. */
+	//@{
+	Game *m_game; /**< Main game object */
+	Player *m_owner; /**< The player that owns this object */
+	ObjectState_t m_state; /**< See ObjectState */
+	Coordinate m_pos;
+	float m_angle;
+	//@}
+	
+	/** @name Object attributes */
+	//@{
+	float m_hit_point; /**< Current hit point */
+	float m_energy; /**< Current energy */
+	int m_remaining_minerals; /**< Remaining minerals */
+	int m_remaining_vespene_gas; /**< Remaining vespene gas */
+	float m_added_armor_bonus, m_added_damage_bonus, m_added_moving_speed_bonus, m_added_attack_speed_bonus;
+	float m_mul_armor_bonus, m_mul_damage_bonus, m_mul_moving_speed_bonus, m_mul_attack_speed_bonus;
+	//@}
+	
+	UnitAction::ActionTable m_actions; /**< List of currently activated actions */
+	UnitOrder::OrderPtr m_order; /**< The order that this object is processing. */
+	
+	/** Production related data */
+	struct ms_production
+	{
+		std::deque<ObjectId_t> queue; /**< production queue */
+		double starttime; /** the time when the first slot in the queue has begun */
+	} m_production;
+	
+	//std::list<UpgradeId> m_upgrade_queue; /**< Currently not used; todo: implement this */
+	//std::deque<UnitOrderPtr> m_order_queue; /**< Currently not used; todo: implement this */
+	
+	/** Unit rendering state
+	 */
+	ObjectRenderingStatePtr m_rendering_state;
+	//RenderingContext *m_renderctx; /**< TODO: contains information about rendering states. animation frame etc. It's not used in Object class */
+	
+	/** Constant object attributes */
 	struct ConstantAttributes
 	{
 		ConstantAttributes();
@@ -461,9 +447,6 @@ protected:
 		float attack_speed; /**< Bare attack speed of the object @sa getNetAttackSpeed() */
 		float attack_range; /**< Bare attack range of the object @sa getNetAttackRange() */
 	} m_constattrs;
-	
-private:
-	bool m_cleanup_called; /**< for debugging */
 };
 
 

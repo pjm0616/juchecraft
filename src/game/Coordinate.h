@@ -79,6 +79,10 @@ public:
 	 */
 	float calculateDistance(const Coordinate &dest) const;
 	
+	/** Normalizes top-left and bottom-right coordinate.
+	 *  @param[in,out] top_left
+	 *  @param[in,out] bottom_right
+	 */
 	static void normalizeTopLeftCoordinate(Coordinate &top_left, Coordinate &bottom_right);
 	
 private:

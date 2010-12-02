@@ -26,24 +26,42 @@ public:
 	Game();
 	~Game();
 	
+	/** Loads game data
+	 */
 	void loadGameData(const char *dir);
+	/** Sets game UI
+	 */
 	void setUI(GameUI *ui) { this->m_ui = ui; }
 	
+	/** Game main loop
+	 */
 	void run();
-	void test_tmp1(); // for debugging & testing
+	void test_tmp1(); /**< for debugging & testing */
 	
-	// adds/removes an object.
-	// DO NOT call this function while iterating ObjectList.
-	const ObjectPtr &addObject(const ObjectPtr &obj);
+	/** Creates a new object using ObjectFactory and `objid', and adds to game's object list
+	 *  DO NOT call this function while iterating ObjectList.
+	 *  @return a pointer to the newly created object.
+	 */
 	ObjectPtr newObject(ObjectId_t objid);
+	/** Removes `obj' from the game.
+	 */
 	int removeObject(const ObjectPtr &obj);
 	
+	/** Finds object in the rect
+	 *  @param [out] matched_objs a reference to ObjectList that will store the matched objects.
+	 *  @return pointer to first object if found, otherwise NULL.
+	 */
 	ObjectPtr findObjectByRect(ObjectList &matched_objs, int left, int top, int right, int bottom, 
 		unsigned int flags = ObjectFilter::Selectable);
 	ObjectPtr findObjectByRect(ObjectList &matched_objs, const Coordinate &top_left, 
 		const Coordinate &bottom_right, unsigned int flags = ObjectFilter::Selectable);
 	
+	/** Get current time from the system.
+	 */
 	double getElapsedTime() const;
+	/** Get cached elapsed time.
+	 *  Cached time will be updated at the end of update.
+	 */
 	double getCachedElapsedTime() const { return this->m_cached_elapsed_time; }
 	inline float getDelta() const { return this->m_deltat; }
 	inline float getFrameDelta() const { return this->m_frame_deltat; }
@@ -72,10 +90,26 @@ public:
 	const PlayerVector &getPlayers() const { return this->m_players; }
 	
 private:
+	/** Adds an object
+	 *  DO NOT call this function while iterating ObjectList.
+	 *  @return `obj'
+	 */
+	const ObjectPtr &addObject(const ObjectPtr &obj);
+	
+	/** Removes all objects in the game (m_objects)
+	 */
 	void removeAllObjects();
+	/** Removes all players in the game (m_players)
+	 */
 	void removeAllPlayers();
 	
+	/** Requests higher timer resoltion.
+	 *  Only to be called by run()
+	 */
 	void startTimer();
+	/** called when the game has finished
+	 *  Only to be called by run()
+	 */
 	void endTimer();
 	void setStartTime(time_t t) { this->m_start_time = t; }
 	inline time_t getStartTime() const { return this->m_start_time; }
@@ -87,6 +121,8 @@ private:
 	void setLastDrawTime(double val) { this->m_last_draw = val; }
 	inline double getLastDrawTime() const { return this->m_last_draw; }
 	
+	/** Iterates over object list and process each object
+	 */
 	void processObjects();
 	
 	GameUI *m_ui;

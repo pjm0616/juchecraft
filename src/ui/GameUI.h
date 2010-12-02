@@ -32,7 +32,7 @@ public:
 	virtual bool cleanupUI() = 0;
 	
 	/** @brief get fps value
-	 *  @detail if m_fps is too high, main loop can be delayed
+	 *  @details if m_fps is too high, main loop can be delayed
 	 */
 	inline unsigned int getFPS() const { return this->m_fps; }
 	
