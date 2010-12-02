@@ -138,8 +138,9 @@ static void SDL_print(TTF_Font *font, SDL_Surface *sf, int x, int y, int w, int 
 
 
 
-/* 유닛 색상을 비율에 따라 바꿔줌 */
+/* render unit colors depending on player's color */
 // This is slow :(
+#if 0
 void replace_unit_colors(SDL_Surface *sf, Uint32 newcolor)
 {
 	SDL_LockSurfaceIfNeeded(sf);
@@ -167,6 +168,42 @@ void replace_unit_colors(SDL_Surface *sf, Uint32 newcolor)
 		}
 	}
 	SDL_UnlockSurfaceIfNeeded(sf);
+}
+#endif
+void replace_unit_colors(const SDL_Surface *sf, SDL_Surface *dest_sf, Uint32 newcolor)
+{
+	//SDL_LockSurfaceIfNeeded(sf);
+	SDL_LockSurfaceIfNeeded(dest_sf);
+	//static const Uint32 orig_unit_colors[] = {0xde00de, 0x5b005b, 0xbd00bd, 0x9c009c, 0x7c007c, 0x190019, 0xff00ff, 0x3a003a};
+	Uint8 nc_r = (newcolor & 0x0000ff) >> 0;
+	Uint8 nc_g = (newcolor & 0x00ff00) >> 8;
+	Uint8 nc_b = (newcolor & 0xff0000) >> 16;
+	
+	#pragma omp parallel for if(sf->h > 200) shared(sf, dest_sf)
+	for(int y = 0; y < sf->h; y++)
+	{
+		const Uint32 *line = SDL_GetPixelPtr32(const_cast<SDL_Surface *>(sf), 0, y);
+		Uint32 *line_dest = SDL_GetPixelPtr32(dest_sf, 0, y);
+		for(int x = 0; x < sf->w; x++)
+		{
+			Uint8 r, g, b, a;
+			SDL_GetRGBA32(line[x], &r, &g, &b, &a);
+			if(r != 0 && g == 0 && r == b)
+			{
+				// 0xff:orig_r = player_[rgb]:rendered_[rgb]
+				Uint8 r2 = r * nc_r / 0xff;
+				Uint8 g2 = r * nc_g / 0xff;
+				Uint8 b2 = r * nc_b / 0xff;
+				line_dest[x] = SDL_MapRGBA32(r2, g2, b2, a);
+			}
+			else
+			{
+				line_dest[x] = line[x];
+			}
+		}
+	}
+	//SDL_UnlockSurfaceIfNeeded(sf);
+	SDL_UnlockSurfaceIfNeeded(dest_sf);
 }
 
 
@@ -204,10 +241,10 @@ static void render_jcimg_to_screen(JucheImage *img, SDL_Surface *scr, int num, i
 	
 	SDL_BlitSurface(sf.get(), &srcrect, scr, &dstrect);
 }
-static void render_jcimg_obj_to_screen(const ObjectPtr &obj, JucheImage *img, SDL_Surface *scr, int num, int scr_cx, int scr_cy)
+static void render_jcimg_obj_to_screen(const ObjectPtr &obj, JucheImage *img, SDL_Surface *scr, int num, int scr_cx, int scr_cy, Uint32 unit_color = 0x00000000)
 {
 	jcimg_imginfo_t *imginfo;
-	const SDL_SurfacePtr &sf = img->getImage(num, &imginfo);
+	const SDL_SurfacePtr &orig_sf = img->getImage(num, &imginfo);
 	
 	// TODO
 	#if 1
@@ -223,7 +260,16 @@ static void render_jcimg_obj_to_screen(const ObjectPtr &obj, JucheImage *img, SD
 	SDL_Rect srcrect = {imginfo->left, imginfo->top, imginfo->width, imginfo->height};
 	SDL_Rect dstrect = {left, top, imginfo->width, imginfo->height};
 	
-	SDL_BlitSurface(sf.get(), &srcrect, scr, &dstrect);
+	
+	SDL_Surface *sf;
+	if(unit_color == 0x00000000)
+		sf = orig_sf.get();
+	else
+	{
+		SDL_SurfacePtr sf_color(SDL_CreateRGBSurface(SDL_HWSURFACE, imginfo->width, imginfo->height, 32, 0xff, 0xff00, 0xff0000, 0xff000000));
+		replace_unit_colors(orig_sf.get(), sf_color.get(), unit_color);
+	}
+	SDL_BlitSurface(sf, &srcrect, scr, &dstrect);
 }
 
 ///////

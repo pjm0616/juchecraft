@@ -40,7 +40,7 @@ public:
 	void set(const ObjectPtr &obj);
 	const Coordinate &getCoordinate() const
 	{
-		SCAssert(this->getType() != Type::Coordinate);
+		SCAssert(this->getType() == Type::Coordinate);
 		return this->m_target.coord;
 	}
 	const ObjectPtr &getObject() const
