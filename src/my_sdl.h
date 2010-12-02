@@ -33,6 +33,11 @@ public:
 		:SC::shared_ptr<SDL_Surface>(sf, SDL_Surface_deleter())
 	{
 	}
+	
+	void reset(SDL_Surface *sf)
+	{
+		this->SC::shared_ptr<SDL_Surface>::reset(sf, SDL_Surface_deleter());
+	}
 };
 
 } /* END OF namespace SDL */

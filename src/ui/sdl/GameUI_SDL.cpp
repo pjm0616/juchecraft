@@ -179,7 +179,7 @@ void replace_unit_colors(const SDL_Surface *sf, SDL_Surface *dest_sf, Uint32 new
 	Uint8 nc_g = (newcolor & 0x00ff00) >> 8;
 	Uint8 nc_b = (newcolor & 0xff0000) >> 16;
 	
-	#pragma omp parallel for if(sf->h > 200) shared(sf, dest_sf)
+	//#pragma omp parallel for if(sf->h > 200) shared(sf, dest_sf)
 	for(int y = 0; y < sf->h; y++)
 	{
 		const Uint32 *line = SDL_GetPixelPtr32(const_cast<SDL_Surface *>(sf), 0, y);
@@ -261,15 +261,18 @@ static void render_jcimg_obj_to_screen(const ObjectPtr &obj, JucheImage *img, SD
 	SDL_Rect dstrect = {left, top, imginfo->width, imginfo->height};
 	
 	
-	SDL_Surface *sf;
+	SDL_SurfacePtr sf;
 	if(unit_color == 0x00000000)
-		sf = orig_sf.get();
+	{
+		sf = orig_sf;
+	}
 	else
 	{
-		SDL_SurfacePtr sf_color(SDL_CreateRGBSurface(SDL_HWSURFACE, imginfo->width, imginfo->height, 32, 0xff, 0xff00, 0xff0000, 0xff000000));
+		SDL_SurfacePtr sf_color(SDL_CreateRGBSurface(SDL_SWSURFACE, orig_sf->w, orig_sf->h, 32, 0xff, 0xff00, 0xff0000, 0xff000000));
 		replace_unit_colors(orig_sf.get(), sf_color.get(), unit_color);
+		sf = sf_color;
 	}
-	SDL_BlitSurface(sf, &srcrect, scr, &dstrect);
+	SDL_BlitSurface(sf.get(), &srcrect, scr, &dstrect);
 }
 
 ///////
@@ -869,7 +872,7 @@ void GameUI_SDL::drawObject(const ObjectPtr &obj)
 				if(img1_shad) // shadow
 					render_jcimg_obj_to_screen(obj, img1_shad, this->m_game_scr, framenum, x, y);
 				if(img1)
-					render_jcimg_obj_to_screen(obj, img1, this->m_game_scr, framenum, x, y);
+					render_jcimg_obj_to_screen(obj, img1, this->m_game_scr, framenum, x, y, unit_color);
 			}
 		}
 		#endif
