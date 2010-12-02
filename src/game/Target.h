@@ -38,9 +38,17 @@ public:
 	
 	void set(const Coordinate &coord);
 	void set(const ObjectPtr &obj);
-	const Coordinate &getCoordinate() const;
-	const ObjectPtr &getObject() const;
-	
+	const Coordinate &getCoordinate() const
+	{
+		SCAssert(this->getType() != Type::Coordinate);
+		return this->m_target.coord;
+	}
+	const ObjectPtr &getObject() const
+	{
+		SCAssert(this->getType() == Type::Object);
+		return this->m_target.obj;
+	}
+	const Coordinate &getAsCoordinate() const;
 	
 private:
 	unsigned int m_type;

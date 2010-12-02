@@ -46,12 +46,14 @@ Move::Move(const Target &target, float minimum_distance, MovementFlags_t flags)
 {
 	this->setMovementFlags(flags);
 	this->setMinimumDistanceToTarget(minimum_distance);
-	this->setFinalDestination(target.getCoordinate()); // not necessary if target is an object; our final destination is `target'
+	if(target.getType() == Target::Type::Coordinate)
+		this->setFinalDestination(target.getCoordinate());
+	// else: our final destination is `target'
 	
 	#if 0
 	Coordinate next_pos = this->calculateNextDestination();
 	#else
-	Coordinate next_pos = target.getCoordinate();
+	Coordinate next_pos = target.getAsCoordinate();
 	#endif
 	this->setDestination(next_pos);
 }

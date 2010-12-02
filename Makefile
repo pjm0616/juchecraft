@@ -3,6 +3,8 @@
 DEBUG				?= 1
 ENABLE_PROFILING 	?= 0
 
+DEBUG_OPT_LEVEL		?= 0
+
 # 0: don't use, 1: generate, 2: use
 ENABLE_PGO			?= 0
 PGO_DIR			= ./tmp_profile/
@@ -23,8 +25,7 @@ LIBDIR				=
 
 ifeq ($(DEBUG),1)
 DEFS_DBG			= -DDEBUG
-CFLAGS_DBG			= $(DEFS_DBG) -g -O0 -fstack-protector-all -fstrict-aliasing
-#CFLAGS_DBG			= $(DEFS_DBG) -g -O1 -fstack-protector-all -fstrict-aliasing -fno-omit-frame-pointer
+CFLAGS_DBG			= $(DEFS_DBG) -g -O$(DEBUG_OPT_LEVEL) -fstack-protector-all -fstrict-aliasing -fno-omit-frame-pointer
 CXXFLAGS_DBG		= $(CFLAGS_DBG)
 LDFLAGS_DBG			=
 ifeq ($(ENABLE_PROFILING),1)

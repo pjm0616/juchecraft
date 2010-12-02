@@ -299,7 +299,10 @@ bool GameUI_SDL::initUI()
 	this->m_unitstat_wnd = SDL_CreateRGBSurface(SDL_HWSURFACE, 128, 128, 32, 0xff, 0xff00, 0xff0000, 0xff000000);
 	this->m_buttons_wnd = SDL_CreateRGBSurface(SDL_HWSURFACE, 128, 128, 32, 0xff, 0xff00, 0xff0000, 0xff000000);
 	
+	double d_loadres_start = this->m_game->getElapsedTime();
 	this->loadResources();
+	double d_loadres = this->m_game->getElapsedTime() - d_loadres_start;
+	fprintf(stderr, "INFO: GameUI_SDL::loadResources() took %f secs\n", d_loadres);
 	
 	return true;
 }

@@ -11,10 +11,8 @@
 #include <deque>
 #include <set>
 
-#ifdef DEBUG
 #include <cstdio>
 #include <cstdlib>
-#endif
 
 #include <time.h>
 
@@ -217,6 +215,7 @@ void Game::run()
 			#endif
 			this->setFrameDelta(draw_finished_time - this->getLastDrawTime());
 			this->setLastDrawTime(draw_finished_time);
+			//fprintf(stderr, "INFO: GameUI::draw() took %f secs\n", draw_finished_time - start_time);
 		}
 		
 		// limit update rate

@@ -97,7 +97,7 @@ void Target::set(const ObjectPtr &obj)
 }
 
 
-const Coordinate &Target::getCoordinate() const
+const Coordinate &Target::getAsCoordinate() const
 {
 	SCAssert(this->getType() != Type::None);
 	switch(this->getType())
@@ -113,11 +113,7 @@ const Coordinate &Target::getCoordinate() const
 	}
 }
 
-const ObjectPtr &Target::getObject() const
-{
-	SCAssert(this->getType() == Type::Object);
-	return this->m_target.obj;
-}
+
 
 
 
