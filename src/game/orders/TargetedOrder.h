@@ -16,13 +16,14 @@ namespace UnitOrder {
 
 class TargetedOrder: public Order
 {
+	typedef Order super;
 public:
 	TargetedOrder(OrderId_t orderid = OrderId::None);
 	TargetedOrder(const Target &target, OrderId_t orderid = OrderId::None);
 	virtual ~TargetedOrder();
 	
 	virtual bool initOrder(const ObjectPtr &obj);
-	virtual bool process(float deltat);
+	virtual ProcessResult_t process(float deltat);
 	virtual OrderPtr clone(OrderPtr cloned_order = null_order);
 	
 	void clearTarget() { this->m_target.clear(); }

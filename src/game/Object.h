@@ -17,10 +17,10 @@ namespace SC {
 // TODO: move ObjectRenderState class to elsewhere
 class ObjectRenderingState
 {
-	ObjectRenderingState();
-	virtual ~ObjectRenderingState();
+public:
+	ObjectRenderingState() {}
+	virtual ~ObjectRenderingState() {}
 };
-typedef shared_ptr<ObjectRenderingState> ObjectRenderingStatePtr;
 
 
 /** 
@@ -314,20 +314,6 @@ private:
 	void detachFromOwner();
 	//@}
 	
-	/** @name production related */
-	//@{
-	void clearProductionQueue() { this->m_production.queue.clear(); }
-	void addToProductionQueue(ObjectId_t what) { this->m_production.queue.push_back(what); }
-	ObjectId_t firstSlotInProductionQueue()
-	{
-		if(this->m_production.queue.empty())
-			return ObjectId::None;
-		else
-			return this->m_production.queue.front();
-	}
-	void popFirstSlotInProductionQueue() { this->m_production.queue.pop_front(); }
-	//@}
-	
 public: // constant object attributes
 	/** @sa ObjectType
 	 */
@@ -370,6 +356,20 @@ public: // constant object attributes
 	float getAttackRange() const { return this->m_constattrs.attack_range; }
 	//@}
 	
+	void setRenderingState(const ObjectRenderingStatePtr &newstate) { this->m_rendering_state = newstate; }
+	void setRenderingState(ObjectRenderingState *newstate) { this->setRenderingState(ObjectRenderingStatePtr(newstate)); }
+	const ObjectRenderingStatePtr &getRenderingStateRaw() { return this->m_rendering_state; }
+	template <class T> inline T *getRenderingState()
+	{
+		T *rstate = dynastatic_cast<T *>(this->m_rendering_state.get());
+		if(unlikely(!rstate))
+		{
+			rstate = new T;
+			this->setRenderingState(rstate);
+		}
+		return rstate;
+	}
+	
 public:
 	/** Creates a new object based on this object.
 	 *  @return Pointer to newly created object.
@@ -378,7 +378,8 @@ public:
 	ObjectPtr clone();
 	
 
-	
+public:
+	UnitProductionManager m_unit_producer;
 private:
 	bool m_cleanup_called;
 	
@@ -403,13 +404,6 @@ private:
 	
 	UnitAction::ActionTable m_actions; /**< List of currently activated actions */
 	UnitOrder::OrderPtr m_order; /**< The order that this object is processing. */
-	
-	/** Production related data */
-	struct ms_production
-	{
-		std::deque<ObjectId_t> queue; /**< production queue */
-		double starttime; /** the time when the first slot in the queue has begun */
-	} m_production;
 	
 	//std::list<UpgradeId> m_upgrade_queue; /**< Currently not used; todo: implement this */
 	//std::deque<UnitOrderPtr> m_order_queue; /**< Currently not used; todo: implement this */

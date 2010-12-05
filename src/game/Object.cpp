@@ -35,6 +35,7 @@
 #include "game/ObjectIdList.h"
 #include "game/actions/Actions.h"
 #include "game/orders/Orders.h"
+#include "game/UnitProductionManager.h"
 #include "game/Object.h"
 #include "game/ObjectList.h"
 #include "game/ObjectFactory.h"
@@ -46,25 +47,25 @@ using namespace SC;
 
 // default object properties. these will be modified in prototypes.
 Object::ConstantAttributes::ConstantAttributes()
-	:object_type(ObjectType::None), 
-	object_id(ObjectId::None), 
-	object_id_name("Object"), 
-	object_name("Object"), 
-	race_id(RaceId::None), 
-	initial_state(ObjectState::None), 
-	width(0), 
-	height(0), 
-	max_hp(-1), 
-	max_energy(-1), 
-	initial_minerals(0), 
-	initial_vespene_gas(0), 
-	provided_supplies(0), 
-	required_supplies(0), 
-	armor(0.0), 
-	damage(0.0), 
-	moving_speed(0.0), 
-	attack_speed(0.0), 
-	attack_range(0.0)
+	: object_type(ObjectType::None)
+	, object_id(ObjectId::None)
+	, object_id_name("Object")
+	, object_name("Object")
+	, race_id(RaceId::None)
+	, initial_state(ObjectState::None)
+	, width(0)
+	, height(0)
+	, max_hp(-1)
+	, max_energy(-1)
+	, initial_minerals(0)
+	, initial_vespene_gas(0)
+	, provided_supplies(0)
+	, required_supplies(0)
+	, armor(0.0)
+	, damage(0.0)
+	, moving_speed(0.0)
+	, attack_speed(0.0)
+	, attack_range(0.0)
 {
 }
 
@@ -97,7 +98,8 @@ void Object::ConstantAttributes::operator=(const ConstantAttributes &o)
 
 
 Object::Object(Game *game)
-	:m_game(game)
+	: m_unit_producer(this)
+	, m_game(game)
 {
 	this->setState(ObjectState::None);
 	
@@ -219,8 +221,8 @@ void Object::processActions(float deltat)
 		const UnitAction::ActionPtr &act = it->second;
 		if(likely(act))
 		{
-			bool res = act->process(deltat);
-			if(res == true) // if finished then
+			UnitAction::ProcessResult_t res = act->process(deltat);
+			if(res == UnitAction::ProcessResult::Finished)
 			{
 				this->m_actions.erase(it++);
 			}
@@ -241,11 +243,11 @@ bool Object::processOrder(float deltat)
 {
 	if(this->m_order)
 	{
-		bool ret = this->m_order->process(deltat);
-		if(!ret)
+		UnitOrder::ProcessResult_t res = this->m_order->process(deltat);
+		if(res == UnitOrder::ProcessResult::Finished)
 		{
 			// the order has been finished
-			this->clearActions();
+			this->clearActions(); // asdf
 			this->cancelOrder();
 		}
 		else
@@ -264,6 +266,7 @@ bool Object::processOrder(float deltat)
 void Object::processFrame(float deltat)
 {
 	this->processOrder(deltat);
+	this->m_unit_producer.process();
 }
 
 
@@ -479,7 +482,7 @@ void Object::cancelOrder()
 bool Object::doOrder(const UnitOrder::OrderPtr &order)
 {
 	this->cancelOrder();
-	this->clearActions();
+	this->clearActions(); // asdf
 	bool ret = order->initOrder(this->getPtr());
 	if(ret)
 	{

@@ -16,12 +16,13 @@ namespace UnitAction {
 
 class Attack: public TargetedAction
 {
+	typedef TargetedAction super;
 public:
 	Attack(const Target &target);
 	virtual ~Attack();
 	
 	virtual bool initAction(const ObjectPtr &obj);
-	virtual bool process(float time);
+	virtual ProcessResult_t process(float time);
 private:
 	void cleanup();
 	

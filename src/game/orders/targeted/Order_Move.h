@@ -16,12 +16,13 @@ namespace UnitOrder {
 
 class Move: public TargetedOrder
 {
+	typedef TargetedOrder super;
 public:
 	Move();
 	Move(const Target &target);
 	
 	virtual bool initOrder(const ObjectPtr &obj);
-	virtual bool process(float time);
+	virtual ProcessResult_t process(float time);
 	virtual OrderPtr clone(OrderPtr cloned_order = null_order);
 	
 private:

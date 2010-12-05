@@ -21,7 +21,6 @@ namespace SDL
 
 namespace SC {
 
-
 class GameUI_SDL: public GameUI
 {
 public:

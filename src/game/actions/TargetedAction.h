@@ -17,6 +17,7 @@ namespace UnitAction {
 
 class TargetedAction: public Action
 {
+	typedef Action super;
 public:
 	TargetedAction(ActionId_t actid = ActionId::None);
 	TargetedAction(const Target &target, ActionId_t actid = ActionId::None);

@@ -41,6 +41,7 @@
 #include "game/ObjectIdList.h"
 #include "game/actions/Actions.h"
 #include "game/orders/Orders.h"
+#include "game/UnitProductionManager.h"
 #include "game/Object.h"
 #include "game/ObjectList.h"
 #include "game/ObjectFactory.h"
@@ -184,7 +185,7 @@ void Player::startObjectSelection(const Coordinate &start_coord)
 size_t Player::finishObjectSelection(const Coordinate &end_coord, SelectionFlags_t flags)
 {
 	ObjectList cur_selected_objs;
-	int max_objs = 16;
+	int max_objs = MAX_SELECTABLE_OBJS;
 	if(this->m_selection_start_coordinate == end_coord)
 		max_objs = 1;
 	

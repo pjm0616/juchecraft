@@ -5,36 +5,25 @@
  *	See LICENSE.txt for details.
 **/
 
-/** @file src/game/orders/ProductionOrder.h
+/** @file src/game/orders/Order_Produce.h
 **/
 
-#ifndef SCUnitOrder_ProductionOrder_H_
-#define SCUnitOrder_ProductionOrder_H_
+#ifndef SCUnitOrder_Produce_H_
+#define SCUnitOrder_Produce_H_
 
 namespace SC {
 namespace UnitOrder {
 
-class ProductionInfo
+class Produce: public Order
 {
+	typedef Order super;
 public:
-	ObjectId_t m_objid;
-	time_t m_time;
-};
-typedef shared_ptr<ProductionInfo> ProductionInfoPtr;
-
-
-class ProductionOrder: public Order
-{
-public:
-	ProductionOrder();
-	ProductionOrder(const ProductionInfoPtr &info);
-	virtual ~ProductionOrder();
+	Produce(ProductionInfoPtr info = ProductionInfoPtr());
+	virtual ~Produce();
 	
 	virtual bool initOrder(const ObjectPtr &obj);
-	virtual bool process(float deltat);
+	virtual ProcessResult_t process(float deltat);
 	virtual OrderPtr clone(OrderPtr cloned_order = null_order);
-	
-	
 	
 private:
 	ProductionInfoPtr m_prodinfo;

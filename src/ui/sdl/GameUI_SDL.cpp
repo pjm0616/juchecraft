@@ -38,6 +38,7 @@
 #include "game/ObjectIdList.h"
 #include "game/actions/Actions.h"
 #include "game/orders/Orders.h"
+#include "game/UnitProductionManager.h"
 #include "game/Object.h"
 #include "game/ObjectList.h"
 #include "game/ObjectFactory.h"
@@ -419,6 +420,13 @@ void GameUI_SDL::processFrame()
 			case 'a':
 				this->m_player->setOrder(new UnitOrder::Attack);
 				break;
+			case 'd': {
+				ProductionInfoPtr pinfo(new ProductionInfo);
+				pinfo->m_objid = ObjectId::Juche_DaepodongLauncher;
+				pinfo->m_time = 3;
+				this->m_player->setOrder(new UnitOrder::Produce(pinfo));
+				this->m_player->multiDoCurrentOrder();
+				} break;
 			default:
 				break;
 			}
@@ -716,21 +724,39 @@ static int convertAngleToDirection(float angle)
 	return direction;
 }
 
+class ObjectRenderingState_SDL: public ObjectRenderingState
+{
+public:
+	ObjectRenderingState_SDL()
+		: m_anim_frame(0)
+	{
+	}
+	virtual ~ObjectRenderingState_SDL() {}
+	
+	unsigned int m_anim_frame;
+};
+
 static int calculate_unit_framenum(const ObjectPtr &obj, int start, int end)
 {
 	int col, row;
+	ObjectRenderingState_SDL *rstate = obj->getRenderingState<ObjectRenderingState_SDL>();
 	
 	row = convertAngleToDirection(obj->getAngle());
 	time_t ticks = obj->getGame()->getCachedElapsedTime() * 1000;
 	if(obj->isMoving())
 	{
-		int t = (int)(ticks/50) % (end - start + 1);
-		col = t + start;
+		//int t = (int)(ticks/50) % (end - start + 1);
+		//col = t + start;
+		// TODO: animation speed
+		col = (unsigned int)(rstate->m_anim_frame/1.1) % (end - start + 1);
+		rstate->m_anim_frame++;
 	}
 	else if(obj->isAttacking())
 	{
-		int t = (int)(ticks/80) % (end - start + 1);
-		col = t + start;
+		//int t = (int)(ticks/80) % (end - start + 1);
+		//col = t + start;
+		col = (unsigned int)(rstate->m_anim_frame/2.0) % (end - start + 1);
+		rstate->m_anim_frame++;
 	}
 	else
 		col = start;
@@ -756,6 +782,8 @@ void GameUI_SDL::drawObject(const ObjectPtr &obj)
 	Player *owner = obj->getOwner();
 	obj->getPosition(&x, &y);
 	obj->getSize(&w, &h);
+	
+	//ObjectRenderingState_SDL *rstate = obj->getRenderingState<ObjectRenderingState_SDL>();
 	
 	#if 0
 	#else

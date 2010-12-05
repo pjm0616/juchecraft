@@ -34,6 +34,7 @@
 #include "game/ObjectIdList.h"
 #include "game/actions/Actions.h"
 #include "game/orders/Orders.h"
+#include "game/UnitProductionManager.h"
 #include "game/Object.h"
 #include "game/ObjectList.h"
 #include "game/ObjectFactory.h"
@@ -71,7 +72,7 @@ bool TargetedAction::setTarget(const Target &target)
 
 bool TargetedAction::initAction(const ObjectPtr &obj)
 {
-	if(!this->Action::initAction(obj))
+	if(!this->super::initAction(obj))
 		return false;
 	
 	const Target &target = this->getTarget();

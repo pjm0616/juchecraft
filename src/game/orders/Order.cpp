@@ -34,6 +34,7 @@
 #include "game/ObjectIdList.h"
 #include "game/actions/Actions.h"
 #include "game/orders/Orders.h"
+#include "game/UnitProductionManager.h"
 #include "game/Object.h"
 #include "game/ObjectList.h"
 #include "game/ObjectFactory.h"
@@ -62,9 +63,9 @@ bool Order::initOrder(const ObjectPtr &obj)
 	return true;
 }
 
-bool Order::process(float deltat)
+ProcessResult_t Order::process(float deltat)
 {
-	return true;
+	return ProcessResult::Finished;
 }
 
 OrderPtr Order::clone(OrderPtr cloned_order)

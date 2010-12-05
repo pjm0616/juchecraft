@@ -34,6 +34,7 @@
 #include "game/ObjectIdList.h"
 #include "game/actions/Actions.h"
 #include "game/orders/Orders.h"
+#include "game/UnitProductionManager.h"
 #include "game/Object.h"
 #include "game/ObjectList.h"
 #include "game/ObjectFactory.h"
@@ -63,7 +64,7 @@ bool TargetedOrder::initOrder(const ObjectPtr &obj)
 	return this->Order::initOrder(obj);
 }
 
-bool TargetedOrder::process(float deltat)
+ProcessResult_t TargetedOrder::process(float deltat)
 {
 	return this->Order::process(deltat);
 }

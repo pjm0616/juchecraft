@@ -14,6 +14,15 @@
 namespace SC {
 namespace UnitAction {
 
+struct ProcessResult
+{
+	enum
+	{
+		Continue, 
+		Finished, 
+	};
+};
+typedef unsigned int ProcessResult_t;
 
 /** An abstract class for UnitAction::*
  */
@@ -32,7 +41,7 @@ public:
 	
 	// you must call setObject() in initAction
 	virtual bool initAction(const ObjectPtr &obj);
-	virtual bool process(float time) = 0;
+	virtual ProcessResult_t process(float time) = 0;
 	
 	bool isFinished() const { return this->m_is_finished; }
 	bool isStarted() const { return this->m_is_started; }

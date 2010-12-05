@@ -16,9 +16,11 @@ namespace UnitAction {
 
 class Move: public TargetedAction
 {
+	typedef TargetedAction super;
 public:
 	/** @brief Defines movement options.
 	 *  @details This is an enum class. C++98 does not support enum classes, damn.
+	 *  TODO: remove MovementFlags in action class, move it to UnitOrder::Attack
 	 */
 	struct MovementFlags
 	{
@@ -35,7 +37,7 @@ public:
 	virtual ~Move();
 	
 	virtual bool initAction(const ObjectPtr &obj);
-	virtual bool process(float time);
+	virtual ProcessResult_t process(float time);
 private:
 	void cleanup();
 	

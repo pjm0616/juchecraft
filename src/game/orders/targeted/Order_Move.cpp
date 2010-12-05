@@ -34,6 +34,7 @@
 #include "game/ObjectIdList.h"
 #include "game/actions/Actions.h"
 #include "game/orders/Orders.h"
+#include "game/UnitProductionManager.h"
 #include "game/Object.h"
 #include "game/ObjectList.h"
 #include "game/ObjectFactory.h"
@@ -59,7 +60,7 @@ Move::Move(const Target &target)
 
 OrderPtr Move::clone(OrderPtr cloned_order)
 {
-	Move *p = this->do_clone_head<Move, TargetedOrder>(cloned_order);
+	Move *p = this->do_clone_head<Move, super>(cloned_order);
 	
 	return cloned_order;
 }
@@ -68,19 +69,19 @@ OrderPtr Move::clone(OrderPtr cloned_order)
 
 bool Move::initOrder(const ObjectPtr &obj)
 {
-	return this->TargetedOrder::initOrder(obj);
+	return this->super::initOrder(obj);
 }
 
-bool Move::process(float time)
+ProcessResult_t Move::process(float time)
 {
-	bool result = true;
+	ProcessResult_t result = ProcessResult::Continue;
 	switch(this->m_state.step)
 	{
 	case 0: {
 		bool ret = this->getObject()->doAction(new UnitAction::Move(this->getTarget()));
 		if(!ret)
 		{
-			result = false;
+			result = ProcessResult::Finished;
 			this->getObject()->getOwner()->toast(_("Unable to move"));
 		}
 		else
@@ -91,7 +92,7 @@ bool Move::process(float time)
 	case 1: {
 		if(!this->getObject()->isActivatedAction(UnitAction::ActionId::Move))
 		{
-			result = false;
+			result = ProcessResult::Finished;
 		}
 		break; }
 	}

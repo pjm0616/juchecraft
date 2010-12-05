@@ -14,7 +14,18 @@
 namespace SC {
 namespace UnitOrder {
 
+struct ProcessResult
+{
+	enum
+	{
+		Continue, 
+		Finished, 
+	};
+};
+typedef unsigned int ProcessResult_t;
+
 static OrderPtr null_order ATTRIBUTE_UNUSED;
+
 
 /** @brief An abstract class that describes unit orders
  *  @detail
@@ -38,20 +49,11 @@ public:
 private:
 	OrderId_t m_orderid;
 	
-	/** @brief The requirements in order to execute this Order
+	/** The requirements in order to execute this Order
 	 */
-	struct ms_requirements
-	{
-		int hit_points;
-		int shield;
-		int energy;
-		int minerals;
-		int vespene_gas;
-		int supplies;
-		std::vector<ObjectId_t> objects;
-		//std::vector<UpgradeId_t> upgrades;
-	} m_requirements;
-	/** @brief A list of orders that will be executed sequentially.
+	OrderRequirementsPtr m_reqirements;
+	
+	/** A list of orders that will be executed sequentially.
 	 */
 	//std::vector<UnitAction> m_actionlist;
 };
@@ -89,7 +91,7 @@ public:
 	 *  @return otherwise return true
 	 *  @sa Object::processOrder()
 	 */
-	virtual bool process(float deltat);
+	virtual ProcessResult_t process(float deltat);
 	/** Clones the order.
 	 *  This method only clones order types and parameters, not order states.
 	 */
@@ -133,7 +135,7 @@ private:
 class NoOrder: public Order
 {
 public:
-	virtual bool process(float deltat) {return true;}
+	virtual ProcessResult_t process(float deltat) {return ProcessResult::Finished;}
 };
 
 

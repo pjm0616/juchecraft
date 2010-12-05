@@ -34,6 +34,7 @@
 #include "game/ObjectIdList.h"
 #include "game/actions/Actions.h"
 #include "game/orders/Orders.h"
+#include "game/UnitProductionManager.h"
 #include "game/Object.h"
 #include "game/ObjectList.h"
 #include "game/ObjectFactory.h"
@@ -59,7 +60,7 @@ Attack::Attack(const Target &target)
 
 OrderPtr Attack::clone(OrderPtr cloned_order)
 {
-	Attack *p = this->do_clone_head<Attack, TargetedOrder>(cloned_order);
+	Attack *p = this->do_clone_head<Attack, super>(cloned_order);
 	
 	return cloned_order;
 }
@@ -67,12 +68,12 @@ OrderPtr Attack::clone(OrderPtr cloned_order)
 
 bool Attack::initOrder(const ObjectPtr &obj)
 {
-	return this->TargetedOrder::initOrder(obj);
+	return this->super::initOrder(obj);
 }
 
-bool Attack::process(float time)
+ProcessResult_t Attack::process(float time)
 {
-	bool result = true;
+	ProcessResult_t result = ProcessResult::Continue;
 	const ObjectPtr &obj = this->getObject();
 	const Target &target = this->getTarget();
 	Player *player = obj->getOwner();
@@ -85,7 +86,7 @@ bool Attack::process(float time)
 			if(!obj->doAction(new UnitAction::Attack(target.getObject())))
 			{
 				player->toast(_("Unable to attack target"));
-				result = false;
+				result = ProcessResult::Finished;
 			}
 		
 			this->m_state.step = 1;
@@ -103,7 +104,7 @@ bool Attack::process(float time)
 	case 100: { // target is a coordinate
 		if(!obj->isActivatedAction(UnitAction::ActionId::Move))
 		{
-			result = false;
+			result = ProcessResult::Finished;
 		}
 		else
 		{
@@ -115,7 +116,7 @@ bool Attack::process(float time)
 		{
 			if(!obj->canAttack(target.getObject()))
 			{
-				result = false;
+				result = ProcessResult::Finished;
 			}
 			else
 			{
@@ -124,7 +125,7 @@ bool Attack::process(float time)
 				if(!ret)
 				{
 					player->toast(_("Unable to reach target"));
-					result = false;
+					result = ProcessResult::Finished;
 				}
 				else
 				{
@@ -142,7 +143,7 @@ bool Attack::process(float time)
 			}
 			else
 			{
-				result = false;
+				result = ProcessResult::Finished;
 			}
 		}
 		break; }

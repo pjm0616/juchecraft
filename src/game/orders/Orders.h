@@ -10,7 +10,6 @@
 
 #include "game/orders/Order.h"
 #include "game/orders/TargetedOrder.h"
-#include "game/orders/ProductionOrder.h"
 
 #include "game/orders/OrderList.h"
 

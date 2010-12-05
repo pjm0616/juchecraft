@@ -5,7 +5,7 @@
  *	See LICENSE.txt for details.
 **/
 
-/** @file src/game/orders/ProductionOrder.cpp
+/** @file src/game/orders/Order_Produce.cpp
 **/
 
 #include "config.h"
@@ -34,6 +34,7 @@
 #include "game/ObjectIdList.h"
 #include "game/actions/Actions.h"
 #include "game/orders/Orders.h"
+#include "game/UnitProductionManager.h"
 #include "game/Object.h"
 #include "game/ObjectList.h"
 #include "game/ObjectFactory.h"
@@ -45,38 +46,37 @@ using namespace SC::UnitOrder;
 
 
 
-ProductionOrder::ProductionOrder()
-{
-}
-
-ProductionOrder::ProductionOrder(const ProductionInfoPtr &info)
+Produce::Produce(ProductionInfoPtr info)
+	: Order(OrderId::Move)
 {
 	this->m_prodinfo = info;
 }
 
-ProductionOrder::~ProductionOrder()
+Produce::~Produce()
 {
 }
 
-bool ProductionOrder::initOrder(const ObjectPtr &obj)
+bool Produce::initOrder(const ObjectPtr &obj)
 {
-	return this->Order::initOrder(obj);
-}
-
-bool ProductionOrder::process(float deltat)
-{
-	return this->Order::process(deltat);
-}
-
-OrderPtr ProductionOrder::clone(OrderPtr cloned_order)
-{
-	ProductionOrder *p = this->do_clone_head<ProductionOrder, Order>(cloned_order);
+	if(!this->super::initOrder(obj))
+		return false;
 	
-	p->m_prodinfo = this->m_prodinfo;
+	obj->m_unit_producer.addToProductionQueue(this->m_prodinfo);
+	return true;
+}
+
+ProcessResult_t Produce::process(float time)
+{
+	return ProcessResult::Finished;
+}
+
+OrderPtr Produce::clone(OrderPtr cloned_order)
+{
+	Produce *p = this->do_clone_head<Produce, Order>(cloned_order);
+	
+	p->m_prodinfo = this->m_prodinfo->clone();
 	
 	return cloned_order;
 }
-
-
 
 

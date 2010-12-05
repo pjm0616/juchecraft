@@ -34,6 +34,7 @@
 #include "game/ObjectIdList.h"
 #include "game/actions/Actions.h"
 #include "game/orders/Orders.h"
+#include "game/UnitProductionManager.h"
 #include "game/Object.h"
 #include "game/ObjectList.h"
 #include "game/ObjectFactory.h"
@@ -74,7 +75,7 @@ Move::~Move()
 
 bool Move::initAction(const ObjectPtr &obj)
 {
-	if(!this->TargetedAction::initAction(obj))
+	if(!this->super::initAction(obj))
 		return false;
 	
 	const Target &target = this->getTarget();
@@ -102,7 +103,7 @@ void Move::cleanup()
 }
 
 
-bool Move::process(float time)
+ProcessResult_t Move::process(float time)
 {
 	// if this function is called without being activated, return true (and remove this action in actionlist)
 	SCAssert(this->isFinished() == false);
@@ -162,11 +163,13 @@ bool Move::process(float time)
 		obj->addY(d_move.getY());
 	}
 	
-	bool is_finished = (nfinished == 2);
-	if(is_finished)
+	ProcessResult_t result = ProcessResult::Continue;
+	if(nfinished == 2)
+	{
+		result = ProcessResult::Finished;
 		this->setAsFinished(true);
-	
-	return is_finished;
+	}
+	return result;
 }
 
 

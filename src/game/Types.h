@@ -136,6 +136,7 @@ namespace UnitAction {
 			None, 
 			Move, 
 			Attack, 
+			Produce, 
 		};
 	}
 	
@@ -158,6 +159,7 @@ namespace UnitOrder {
 			None, 
 			Move, 
 			Attack, 
+			Produce, 
 		};
 	}
 	
@@ -181,6 +183,49 @@ namespace UnitOrderId
 	// enum UnitOrderId: see SCUnitOrderIdList.h
 }
 using UnitOrderId::UnitOrderId_t;
+
+
+
+
+class ObjectRenderingState;
+typedef shared_ptr<ObjectRenderingState> ObjectRenderingStatePtr;
+
+class ProductionInfo;
+typedef shared_ptr<ProductionInfo> ProductionInfoPtr;
+
+
+/** Defines requirements to do something
+ */
+struct OrderRequirements
+{
+public:
+	OrderRequirements()
+	{
+	}
+	
+	bool checkRequirements(const ObjectPtr &obj)
+	{
+		return true;
+	}
+	
+public:
+	int hit_points;
+	int shield;
+	int energy;
+	int minerals;
+	int vespene_gas;
+	int supplies;
+	std::vector<ObjectId_t> objects;
+	//std::vector<UpgradeId_t> upgrades;
+};
+typedef shared_ptr<OrderRequirements> OrderRequirementsPtr;
+typedef shared_ptr<const OrderRequirements> OrderRequirementsConstPtr;
+
+
+
+
+
+
 
 
 
