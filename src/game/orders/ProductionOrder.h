@@ -14,10 +14,20 @@
 namespace SC {
 namespace UnitOrder {
 
+class ProductionInfo
+{
+public:
+	ObjectId_t m_objid;
+	time_t m_time;
+};
+typedef shared_ptr<ProductionInfo> ProductionInfoPtr;
+
+
 class ProductionOrder: public Order
 {
 public:
-	ProductionOrder(OrderId_t orderid = OrderId::None);
+	ProductionOrder();
+	ProductionOrder(const ProductionInfoPtr &info);
 	virtual ~ProductionOrder();
 	
 	virtual bool initOrder(const ObjectPtr &obj);
@@ -27,7 +37,7 @@ public:
 	
 	
 private:
-	ObjectId_t m_obj_to_be_produced;
+	ProductionInfoPtr m_prodinfo;
 };
 
 
