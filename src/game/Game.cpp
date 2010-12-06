@@ -30,6 +30,15 @@
 #include <windows.h>
 #endif
 
+// for chdir
+#ifdef __WIN32__
+# include <direct.h>
+# define chdir _chdir
+# define getcwd _getcwd
+#else
+# include <unistd.h>
+#endif
+
 #include "defs.h"
 #include "compat.h"
 #include "luacpp/luacpp.h"
@@ -72,8 +81,17 @@ Game::~Game()
 
 void Game::loadGameData(const char *dir)
 {
-	std::string basedir(dir);
-	this->m_obj_factory.load(std::string(basedir + "./object_data/objects.dat").c_str());
+	char prevdir[512];
+	getcwd(prevdir, sizeof(prevdir));
+	
+	chdir(dir);
+	{
+		chdir("./object_data/");
+		this->m_obj_factory.load("objects.dat");
+		chdir("../");
+	}
+	
+	chdir(prevdir);
 }
 
 const ObjectPtr &Game::addObject(const ObjectPtr &obj)
