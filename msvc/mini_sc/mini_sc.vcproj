@@ -215,6 +215,10 @@
 					RelativePath="..\..\src\game\Target.cpp"
 					>
 				</File>
+				<File
+					RelativePath="..\..\src\game\UnitProductionManager.cpp"
+					>
+				</File>
 				<Filter
 					Name="actions"
 					>
@@ -244,6 +248,10 @@
 					>
 					<File
 						RelativePath="..\..\src\game\orders\Order.cpp"
+						>
+					</File>
+					<File
+						RelativePath="..\..\src\game\orders\Order_Produce.cpp"
 						>
 					</File>
 					<File
@@ -581,6 +589,10 @@
 					RelativePath="..\..\src\game\Types.h"
 					>
 				</File>
+				<File
+					RelativePath="..\..\src\game\UnitProductionManager.h"
+					>
+				</File>
 				<Filter
 					Name="actions"
 					>
@@ -610,6 +622,10 @@
 					>
 					<File
 						RelativePath="..\..\src\game\orders\Order.h"
+						>
+					</File>
+					<File
+						RelativePath="..\..\src\game\orders\Order_Produce.h"
 						>
 					</File>
 					<File
