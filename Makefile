@@ -4,6 +4,7 @@ DEBUG				?= 1
 ENABLE_PROFILING 	?= 0
 
 DEBUG_OPT_LEVEL		?= 0
+ENABLE_DEP_TRACKING ?= 1
 
 # 0: don't use, 1: generate, 2: use
 ENABLE_PGO			?= 0
@@ -73,13 +74,17 @@ LDFLAGS				= $(LDFLAGS_DBG) $(C_CXX_LD_FLAGS_PROF) $(C_CXX_LD_FLAGS_PGO) $(LIBDI
 #OBJS				=$(SRCS:.cpp=.o) 
 OBJS_TMP				=$(SRCS:.c=.o) 
 OBJS				=$(OBJS_TMP:.cpp=.o) 
+DEPS				=$(OBJS:.o=.dep)
+
+ifneq ($(ENABLE_DEP_TRACKING),1)
+DEPS            =
+endif
 
 
 
+.PHONY:	all libs libclean tools toolclean resources resclean doc docclean clean distclean depclean
 
-.PHONY:	all libs libclean tools toolclean resources resclean doc docclean clean distclean dep depclean
-
-all:	.depend libs $(TARGET1) tools resources
+all:	libs $(TARGET1) tools resources
 
 .SUFFIXES: .c .o
 .c.o:
@@ -92,9 +97,18 @@ all:	.depend libs $(TARGET1) tools resources
 	$(CXX) -c $(CXXFLAGS) -o $@ $<
 
 # FIXME: mini_sc is relinked every time. it doesn't happen if there's not `libs'
-$(TARGET1):	libs $(OBJS)
+$(TARGET1):	libs $(DEPS) $(OBJS)
 	@echo LD $@
 	$(LD) -o $@ $(LDFLAGS) $(OBJS) $(LIBS)
+
+#asdf
+.SUFFIXES: .c .dep
+.c.dep:
+	$(CXX) $(CXXFLAGS) -MF"$@" -MG -MM -MP -MT"$@" -MT"$(<:.c=.o)" "$<"
+
+.SUFFIXES: .cpp .dep
+.cpp.dep:
+	$(CXX) $(CXXFLAGS) -MF"$@" -MG -MM -MP -MT"$@" -MT"$(<:.cpp=.o)" "$<"
 
 libs:
 	$(MAKE) -C ./libs
@@ -120,20 +134,13 @@ clean:
 	rm -f $(OBJS)
 	rm -f $(TARGET1)
 	
-distclean: libclean resclean clean toolclean docclean
-	rm -f .depend
-
-dep:	depclean .depend
-
-.depend:
-	$(CC) -MM $(CXXFLAGS) $(SRCS) 1>.depend
+distclean: libclean resclean clean depclean toolclean docclean
 
 depclean:
-	$(RM) -f .depend
+	$(RM) -f $(DEPS)
 
 
-
-ifneq ($(wildcard .depend),)
-include .depend
+ifneq ($(wildcard $(DEPS)),)
+include $(DEPS)
 endif
 

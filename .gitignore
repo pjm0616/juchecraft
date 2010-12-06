@@ -1,7 +1,7 @@
 *.o
 *.a
 *~
-.depend
+*.dep
 /mini_sc
 
 # profiler output
