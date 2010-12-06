@@ -309,6 +309,13 @@ void GameUI_ncurses::processFrame()
 		case 'a':
 			this->m_player->setOrder(new UnitOrder::Attack);
 			break;
+			case 'd': {
+				ProductionInfoPtr pinfo(new ProductionInfo);
+				pinfo->m_objid = ObjectId::Juche_DaepodongLauncher;
+				pinfo->m_time = 3;
+				this->m_player->setOrder(new UnitOrder::Produce(pinfo));
+				this->m_player->multiDoCurrentOrder();
+				} break;
 		}
 	}
 }
