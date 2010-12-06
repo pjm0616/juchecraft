@@ -733,7 +733,7 @@ public:
 	}
 	virtual ~ObjectRenderingState_SDL() {}
 	
-	unsigned int m_anim_frame;
+	float m_anim_frame;
 };
 
 static int calculate_unit_framenum(const ObjectPtr &obj, int start, int end)
@@ -742,21 +742,16 @@ static int calculate_unit_framenum(const ObjectPtr &obj, int start, int end)
 	ObjectRenderingState_SDL *rstate = obj->getRenderingState<ObjectRenderingState_SDL>();
 	
 	row = convertAngleToDirection(obj->getAngle());
-	time_t ticks = obj->getGame()->getCachedElapsedTime() * 1000;
+	double deltat = obj->getGame()->getDelta();
 	if(obj->isMoving())
 	{
-		//int t = (int)(ticks/50) % (end - start + 1);
-		//col = t + start;
-		// TODO: animation speed
-		col = (unsigned int)(rstate->m_anim_frame/0.9) % (end - start + 1);
-		rstate->m_anim_frame++;
+		col = (unsigned int)rstate->m_anim_frame % (end - start + 1);
+		rstate->m_anim_frame += deltat * 140;
 	}
 	else if(obj->isAttacking())
 	{
-		//int t = (int)(ticks/80) % (end - start + 1);
-		//col = t + start;
-		col = (unsigned int)(rstate->m_anim_frame/1.2) % (end - start + 1);
-		rstate->m_anim_frame++;
+		col = (unsigned int)rstate->m_anim_frame % (end - start + 1);
+		rstate->m_anim_frame += deltat * 100;
 	}
 	else
 		col = start;
