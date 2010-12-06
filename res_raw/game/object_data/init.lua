@@ -1,7 +1,12 @@
+--[[
+ *	Copyright (C) 2010 Park Jeongmin <pjm0616@gmail.com>
+ *	This file is a part of JucheCraft. http://sigkill.kr/projects/juchecraft
+ *	
+ *	See LICENSE.txt for details.
+--]]
 
 
 object_prototypes = {}
-
 
 local object_data_base_path = './'
 
