@@ -103,34 +103,4 @@ void UnitProductionManager::do_produce(const ProductionInfoPtr &prodinfo)
 
 
 
-#if 0
-
-bool Produce::initAction(const ObjectPtr &obj)
-{
-	if(!this->super::initAction(obj))
-		return false;
-	
-	this->m_prodinfo->m_state.started_time = obj->getGame()->getCachedElapsedTime();
-	
-	return true;
-}
-
-ProcessResult_t Produce::process(float deltat)
-{
-	ProcessResult_t result = ProcessResult::Continue;
-	
-	double now = this->getObject()->getGame()->getCachedElapsedTime();
-	if(now - this->m_prodinfo->m_state.started_time >= this->m_prodinfo->m_time)
-	{
-		this->do_produce();
-		result = ProcessResult::Finished;
-	}
-	
-	if(result == ProcessResult::Finished)
-		this->setAsFinished(true);
-	return result;
-}
-#endif
-
-
 

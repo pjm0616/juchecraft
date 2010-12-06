@@ -748,14 +748,14 @@ static int calculate_unit_framenum(const ObjectPtr &obj, int start, int end)
 		//int t = (int)(ticks/50) % (end - start + 1);
 		//col = t + start;
 		// TODO: animation speed
-		col = (unsigned int)(rstate->m_anim_frame/1.1) % (end - start + 1);
+		col = (unsigned int)(rstate->m_anim_frame/0.9) % (end - start + 1);
 		rstate->m_anim_frame++;
 	}
 	else if(obj->isAttacking())
 	{
 		//int t = (int)(ticks/80) % (end - start + 1);
 		//col = t + start;
-		col = (unsigned int)(rstate->m_anim_frame/2.0) % (end - start + 1);
+		col = (unsigned int)(rstate->m_anim_frame/1.2) % (end - start + 1);
 		rstate->m_anim_frame++;
 	}
 	else
