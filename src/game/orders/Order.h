@@ -97,11 +97,21 @@ public:
 	 */
 	virtual OrderPtr clone(OrderPtr cloned_order = null_order);
 	
+	bool isPrimaryOrder() const { return this->m_rank == 0; }
+	//void isSecondaryOrder() const { return this->m_rank == 1; }
+	
 	bool isFinished() const { return this->m_is_finished; }
 	bool isStarted() const { return this->m_is_started; }
 protected:
 	void setAsFinished(bool onoff = true) { this->m_is_finished = onoff; }
 	void setAsStarted(bool onoff = true) { this->m_is_started = onoff; }
+	
+	/** only to be used by derived class' ctor
+	 *  defaults to primary order
+	 *  somewhat dirty
+	 */
+	void setAsPrimaryOrder() { this->m_rank = 0; }
+	void setAsSecondaryOrder() { this->m_rank = 1; }
 	
 	const OrderInfo *m_info; /**< Information of the order(requirements, etc.) */
 	
@@ -121,6 +131,10 @@ protected:
 private:
 	OrderId_t m_orderid;
 	ObjectWeakPtr m_obj;
+	/** 0(primary, foreground) or 1(secondary, background)
+	 *  @sa Object::m_secondary_order
+	 */
+	int m_rank;
 	
 	/** @name state information
 	 */

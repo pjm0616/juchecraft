@@ -47,6 +47,7 @@ using namespace SC::UnitOrder;
 
 Order::Order(OrderId_t orderid)
 	: m_orderid(orderid)
+	, m_rank(0) // defaults to primary order
 {
 	this->setAsFinished(false);
 	this->setAsStarted(false);
@@ -77,6 +78,7 @@ OrderPtr Order::clone(OrderPtr cloned_order)
 	p->m_orderid = this->m_orderid;
 	p->m_obj = this->m_obj;
 	p->m_info = this->m_info;
+	p->m_rank = this->m_rank;
 	
 	return cloned_order;
 }

@@ -90,6 +90,26 @@ void ObjectList::clear()
 }
 
 
+bool ObjectList::testCollision(const ObjectPtr &obj)
+{
+	// TODO: implement this
+	
+	return false;
+}
+
+bool ObjectList::detectCollision(const ObjectPtr &obj)
+{
+	// TODO: implement this
+	
+	return false;
+}
+
+
+
+
+
+
+
 
 
 

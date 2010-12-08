@@ -253,7 +253,7 @@ void Player::multiCancelOrder()
 
 void Player::setOrderTargetByCoord(const Coordinate &coord)
 {
-	UnitOrder::TargetedOrder *tgorder = dynamic_cast<UnitOrder::TargetedOrder *>(this->getOrder().get());
+	UnitOrder::TargetedOrder *tgorder = dynastatic_cast<UnitOrder::TargetedOrder *>(this->getOrder().get());
 	SCAssert(tgorder != NULL);
 	float x = coord.getX(), y = coord.getY();
 	

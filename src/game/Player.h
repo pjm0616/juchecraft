@@ -13,7 +13,7 @@
 
 namespace SC {
 
-enum { MAX_SELECTABLE_OBJS = 100 };
+enum { MAX_SELECTABLE_OBJS = 10000 };
 
 class Player
 {

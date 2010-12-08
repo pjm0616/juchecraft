@@ -100,6 +100,9 @@ public:
 	void addPosition(float x, float y) { this->m_pos.add(x, y); } /**< Increase object's coordinate */
 	//@}
 	
+	void setSpeed(const Vector2 &speed) { this->m_speed = speed; }
+	const Vector2 &getSpeed() const { return this->m_speed; }
+	
 	float getAngle() const { return this->m_angle; }
 	void setAngle(float angle) { this->m_angle = angle; }
 	
@@ -119,7 +122,6 @@ public:
 	bool insideRect(int left, int top, int right, int bottom);
 	bool insideRect(const Coordinate &top_left, const Coordinate &bottom_right);
 	
-	
 	//@{
 	bool checkMinDistanceOld(const ObjectPtr &target, float min_distance, Coordinate *where_to_move);
 	/** @brief checks the distance between `this' and `dest'
@@ -130,6 +132,13 @@ public:
 	 */
 	bool checkMinDistance(const ObjectPtr &target, float min_distance, Coordinate *where_to_move);
 	//@}
+	
+	/** checks if `this' and `obj' are currently collided
+	 */
+	bool testCollision(const ObjectPtr &obj);
+	/** checks if `this' and `obj' will collide within next frame
+	 */
+	bool detectCollision(const ObjectPtr &obj);
 	
 	/** @name Unit states */
 	//@{
@@ -145,11 +154,11 @@ public:
 	
 	//@{
 private:
-	void clearActions();
+	void clearAllActions();
 	void setAction(const UnitAction::ActionPtr &action);
 	
 	void processActions(float deltat);
-	bool processOrder(float deltat);
+	void processOrder(float deltat);
 public:
 	//void cancelAction(UnitAction::ActionId_t actid); // TODO: implement this
 	bool doAction(const UnitAction::ActionPtr &action);
@@ -161,6 +170,7 @@ public:
 	
 	//@{
 	void cancelOrder();
+	//void cancelSecondaryOrder();// there's no canceller for secondary order
 	bool doOrder(const UnitOrder::OrderPtr &cmd);
 	bool doOrder(UnitOrder::Order *cmd) { return this->doOrder(UnitOrder::OrderPtr(cmd)); }
 	//@}
@@ -389,6 +399,7 @@ private:
 	Player *m_owner; /**< The player that owns this object */
 	ObjectState_t m_state; /**< See ObjectState */
 	Coordinate m_pos;
+	Vector2 m_speed;
 	float m_angle;
 	//@}
 	
@@ -404,6 +415,7 @@ private:
 	
 	UnitAction::ActionTable m_actions; /**< List of currently activated actions */
 	UnitOrder::OrderPtr m_order; /**< The order that this object is processing. */
+	UnitOrder::OrderPtr m_secondary_order; /**< The order that this object is processing. */
 	
 	//std::list<UpgradeId> m_upgrade_queue; /**< Currently not used; todo: implement this */
 	//std::deque<UnitOrderPtr> m_order_queue; /**< Currently not used; todo: implement this */

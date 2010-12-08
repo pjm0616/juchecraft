@@ -149,7 +149,7 @@ static void SDL_print(TTF_Font *font, SDL_Surface *sf, int x, int y, int w, int 
 /* render unit colors depending on player's color */
 // This is slow :(
 #if 0
-void replace_unit_colors(SDL_Surface *sf, Uint32 newcolor)
+void render_unit_colors(SDL_Surface *sf, Uint32 newcolor)
 {
 	SDL_LockSurfaceIfNeeded(sf);
 	//static const Uint32 orig_unit_colors[] = {0xde00de, 0x5b005b, 0xbd00bd, 0x9c009c, 0x7c007c, 0x190019, 0xff00ff, 0x3a003a};
@@ -178,7 +178,11 @@ void replace_unit_colors(SDL_Surface *sf, Uint32 newcolor)
 	SDL_UnlockSurfaceIfNeeded(sf);
 }
 #endif
-void replace_unit_colors(const SDL_Surface *sf, SDL_Surface *dest_sf, Uint32 newcolor)
+
+/**
+ *  TODO: cache this
+ */
+void render_unit_colors(const SDL_Surface *sf, SDL_Surface *dest_sf, Uint32 newcolor)
 {
 	//SDL_LockSurfaceIfNeeded(sf);
 	SDL_LockSurfaceIfNeeded(dest_sf);
@@ -277,7 +281,7 @@ static void render_jcimg_obj_to_screen(const ObjectPtr &obj, JucheImage *img, SD
 	else
 	{
 		SDL_SurfacePtr sf_color(SDL_CreateRGBSurface(SDL_SWSURFACE, orig_sf->w, orig_sf->h, 32, 0xff, 0xff00, 0xff0000, 0xff000000));
-		replace_unit_colors(orig_sf.get(), sf_color.get(), unit_color);
+		render_unit_colors(orig_sf.get(), sf_color.get(), unit_color);
 		sf = sf_color;
 	}
 	SDL_BlitSurface(sf.get(), &srcrect, scr, &dstrect);

@@ -89,6 +89,50 @@ private:
 	float m_x, m_y;
 };
 
+/** 2D vector
+ *  FIXME: move to somewhere else
+ */
+class Vector2
+{
+public:
+	Vector2()
+		: m_x(0.0)
+		, m_y(0.0)
+	{
+	}
+	Vector2(float x, float y)
+		: m_x(x)
+		, m_y(y)
+	{
+	}
+	Vector2(const Vector2 &rhs)
+		: m_x(rhs.m_x)
+		, m_y(rhs.m_y)
+	{
+	}
+	
+	void set(float x, float y) { this->m_x = x; this->m_y = y; }
+	void setX(float x) { this->m_x = x; }
+	void setY(float y) { this->m_y = y; }
+	float getX() const { return this->m_x; }
+	float getY() const { return this->m_y; }
+	
+	Vector2 add(const Vector2 &rhs) { return Vector2(this->m_x + rhs.m_x, this->m_y + rhs.m_y); }
+	Vector2 add(float x, float y) { return Vector2(this->m_x + x, this->m_y + y); }
+	Vector2 mul(const Vector2 &rhs) { return Vector2(this->m_x * rhs.m_x, this->m_y * rhs.m_y); }
+	Vector2 mul(float x, float y) { return Vector2(this->m_x * x, this->m_y * y); }
+	Vector2 div(const Vector2 &rhs) { return Vector2(this->m_x / rhs.m_x, this->m_y / rhs.m_y); }
+	Vector2 div(float x, float y) { return Vector2(this->m_x / x, this->m_y / y); }
+	
+	Vector2 operator-() { return Vector2(-m_x, -m_y); }
+	Vector2 operator+(const Vector2 &rhs) { return this->add(rhs); }
+	Vector2 operator-(const Vector2 &rhs) { return this->add(rhs); }
+	Vector2 operator*(const Vector2 &rhs) { return this->mul(rhs); }
+	Vector2 operator/(const Vector2 &rhs) { return this->div(rhs); }
+	
+private:
+	float m_x, m_y;
+};
 
 
 } // end of namespace SC

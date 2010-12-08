@@ -15,6 +15,8 @@
 namespace SC {
 
 
+/** Object manager class
+ */
 class ObjectList
 {
 public:
@@ -56,6 +58,13 @@ public:
 	// returns true if iterator has been invalidated by adding/removing objects.
 	bool isIteratorInvalidated() const { return this->m_iterator_invalidated; }
 	void resetIteratorChecker() { this->m_iterator_invalidated = false; }
+	
+	/** checks if `obj' collides with objects in this list
+	 */
+	bool testCollision(const ObjectPtr &obj);
+	/** checks if `obj' will collide with objs in this list within next frame
+	 */
+	bool detectCollision(const ObjectPtr &obj);
 	
 private:
 	void setIteratorAsInvalidated() { this->m_iterator_invalidated = true; }

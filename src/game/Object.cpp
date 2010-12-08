@@ -117,7 +117,7 @@ Object::Object(Game *game)
 	
 	this->setAngle(lrand48() % 360);
 	
-	this->clearActions();
+	this->clearAllActions();
 	
 	this->m_cleanup_called = false;
 }
@@ -239,7 +239,7 @@ void Object::processActions(float deltat)
 	}
 }
 
-bool Object::processOrder(float deltat)
+void Object::processOrder(float deltat)
 {
 	if(this->m_order)
 	{
@@ -247,19 +247,20 @@ bool Object::processOrder(float deltat)
 		if(res == UnitOrder::ProcessResult::Finished)
 		{
 			// the order has been finished
-			this->clearActions(); // asdf
+			this->clearAllActions(); // asdf
 			this->cancelOrder();
 		}
 		else
 		{
 			this->processActions(deltat);
 		}
-		
-		return true;
 	}
-	else
+	if(this->m_secondary_order)
 	{
-		return false;
+		// somewhat dirty..
+		UnitOrder::ProcessResult_t res = this->m_secondary_order->process(deltat);
+		SCAssert(res == UnitOrder::ProcessResult::Finished);
+		this->m_secondary_order.reset();
 	}
 }
 
@@ -441,7 +442,7 @@ bool Object::checkMinDistance(const ObjectPtr &target, float min_distance, Coord
 
 
 
-void Object::clearActions()
+void Object::clearAllActions()
 {
 	this->m_actions.clear();
 }
@@ -481,16 +482,28 @@ void Object::cancelOrder()
 
 bool Object::doOrder(const UnitOrder::OrderPtr &order)
 {
-	this->cancelOrder();
-	this->clearActions(); // asdf
 	bool ret = order->initOrder(this->getPtr());
-	if(ret)
+	if(likely(order->isPrimaryOrder()))
 	{
-		this->m_order = order;
+		if(ret)
+		{
+			this->cancelOrder();
+			this->clearAllActions(); // asdf
+			
+			this->m_order = order;
+		}
+		else
+		{
+			this->cancelOrder();
+		}
 	}
 	else
 	{
-		this->cancelOrder();
+		// This is an secondary order.
+		// probably UnitOrder::Produce or something
+		// no need to cancel previous order, as secondary order finished immediately.
+		if(ret)
+			this->m_secondary_order = order;
 	}
 	return ret;
 }
@@ -520,5 +533,33 @@ float Object::hit(float damage)
 	this->decreaseHP(net_damage);
 	return net_damage;
 }
+
+bool Object::testCollision(const ObjectPtr &obj)
+{
+	// TODO: fix this
+	
+	Coordinate diff = obj->getPosition() - this->getPosition();
+	float dwidth = this->getWidth() + obj->getWidth();
+	float dheight = this->getHeight() + obj->getHeight();
+	
+	if(dwidth < diff.getX())
+		return true;
+	if(dheight < diff.getY())
+		return true;
+	
+	return false;
+}
+
+bool Object::detectCollision(const ObjectPtr &obj)
+{
+	// TODO: implement this
+	
+	return false;
+}
+
+
+
+
+
 
 

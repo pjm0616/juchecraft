@@ -50,6 +50,7 @@ Produce::Produce(ProductionInfoPtr info)
 	: Order(OrderId::Move)
 {
 	this->m_prodinfo = info;
+	this->setAsSecondaryOrder();
 }
 
 Produce::~Produce()

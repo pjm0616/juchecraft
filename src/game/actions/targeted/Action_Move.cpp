@@ -137,6 +137,7 @@ ProcessResult_t Move::process(float time)
 	Coordinate newpos = d_move + obj->getPosition();
 	float newx = newpos.getX();
 	float newy = newpos.getY();
+	Vector2 speed;
 	
 	int nfinished = 0;
 	if((startx >= destx && newx <= destx) // moving left
@@ -148,6 +149,7 @@ ProcessResult_t Move::process(float time)
 	}
 	else
 	{
+		speed.setX(d_move.getX() / time);
 		obj->addX(d_move.getX());
 	}
 	
@@ -160,13 +162,18 @@ ProcessResult_t Move::process(float time)
 	}
 	else
 	{
+		speed.setY(d_move.getY() / time);
 		obj->addY(d_move.getY());
 	}
+	
+	obj->setSpeed(speed);
 	
 	ProcessResult_t result = ProcessResult::Continue;
 	if(nfinished == 2)
 	{
 		result = ProcessResult::Finished;
+		SCAssert(speed.getX() == 0.0 && speed.getY() == 0.0);
+		//obj->setSpeed(Vector2(0.0, 0.0));
 		this->setAsFinished(true);
 	}
 	return result;
