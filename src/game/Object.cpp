@@ -311,6 +311,7 @@ static float calculate_distance(float x1, float y1, float x2, float y2)
 	return distance;
 }
 
+#if 0
 bool Object::checkMinDistanceOld(const ObjectPtr &target, float min_distance, Coordinate *where_to_move)
 {
 	Object *obj = this;
@@ -384,7 +385,8 @@ bool Object::checkMinDistanceOld(const ObjectPtr &target, float min_distance, Co
 		return false;
 	}
 }
-
+#endif
+#if 0
 bool Object::checkMinDistance(const ObjectPtr &target, float min_distance, Coordinate *where_to_move)
 {
 	Object *obj = this;
@@ -438,7 +440,38 @@ bool Object::checkMinDistance(const ObjectPtr &target, float min_distance, Coord
 		return false;
 	}
 }
+#endif
+#if 1
 
+// TODO: reimplement this
+bool Object::checkMinDistance(const ObjectPtr &target, float min_distance, Coordinate *where_to_move)
+{
+	Object *obj = this;
+	float cx = obj->getX(), w = obj->getWidth(), target_cx = target->getX(), target_w = target->getWidth();
+	float cy = obj->getY(), h = obj->getHeight(), target_cy = target->getY(), target_h = target->getHeight();
+	float dx_center = target_cx - cx;
+	float dy_center = target_cy - cy;
+	
+	// calculate distance as if these objects are circle
+	float my_radius_avg = (w/2 + h/2) / 2;
+	float target_radius_avg = (target_w/2 + target_h/2) / 2;
+	float real_min_distance = my_radius_avg + target_radius_avg + min_distance;
+	
+	float distance = this->getPosition().calculateDistance(target->getPosition());
+	if(distance <= real_min_distance)
+	{
+		return true;
+	}
+	else
+	{
+		if(where_to_move)
+		{
+			where_to_move->set(target->getPosition()); // FIXME!!
+		}
+		return false;
+	}
+}
+#endif
 
 
 

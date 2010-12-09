@@ -122,8 +122,6 @@ public:
 	bool insideRect(int left, int top, int right, int bottom);
 	bool insideRect(const Coordinate &top_left, const Coordinate &bottom_right);
 	
-	//@{
-	bool checkMinDistanceOld(const ObjectPtr &target, float min_distance, Coordinate *where_to_move);
 	/** @brief checks the distance between `this' and `dest'
 	 * 
 	 *  Checks if the distance if less(or equal) than `min_distance'.
@@ -131,7 +129,6 @@ public:
 	 *  @return true if the distance if less(or equal) than `min_distance'. Otherwise false.
 	 */
 	bool checkMinDistance(const ObjectPtr &target, float min_distance, Coordinate *where_to_move);
-	//@}
 	
 	/** checks if `this' and `obj' are currently collided
 	 */
