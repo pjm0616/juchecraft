@@ -424,6 +424,7 @@ void GameUI_SDL::processFrame()
 			case 'a':
 				this->m_player->setOrder(new UnitOrder::Attack);
 				break;
+#if 0
 			case 'd': {
 				ProductionInfoPtr pinfo(new ProductionInfo);
 				pinfo->m_objid = ObjectId::Juche_DaepodongLauncher;
@@ -431,6 +432,21 @@ void GameUI_SDL::processFrame()
 				this->m_player->setOrder(new UnitOrder::Produce(pinfo));
 				this->m_player->multiDoCurrentOrder();
 				} break;
+#else
+			case 'd': {
+				const ObjectList &selected_objs = this->m_player->getSelectedObjs();
+				for(SC::ObjectList::const_iterator it = selected_objs.begin(); 
+					it != selected_objs.end(); ++it)
+				{
+					const ObjectPtr &obj = *it;
+					
+					ProductionInfoPtr pinfo(new ProductionInfo);
+					pinfo->m_objid = obj->getObjectId();
+					pinfo->m_time = 3;
+					obj->doOrder(new UnitOrder::Produce(pinfo));
+				}
+				} break;
+#endif
 			default:
 				break;
 			}
@@ -691,6 +707,20 @@ void GameUI_SDL::drawUI_UnitStatWnd()
 			char buf[64];
 			snprintf(buf, sizeof(buf), "%.0f / %d", obj->getHP(), obj->getMaxHP());
 			SDL_print(this->m_font, this->m_screen, 160, 450, 100, this->getFontSize(), 0xff00ff00, buf);
+		}
+		
+		// # of selected units
+		{
+			char buf[64];
+			snprintf(buf, sizeof(buf), "# of selected units: %d", selected_objs.size());
+			SDL_print(this->m_font, this->m_screen, 240, 410, 100, this->getFontSize(), 0xffffffff, buf);
+		}
+		
+		// # of queued units
+		{
+			char buf[64];
+			snprintf(buf, sizeof(buf), "prodqueue: %d", obj->m_unit_producer.numOfQueuedUnits());
+			SDL_print(this->m_font, this->m_screen, 240, 430, 100, this->getFontSize(), 0xffffffff, buf);
 		}
 		
 		break;

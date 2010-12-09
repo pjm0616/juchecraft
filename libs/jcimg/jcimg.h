@@ -15,7 +15,7 @@
 //#define JCIMG_SAVE_SUPPORT
 
 
-
+// TODO: add support for metadata(like rendering scripts or etc)
 
 /*
 	File format:

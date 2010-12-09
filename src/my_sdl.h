@@ -22,7 +22,6 @@ namespace SDL
 //#include <SDL/SDL_gfxBlitFunc.h>
 
 
-//typedef SC::shared_ptr<SDL_Surface> SDL_SurfacePtr;
 class SDL_SurfacePtr: public SC::shared_ptr<SDL_Surface>
 {
 public:

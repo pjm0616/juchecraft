@@ -68,6 +68,8 @@ public:
 	void popFirstSlotInProductionQueue();
 	
 	bool isQueueEmpty() const { return this->m_prodqueue.empty(); }
+	size_t numOfQueuedUnits() const { return this->m_prodqueue.size(); }
+	
 	ProductionInfoPtr &firstSlotInProductionQueue() { return this->m_prodqueue.front(); }
 	const ProductionInfoPtr &firstSlotInProductionQueue() const { return this->m_prodqueue.front(); }
 	
