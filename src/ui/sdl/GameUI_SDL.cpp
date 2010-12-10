@@ -780,12 +780,22 @@ static int calculate_unit_framenum(const ObjectPtr &obj, int start, int end)
 	if(obj->isMoving())
 	{
 		col = (unsigned int)rstate->m_anim_frame % (end - start + 1);
-		rstate->m_anim_frame += deltat * 140;
+		
+		// limit to 1 frame (framedrops are very frequent in windows vm. strange...)
+		float a = deltat * 140;
+		if(a > 1.0)
+			a = 1.0;
+		rstate->m_anim_frame += a;
 	}
 	else if(obj->isAttacking())
 	{
 		col = (unsigned int)rstate->m_anim_frame % (end - start + 1);
-		rstate->m_anim_frame += deltat * 100;
+		
+		// limit to 1 frame (framedrops are very frequent in windows vm. strange...)
+		float a = deltat * 100;
+		if(a > 1.0)
+			a = 1.0;
+		rstate->m_anim_frame += a;
 	}
 	else
 		col = start;

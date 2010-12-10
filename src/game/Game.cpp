@@ -227,8 +227,9 @@ void Game::run()
 		
 		this->processObjects();
 		this->m_ui->processFrame();
-		
 		double process_finished_time = start_time; // this->getElapsedTime();
+		
+		// TODO: buffer rendering information, create rendering thread, and rendering will be done there
 		if(process_finished_time - this->getLastDrawTime() > fixed_frame_deltat)
 		{
 			this->m_ui->draw();
