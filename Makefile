@@ -15,7 +15,7 @@ CROSSC				=
 
 SRCS_UI				= src/ui/GameUI.cpp src/ui/sdl/GameUI_SDL.cpp src/ui/ncurses/GameUI_ncurses.cpp
 SRCS_ACTIONS		= src/game/actions/Action.cpp src/game/actions/TargetedAction.cpp src/game/actions/targeted/Action_Move.cpp src/game/actions/targeted/Action_Attack.cpp
-SRCS_ORDERS			= src/game/orders/Order.cpp src/game/orders/TargetedOrder.cpp src/game/orders/Order_Produce.cpp src/game/orders/targeted/Order_Move.cpp src/game/orders/targeted/Order_Attack.cpp
+SRCS_ORDERS			= src/game/orders/Order.cpp src/game/orders/TargetedOrder.cpp src/game/orders/secondary/Order_Produce.cpp src/game/orders/targeted/Order_Move.cpp src/game/orders/targeted/Order_Attack.cpp
 SRCS				= libs/etc/md5.c libs/jcimg/jcimg.cpp libs/luacpp/luacpp.cpp src/game/Exception.cpp src/game/Coordinate.cpp src/game/Object.cpp src/game/Player.cpp src/game/ObjectList.cpp src/game/UnitProductionManager.cpp src/game/ObjectFactory.cpp src/game/Target.cpp src/game/Game.cpp src/main.cpp $(SRCS_ACTIONS) $(SRCS_ORDERS) $(SRCS_UI)
 TARGET1				= mini_sc
 

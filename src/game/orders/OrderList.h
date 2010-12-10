@@ -8,7 +8,7 @@
 /** @file src/game/orders/OrderList.h
 **/
 
-#include "game/orders/Order_Produce.h"
+#include "game/orders/secondary/Order_Produce.h"
 
 #include "game/orders/targeted/Order_Move.h"
 #include "game/orders/targeted/Order_Attack.h"

@@ -251,10 +251,6 @@
 						>
 					</File>
 					<File
-						RelativePath="..\..\src\game\orders\Order_Produce.cpp"
-						>
-					</File>
-					<File
 						RelativePath="..\..\src\game\orders\TargetedOrder.cpp"
 						>
 					</File>
@@ -267,6 +263,14 @@
 						</File>
 						<File
 							RelativePath="..\..\src\game\orders\targeted\Order_Move.cpp"
+							>
+						</File>
+					</Filter>
+					<Filter
+						Name="secondary"
+						>
+						<File
+							RelativePath="..\..\src\game\orders\secondary\Order_Produce.cpp"
 							>
 						</File>
 					</Filter>
@@ -625,10 +629,6 @@
 						>
 					</File>
 					<File
-						RelativePath="..\..\src\game\orders\Order_Produce.h"
-						>
-					</File>
-					<File
 						RelativePath="..\..\src\game\orders\OrderList.h"
 						>
 					</File>
@@ -643,6 +643,22 @@
 					<Filter
 						Name="targeted"
 						>
+						<File
+							RelativePath="..\..\src\game\orders\targeted\Order_Attack.h"
+							>
+						</File>
+						<File
+							RelativePath="..\..\src\game\orders\targeted\Order_Move.h"
+							>
+						</File>
+					</Filter>
+					<Filter
+						Name="secondary"
+						>
+						<File
+							RelativePath="..\..\src\game\orders\secondary\Order_Produce.h"
+							>
+						</File>
 					</Filter>
 				</Filter>
 			</Filter>
