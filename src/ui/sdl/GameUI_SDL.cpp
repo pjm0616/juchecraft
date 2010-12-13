@@ -749,10 +749,10 @@ const std::string *GameUI_SDL::getObjectImg(ObjectId_t id) const
 
 static int convertAngleToDirection(float angle)
 {
-	float angle2 = 360 - (angle - 90); /* 0시 방향이 0도가 되도록 회전 후 좌-우를 뒤집음 */
-	if(angle2 > 360) angle2 -= 360; /* 0시 방향이 0도가 되도록 회전 후 기존0~90도 사이의 각들에 생긴 오류를 고침 */
+	float angle2 = 360 - (angle - 90); /* flip left-right to make 0 o'clock direction to be 0 deg. */
+	if(angle2 > 360) angle2 -= 360; /* correct errors caused by the flip. */
 	
-	int direction = angle2 / (180.0/17); /* 0~90 도 사이에 9개의 이미지가 있음. 10도당 이미지 한개 */
+	int direction = angle2 / (180.0/17); /* there are 9 frames between 0~90 deg. one image per 10 deg. */
 	
 	//fprintf(stderr, "a: %f, a2: %f, dir: %d\n", angle, angle2, direction);
 	return direction;
@@ -934,15 +934,6 @@ void GameUI_SDL::drawObject(const ObjectPtr &obj)
 		{
 			if(img1)
 			{
-				#if 0
-				{ /* 이동시 마우스 포인터 중앙이 아래 점에 오도록 이동 */
-					jcimg_imginfo_t *imginfo;
-					img1->getImage(framenum, &imginfo);
-					int center_x = (img1->getMaxWidth()/2 - 1) - imginfo->left;
-					int center_y = (img1->getMaxHeight()/2 - 1) - imginfo->top;
-				}
-				#endif
-				
 				if(img1_shad) // shadow
 					render_jcimg_obj_to_screen(obj, img1_shad, this->m_game_scr, framenum, x, y);
 				if(img1)
