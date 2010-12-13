@@ -74,13 +74,12 @@ public:
 			LUA_ERRERR: error while running the error handler function.
 	*/
 	int pcall(int nargs, int nresults);
-	// lua 스택의 top에 있는 문자열을 pop한 후 반환.
+	// pops and returns first string in lua stack.
 	std::string popstring();
 	
-	// file을 로드 후 실행
 	int dofile(const char *file);
 	int dofile(const std::string &file){return this->dofile(file.c_str());}
-	// code를 실행
+	
 	int dostring(const char *code);
 	int dostring(const std::string &code){return this->dostring(code.c_str());}
 	
