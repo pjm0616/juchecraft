@@ -399,6 +399,9 @@ public:
 	
 
 public:
+	/** Manages unit production
+	 *  @sa UnitProductionManager
+	 */
 	UnitProductionManager m_unit_producer;
 private:
 	bool m_cleanup_called;

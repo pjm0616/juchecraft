@@ -86,14 +86,21 @@ public:
 	ProductionInfoPtr &firstSlotInProductionQueue() { return this->m_prodqueue.front(); }
 	const ProductionInfoPtr &firstSlotInProductionQueue() const { return this->m_prodqueue.front(); }
 	
+	/** Processes production job
+	 */
 	void process();
 	
 private:
+	/** Returns the owner of the class
+	 */
 	inline Object *getObject() { return this->m_obj; }
+	
+	/** Create produced unit to the field.
+	 */
 	void do_produce(const ProductionInfoPtr &prodinfo);
 	
 private:
-	Object *m_obj;
+	Object *m_obj; /**< owner of the object(UnitProductionManager) */
 	std::deque<ProductionInfoPtr> m_prodqueue; /**< production queue */
 };
 
