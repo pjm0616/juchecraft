@@ -785,34 +785,11 @@ public:
 
 static int calculate_unit_framenum(const ObjectPtr &obj, int start, int end)
 {
-	int col, row;
 	ObjectRenderingState_SDL *rstate = obj->getRenderingState<ObjectRenderingState_SDL>();
 	
-	row = convertAngleToDirection(obj->getAngle());
-	double deltat = obj->getGame()->getDelta();
-	if(obj->isMoving())
-	{
-		col = (unsigned int)rstate->m_anim_frame % (end - start + 1);
-		
-		// limit to 1 frame (framedrops are very frequent in windows vm. strange...)
-		float a = deltat * 140;
-		if(a > 1.0)
-			a = 1.0;
-		rstate->m_anim_frame += a;
-	}
-	else if(obj->isAttacking())
-	{
-		col = (unsigned int)rstate->m_anim_frame % (end - start + 1);
-		
-		// limit to 1 frame (framedrops are very frequent in windows vm. strange...)
-		float a = deltat * 100;
-		if(a > 1.0)
-			a = 1.0;
-		rstate->m_anim_frame += a;
-	}
-	else
-		col = start;
-	
+	// calculate frame number
+	int col = (unsigned int)rstate->m_anim_frame % (end - start + 1);
+	int row = convertAngleToDirection(obj->getAngle());
 	if(row == 34) // angle == 90deg
 		row = 0;
 	else if(row >= 0 && row <= 33){}
@@ -822,8 +799,33 @@ static int calculate_unit_framenum(const ObjectPtr &obj, int start, int end)
 		row = 0;
 	}
 	
-	int framenum = col*34 + row;
-	return framenum;
+	// update animation status
+	{
+		float anim_speed = 0.0; // frame per second
+		if(obj->isMoving())
+		{
+			anim_speed = obj->getNetMovingSpeed() / 2.0;
+		}
+		else if(obj->isAttacking())
+		{
+			anim_speed = obj->getNetAttackSpeed() / 1.0;
+		}
+		else
+		{
+			// FIXME: HACK HACK
+			// reset animation frame when order changes
+			// do obj->getRenderingState<ObjectRenderingState_SDL>()->m_anim_frame = 0.0;
+			
+			col = 0; // HACK HACK FIXME
+		}
+		
+		float dt = obj->getGame()->getFrameDelta();
+		rstate->m_anim_frame += dt * anim_speed;
+	}
+	
+	// return image's frame number
+	int img_framenum = col*34 + row;
+	return img_framenum;
 }
 
 void GameUI_SDL::drawObject(const ObjectPtr &obj)

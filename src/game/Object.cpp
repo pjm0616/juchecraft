@@ -547,7 +547,7 @@ bool Object::doOrder(const UnitOrder::OrderPtr &order)
 	{
 		// This is an secondary order.
 		// probably UnitOrder::Produce or something
-		// no need to cancel previous order, as secondary order finished immediately.
+		// no need to cancel previous order, as secondary order finishes immediately.
 		if(ret)
 			this->m_secondary_order = order;
 	}

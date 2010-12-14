@@ -270,7 +270,7 @@ void Player::setOrderTargetByCoord(const Coordinate &coord)
 	SCAssert(tgorder != NULL);
 	float x = coord.getX(), y = coord.getY();
 	
-	// check if there's an selectable object
+	// check if there's a selectable object
 	ObjectList dummy;
 	ObjectPtr first = this->m_game->findObjectByRect(dummy, x, y, x, y);
 	
@@ -288,7 +288,7 @@ void Player::setOrderTargetByRectCoord(Coordinate coord1, Coordinate coord2)
 	float x1 = coord1.getX(), y1 = coord1.getY();
 	float x2 = coord2.getX(), y2 = coord2.getY();
 	
-	// check if there's an selectable object
+	// check if there's a selectable object
 	ObjectList dummy;
 	ObjectPtr first = this->m_game->findObjectByRect(dummy, x1, y1, x2, y2);
 	
