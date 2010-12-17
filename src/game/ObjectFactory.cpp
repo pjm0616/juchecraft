@@ -167,7 +167,7 @@ ObjectPtr ObjectFactory::newObjectById(ObjectId_t id)
 	if(!proto)
 		throw new Exception("Cannot find object prototype");
 	// return shared_ptr of newly created(cloned) object
-	return proto->clone()->getPtr();
+	return proto->clone();
 }
 
 

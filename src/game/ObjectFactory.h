@@ -39,7 +39,7 @@ public:
 	
 	/** finds object prototype by ObjectId
 	 *  pointer returned by this functions become invalid when this object destructs.
-	 *  @return constant referenct to the object prototype
+	 *  @return constant reference to the object prototype
 	 */
 	const ObjectPtr &findObjectById(ObjectId_t id) { return this->m_obj_protos_by_id[id]; }
 	
