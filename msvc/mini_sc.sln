@@ -1,7 +1,7 @@
 ﻿
-Microsoft Visual Studio Solution File, Format Version 10.00
-# Visual Studio 2008
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "mini_sc", "mini_sc\mini_sc.vcproj", "{988B2817-B3BC-488B-9EA3-9A73CE2BD829}"
+Microsoft Visual Studio Solution File, Format Version 11.00
+# Visual Studio 2010
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "mini_sc", "mini_sc\mini_sc.vcxproj", "{988B2817-B3BC-488B-9EA3-9A73CE2BD829}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

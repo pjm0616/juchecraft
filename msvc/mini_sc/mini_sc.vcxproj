@@ -1,0 +1,226 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{988B2817-B3BC-488B-9EA3-9A73CE2BD829}</ProjectGuid>
+    <RootNamespace>mini_sc</RootNamespace>
+    <Keyword>Win32Proj</Keyword>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <CharacterSet>MultiByte</CharacterSet>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <CharacterSet>MultiByte</CharacterSet>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup>
+    <_ProjectFileVersion>10.0.30319.1</_ProjectFileVersion>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(SolutionDir)$(Configuration)\</OutDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(Configuration)\</IntDir>
+    <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</LinkIncremental>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(SolutionDir)$(Configuration)\</OutDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(Configuration)\</IntDir>
+    <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">false</LinkIncremental>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <ClCompile>
+      <Optimization>Disabled</Optimization>
+      <AdditionalIncludeDirectories>$(SolutionDir)\..\libs\zlib\;$(SolutionDir)\..\platform_local\win32\include\;$(SolutionDir)\..\libs\boost\include\;$(SolutionDir)\..\src\libs\;$(SolutionDir)\..\src\;$(SolutionDir)\..\libs\;$(SolutionDir)\..\libs\lua\src\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <MinimalRebuild>true</MinimalRebuild>
+      <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
+      <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
+      <OpenMPSupport>true</OpenMPSupport>
+      <PrecompiledHeader>
+      </PrecompiledHeader>
+      <WarningLevel>Level1</WarningLevel>
+      <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
+    </ClCompile>
+    <Link>
+      <AdditionalDependencies>winmm.lib;msvcrt.lib;$(SolutionDir)..\platform_local\win32\lib\SDL.lib;$(SolutionDir)..\platform_local\win32\lib\SDL_ttf.lib;$(SolutionDir)..\platform_local\win32\lib\SDL_image.lib;$(SolutionDir)..\platform_local\win32\lib\SDL_gfx.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <SubSystem>Windows</SubSystem>
+      <TargetMachine>MachineX86</TargetMachine>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <ClCompile>
+      <Optimization>MaxSpeed</Optimization>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <AdditionalIncludeDirectories>$(SolutionDir)\..\libs\zlib\;$(SolutionDir)\..\platform_local\win32\include\;$(SolutionDir)\..\libs\boost\include\;$(SolutionDir)\..\src\;$(SolutionDir)\..\libs\;$(SolutionDir)\..\libs\lua\src\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <OpenMPSupport>true</OpenMPSupport>
+      <PrecompiledHeader>
+      </PrecompiledHeader>
+      <WarningLevel>Level1</WarningLevel>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+    </ClCompile>
+    <Link>
+      <AdditionalDependencies>winmm.lib;msvcrt.lib;$(SolutionDir)..\platform_local\win32\lib\SDL.lib;$(SolutionDir)..\platform_local\win32\lib\SDL_ttf.lib;$(SolutionDir)..\platform_local\win32\lib\SDL_image.lib;$(SolutionDir)..\platform_local\win32\lib\SDL_gfx.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <SubSystem>Windows</SubSystem>
+      <OptimizeReferences>true</OptimizeReferences>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <TargetMachine>MachineX86</TargetMachine>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClCompile Include="..\..\src\libs\jcimg\jcimg.cpp" />
+    <ClCompile Include="..\..\src\libs\luacpp\luacpp.cpp" />
+    <ClCompile Include="..\..\src\main.cpp" />
+    <ClCompile Include="..\..\src\game\Coordinate.cpp" />
+    <ClCompile Include="..\..\src\game\Exception.cpp" />
+    <ClCompile Include="..\..\src\game\Game.cpp" />
+    <ClCompile Include="..\..\src\game\Object.cpp" />
+    <ClCompile Include="..\..\src\game\ObjectFactory.cpp" />
+    <ClCompile Include="..\..\src\game\ObjectList.cpp" />
+    <ClCompile Include="..\..\src\game\Player.cpp" />
+    <ClCompile Include="..\..\src\game\Target.cpp" />
+    <ClCompile Include="..\..\src\game\UnitProductionManager.cpp" />
+    <ClCompile Include="..\..\src\game\actions\Action.cpp" />
+    <ClCompile Include="..\..\src\game\actions\TargetedAction.cpp" />
+    <ClCompile Include="..\..\src\game\actions\targeted\Action_Attack.cpp" />
+    <ClCompile Include="..\..\src\game\actions\targeted\Action_Move.cpp" />
+    <ClCompile Include="..\..\src\game\orders\Order.cpp" />
+    <ClCompile Include="..\..\src\game\orders\TargetedOrder.cpp" />
+    <ClCompile Include="..\..\src\game\orders\targeted\Order_Attack.cpp" />
+    <ClCompile Include="..\..\src\game\orders\targeted\Order_Move.cpp" />
+    <ClCompile Include="..\..\src\game\orders\secondary\Order_Produce.cpp" />
+    <ClCompile Include="..\..\libs\etc\md5.c" />
+    <ClCompile Include="..\..\libs\lua\src\lapi.c" />
+    <ClCompile Include="..\..\libs\lua\src\lauxlib.c" />
+    <ClCompile Include="..\..\libs\lua\src\lbaselib.c" />
+    <ClCompile Include="..\..\libs\lua\src\lcode.c" />
+    <ClCompile Include="..\..\libs\lua\src\ldblib.c" />
+    <ClCompile Include="..\..\libs\lua\src\ldebug.c" />
+    <ClCompile Include="..\..\libs\lua\src\ldo.c" />
+    <ClCompile Include="..\..\libs\lua\src\ldump.c" />
+    <ClCompile Include="..\..\libs\lua\src\lfunc.c" />
+    <ClCompile Include="..\..\libs\lua\src\lgc.c" />
+    <ClCompile Include="..\..\libs\lua\src\linit.c" />
+    <ClCompile Include="..\..\libs\lua\src\liolib.c" />
+    <ClCompile Include="..\..\libs\lua\src\llex.c" />
+    <ClCompile Include="..\..\libs\lua\src\lmathlib.c" />
+    <ClCompile Include="..\..\libs\lua\src\lmem.c" />
+    <ClCompile Include="..\..\libs\lua\src\loadlib.c" />
+    <ClCompile Include="..\..\libs\lua\src\lobject.c" />
+    <ClCompile Include="..\..\libs\lua\src\lopcodes.c" />
+    <ClCompile Include="..\..\libs\lua\src\loslib.c" />
+    <ClCompile Include="..\..\libs\lua\src\lparser.c" />
+    <ClCompile Include="..\..\libs\lua\src\lstate.c" />
+    <ClCompile Include="..\..\libs\lua\src\lstring.c" />
+    <ClCompile Include="..\..\libs\lua\src\lstrlib.c" />
+    <ClCompile Include="..\..\libs\lua\src\ltable.c" />
+    <ClCompile Include="..\..\libs\lua\src\ltablib.c" />
+    <ClCompile Include="..\..\libs\lua\src\ltm.c" />
+    <ClCompile Include="..\..\libs\lua\src\lundump.c" />
+    <ClCompile Include="..\..\libs\lua\src\lvm.c" />
+    <ClCompile Include="..\..\libs\lua\src\lzio.c" />
+    <ClCompile Include="..\..\libs\lua\src\print.c" />
+    <ClCompile Include="..\..\libs\zlib\adler32.c" />
+    <ClCompile Include="..\..\libs\zlib\compress.c" />
+    <ClCompile Include="..\..\libs\zlib\crc32.c" />
+    <ClCompile Include="..\..\libs\zlib\deflate.c" />
+    <ClCompile Include="..\..\libs\zlib\gzclose.c" />
+    <ClCompile Include="..\..\libs\zlib\gzlib.c" />
+    <ClCompile Include="..\..\libs\zlib\gzread.c" />
+    <ClCompile Include="..\..\libs\zlib\gzwrite.c" />
+    <ClCompile Include="..\..\libs\zlib\infback.c" />
+    <ClCompile Include="..\..\libs\zlib\inffast.c" />
+    <ClCompile Include="..\..\libs\zlib\inflate.c" />
+    <ClCompile Include="..\..\libs\zlib\inftrees.c" />
+    <ClCompile Include="..\..\libs\zlib\trees.c" />
+    <ClCompile Include="..\..\libs\zlib\uncompr.c" />
+    <ClCompile Include="..\..\libs\zlib\zutil.c" />
+    <ClCompile Include="..\..\src\ui\GameUI.cpp" />
+    <ClCompile Include="..\..\src\ui\sdl\GameUI_SDL.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\src\compat.h" />
+    <ClInclude Include="..\..\src\config.h" />
+    <ClInclude Include="..\..\src\defs.h" />
+    <ClInclude Include="..\..\src\libs\jcimg\jcimg.h" />
+    <ClInclude Include="..\..\src\libs\luacpp\luacpp.h" />
+    <ClInclude Include="..\..\src\libs\luacpp\luacpp_lua.h" />
+    <ClInclude Include="..\..\src\my_sdl.h" />
+    <ClInclude Include="..\..\src\platform.h" />
+    <ClInclude Include="..\..\src\smart_ptrs.h" />
+    <ClInclude Include="..\..\src\game\Coordinate.h" />
+    <ClInclude Include="..\..\src\game\Exception.h" />
+    <ClInclude Include="..\..\src\game\Game.h" />
+    <ClInclude Include="..\..\src\game\Object.h" />
+    <ClInclude Include="..\..\src\game\ObjectFactory.h" />
+    <ClInclude Include="..\..\src\game\ObjectFilter.h" />
+    <ClInclude Include="..\..\src\game\ObjectIdList.h" />
+    <ClInclude Include="..\..\src\game\ObjectList.h" />
+    <ClInclude Include="..\..\src\game\Player.h" />
+    <ClInclude Include="..\..\src\game\Target.h" />
+    <ClInclude Include="..\..\src\game\Types.h" />
+    <ClInclude Include="..\..\src\game\UnitProductionManager.h" />
+    <ClInclude Include="..\..\src\game\actions\Action.h" />
+    <ClInclude Include="..\..\src\game\actions\ActionList.h" />
+    <ClInclude Include="..\..\src\game\actions\Actions.h" />
+    <ClInclude Include="..\..\src\game\actions\TargetedAction.h" />
+    <ClInclude Include="..\..\src\game\orders\Order.h" />
+    <ClInclude Include="..\..\src\game\orders\OrderList.h" />
+    <ClInclude Include="..\..\src\game\orders\Orders.h" />
+    <ClInclude Include="..\..\src\game\orders\TargetedOrder.h" />
+    <ClInclude Include="..\..\src\game\orders\targeted\Order_Attack.h" />
+    <ClInclude Include="..\..\src\game\orders\targeted\Order_Move.h" />
+    <ClInclude Include="..\..\src\game\orders\secondary\Order_Produce.h" />
+    <ClInclude Include="..\..\src\ui\GameUI.h" />
+    <ClInclude Include="..\..\src\ui\sdl\GameUI_SDL.h" />
+    <ClInclude Include="..\..\src\ui\dummy\GameUI_dummy.h" />
+    <ClInclude Include="..\..\libs\etc\md5.h" />
+    <ClInclude Include="..\..\libs\lua\src\lapi.h" />
+    <ClInclude Include="..\..\libs\lua\src\lauxlib.h" />
+    <ClInclude Include="..\..\libs\lua\src\lcode.h" />
+    <ClInclude Include="..\..\libs\lua\src\ldebug.h" />
+    <ClInclude Include="..\..\libs\lua\src\ldo.h" />
+    <ClInclude Include="..\..\libs\lua\src\lfunc.h" />
+    <ClInclude Include="..\..\libs\lua\src\lgc.h" />
+    <ClInclude Include="..\..\libs\lua\src\llex.h" />
+    <ClInclude Include="..\..\libs\lua\src\llimits.h" />
+    <ClInclude Include="..\..\libs\lua\src\lmem.h" />
+    <ClInclude Include="..\..\libs\lua\src\lobject.h" />
+    <ClInclude Include="..\..\libs\lua\src\lopcodes.h" />
+    <ClInclude Include="..\..\libs\lua\src\lparser.h" />
+    <ClInclude Include="..\..\libs\lua\src\lstate.h" />
+    <ClInclude Include="..\..\libs\lua\src\lstring.h" />
+    <ClInclude Include="..\..\libs\lua\src\ltable.h" />
+    <ClInclude Include="..\..\libs\lua\src\ltm.h" />
+    <ClInclude Include="..\..\libs\lua\src\lua.h" />
+    <ClInclude Include="..\..\libs\lua\src\luaconf.h" />
+    <ClInclude Include="..\..\libs\lua\src\lualib.h" />
+    <ClInclude Include="..\..\libs\lua\src\lundump.h" />
+    <ClInclude Include="..\..\libs\lua\src\lvm.h" />
+    <ClInclude Include="..\..\libs\lua\src\lzio.h" />
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>

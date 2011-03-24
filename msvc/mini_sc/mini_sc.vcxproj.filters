@@ -1,0 +1,498 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="소스 파일">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="소스 파일\game">
+      <UniqueIdentifier>{dfdc64ff-359a-4b14-92b0-b3416e22391b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="소스 파일\game\actions">
+      <UniqueIdentifier>{809ce123-0400-47d7-b835-0e148d7b682c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="소스 파일\game\actions\targeted">
+      <UniqueIdentifier>{15514ed1-355b-4c72-b0db-04dda2722e68}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="소스 파일\game\orders">
+      <UniqueIdentifier>{a0327dac-8c82-4c2d-913a-f1d21ca91da1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="소스 파일\game\orders\targeted">
+      <UniqueIdentifier>{cc87ea4b-60de-47f2-adcf-5ac2d02985ab}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="소스 파일\game\orders\secondary">
+      <UniqueIdentifier>{c63b675b-404d-438d-b21a-2d91149d5171}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="소스 파일\libs">
+      <UniqueIdentifier>{7a67c632-ec61-4be4-856a-e749beaac16b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="소스 파일\libs\etc">
+      <UniqueIdentifier>{1d7717cf-eb2f-4e78-8a43-45518db923a8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="소스 파일\libs\jcimg">
+      <UniqueIdentifier>{0255ce5a-5c19-45d5-afc0-1096c9030e76}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="소스 파일\libs\lua">
+      <UniqueIdentifier>{74f0393a-3a1d-4c6e-a9b2-86b7debccf5b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="소스 파일\libs\lua\src">
+      <UniqueIdentifier>{317b2d96-8e8d-4828-a44d-13e72d8b66ed}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="소스 파일\libs\luacpp">
+      <UniqueIdentifier>{0b208797-7577-48e6-91e0-eeed52ed8e94}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="소스 파일\libs\zlib">
+      <UniqueIdentifier>{4a07269d-3f53-4a21-bf6e-27bd0e857207}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="소스 파일\ui">
+      <UniqueIdentifier>{269c8dea-2fac-4249-9af6-f850f6828e54}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="소스 파일\ui\sdl">
+      <UniqueIdentifier>{a4657df7-509f-4a61-987e-c643d23c82ee}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="소스 파일\ui\dummy">
+      <UniqueIdentifier>{3a166658-6df3-42b7-9c24-2ab15410baea}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="헤더 파일">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hpp;hxx;hm;inl;inc;xsd</Extensions>
+    </Filter>
+    <Filter Include="헤더 파일\game">
+      <UniqueIdentifier>{8ab9f307-836b-4181-abbc-a3a1c3c8e437}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="헤더 파일\game\actions">
+      <UniqueIdentifier>{b22040e2-3a59-49df-b8d5-4001e072df7b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="헤더 파일\game\actions\targeted">
+      <UniqueIdentifier>{6c480a0e-f2de-4b40-8f1c-e17e5a51dd63}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="헤더 파일\game\orders">
+      <UniqueIdentifier>{e4d0f9b6-cf4f-4473-b8d3-2e3fb7fc390c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="헤더 파일\game\orders\targeted">
+      <UniqueIdentifier>{ce5b3cd1-aa24-451d-9262-3245ef43ba55}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="헤더 파일\game\orders\secondary">
+      <UniqueIdentifier>{6b02ee1b-3b64-4d92-8bf0-3acb4aaefe99}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="헤더 파일\ui">
+      <UniqueIdentifier>{98813f51-2c2b-473f-8912-150c68958664}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="헤더 파일\ui\sdl">
+      <UniqueIdentifier>{3dd71676-738f-40fd-adf0-35c5c651b174}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="헤더 파일\ui\dummy">
+      <UniqueIdentifier>{3a299fc6-4cb8-41bf-8ff6-cf46304cbac2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="헤더 파일\libs">
+      <UniqueIdentifier>{1ccb314a-a6a7-4a1f-a5b8-1512e5e5e363}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="헤더 파일\libs\etc">
+      <UniqueIdentifier>{5ffab84d-02e0-4b59-a696-66b0a389e42e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="헤더 파일\libs\jcimg">
+      <UniqueIdentifier>{d900afca-0e35-468d-8021-65408cac63a7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="헤더 파일\libs\lua">
+      <UniqueIdentifier>{670ddb65-5eac-4d9e-9c40-67366381ec83}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="헤더 파일\libs\lua\src">
+      <UniqueIdentifier>{83c35e60-e395-4edb-8b68-84ae6798cadf}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="헤더 파일\libs\luacpp">
+      <UniqueIdentifier>{5431af51-f7b2-452e-8a7d-5d04b1c7db09}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="리소스 파일">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav</Extensions>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\..\src\main.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\game\Coordinate.cpp">
+      <Filter>소스 파일\game</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\game\Exception.cpp">
+      <Filter>소스 파일\game</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\game\Game.cpp">
+      <Filter>소스 파일\game</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\game\Object.cpp">
+      <Filter>소스 파일\game</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\game\ObjectFactory.cpp">
+      <Filter>소스 파일\game</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\game\ObjectList.cpp">
+      <Filter>소스 파일\game</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\game\Player.cpp">
+      <Filter>소스 파일\game</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\game\Target.cpp">
+      <Filter>소스 파일\game</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\game\UnitProductionManager.cpp">
+      <Filter>소스 파일\game</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\game\actions\Action.cpp">
+      <Filter>소스 파일\game\actions</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\game\actions\TargetedAction.cpp">
+      <Filter>소스 파일\game\actions</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\game\actions\targeted\Action_Attack.cpp">
+      <Filter>소스 파일\game\actions\targeted</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\game\actions\targeted\Action_Move.cpp">
+      <Filter>소스 파일\game\actions\targeted</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\game\orders\Order.cpp">
+      <Filter>소스 파일\game\orders</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\game\orders\TargetedOrder.cpp">
+      <Filter>소스 파일\game\orders</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\game\orders\targeted\Order_Attack.cpp">
+      <Filter>소스 파일\game\orders\targeted</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\game\orders\targeted\Order_Move.cpp">
+      <Filter>소스 파일\game\orders\targeted</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\game\orders\secondary\Order_Produce.cpp">
+      <Filter>소스 파일\game\orders\secondary</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\libs\etc\md5.c">
+      <Filter>소스 파일\libs\etc</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\libs\lua\src\lapi.c">
+      <Filter>소스 파일\libs\lua\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\libs\lua\src\lauxlib.c">
+      <Filter>소스 파일\libs\lua\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\libs\lua\src\lbaselib.c">
+      <Filter>소스 파일\libs\lua\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\libs\lua\src\lcode.c">
+      <Filter>소스 파일\libs\lua\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\libs\lua\src\ldblib.c">
+      <Filter>소스 파일\libs\lua\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\libs\lua\src\ldebug.c">
+      <Filter>소스 파일\libs\lua\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\libs\lua\src\ldo.c">
+      <Filter>소스 파일\libs\lua\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\libs\lua\src\ldump.c">
+      <Filter>소스 파일\libs\lua\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\libs\lua\src\lfunc.c">
+      <Filter>소스 파일\libs\lua\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\libs\lua\src\lgc.c">
+      <Filter>소스 파일\libs\lua\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\libs\lua\src\linit.c">
+      <Filter>소스 파일\libs\lua\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\libs\lua\src\liolib.c">
+      <Filter>소스 파일\libs\lua\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\libs\lua\src\llex.c">
+      <Filter>소스 파일\libs\lua\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\libs\lua\src\lmathlib.c">
+      <Filter>소스 파일\libs\lua\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\libs\lua\src\lmem.c">
+      <Filter>소스 파일\libs\lua\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\libs\lua\src\loadlib.c">
+      <Filter>소스 파일\libs\lua\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\libs\lua\src\lobject.c">
+      <Filter>소스 파일\libs\lua\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\libs\lua\src\lopcodes.c">
+      <Filter>소스 파일\libs\lua\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\libs\lua\src\loslib.c">
+      <Filter>소스 파일\libs\lua\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\libs\lua\src\lparser.c">
+      <Filter>소스 파일\libs\lua\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\libs\lua\src\lstate.c">
+      <Filter>소스 파일\libs\lua\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\libs\lua\src\lstring.c">
+      <Filter>소스 파일\libs\lua\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\libs\lua\src\lstrlib.c">
+      <Filter>소스 파일\libs\lua\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\libs\lua\src\ltable.c">
+      <Filter>소스 파일\libs\lua\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\libs\lua\src\ltablib.c">
+      <Filter>소스 파일\libs\lua\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\libs\lua\src\ltm.c">
+      <Filter>소스 파일\libs\lua\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\libs\lua\src\lundump.c">
+      <Filter>소스 파일\libs\lua\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\libs\lua\src\lvm.c">
+      <Filter>소스 파일\libs\lua\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\libs\lua\src\lzio.c">
+      <Filter>소스 파일\libs\lua\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\libs\lua\src\print.c">
+      <Filter>소스 파일\libs\lua\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\libs\zlib\adler32.c">
+      <Filter>소스 파일\libs\zlib</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\libs\zlib\compress.c">
+      <Filter>소스 파일\libs\zlib</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\libs\zlib\crc32.c">
+      <Filter>소스 파일\libs\zlib</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\libs\zlib\deflate.c">
+      <Filter>소스 파일\libs\zlib</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\libs\zlib\gzclose.c">
+      <Filter>소스 파일\libs\zlib</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\libs\zlib\gzlib.c">
+      <Filter>소스 파일\libs\zlib</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\libs\zlib\gzread.c">
+      <Filter>소스 파일\libs\zlib</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\libs\zlib\gzwrite.c">
+      <Filter>소스 파일\libs\zlib</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\libs\zlib\infback.c">
+      <Filter>소스 파일\libs\zlib</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\libs\zlib\inffast.c">
+      <Filter>소스 파일\libs\zlib</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\libs\zlib\inflate.c">
+      <Filter>소스 파일\libs\zlib</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\libs\zlib\inftrees.c">
+      <Filter>소스 파일\libs\zlib</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\libs\zlib\trees.c">
+      <Filter>소스 파일\libs\zlib</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\libs\zlib\uncompr.c">
+      <Filter>소스 파일\libs\zlib</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\libs\zlib\zutil.c">
+      <Filter>소스 파일\libs\zlib</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\ui\GameUI.cpp">
+      <Filter>소스 파일\ui</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\ui\sdl\GameUI_SDL.cpp">
+      <Filter>소스 파일\ui\sdl</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\libs\jcimg\jcimg.cpp">
+      <Filter>소스 파일\libs\jcimg</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\libs\luacpp\luacpp.cpp">
+      <Filter>소스 파일\libs\luacpp</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\src\compat.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\config.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\defs.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\my_sdl.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\platform.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\smart_ptrs.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\game\Coordinate.h">
+      <Filter>헤더 파일\game</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\game\Exception.h">
+      <Filter>헤더 파일\game</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\game\Game.h">
+      <Filter>헤더 파일\game</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\game\Object.h">
+      <Filter>헤더 파일\game</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\game\ObjectFactory.h">
+      <Filter>헤더 파일\game</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\game\ObjectFilter.h">
+      <Filter>헤더 파일\game</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\game\ObjectIdList.h">
+      <Filter>헤더 파일\game</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\game\ObjectList.h">
+      <Filter>헤더 파일\game</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\game\Player.h">
+      <Filter>헤더 파일\game</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\game\Target.h">
+      <Filter>헤더 파일\game</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\game\Types.h">
+      <Filter>헤더 파일\game</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\game\UnitProductionManager.h">
+      <Filter>헤더 파일\game</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\game\actions\Action.h">
+      <Filter>헤더 파일\game\actions</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\game\actions\ActionList.h">
+      <Filter>헤더 파일\game\actions</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\game\actions\Actions.h">
+      <Filter>헤더 파일\game\actions</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\game\actions\TargetedAction.h">
+      <Filter>헤더 파일\game\actions</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\game\orders\Order.h">
+      <Filter>헤더 파일\game\orders</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\game\orders\OrderList.h">
+      <Filter>헤더 파일\game\orders</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\game\orders\Orders.h">
+      <Filter>헤더 파일\game\orders</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\game\orders\TargetedOrder.h">
+      <Filter>헤더 파일\game\orders</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\game\orders\targeted\Order_Attack.h">
+      <Filter>헤더 파일\game\orders\targeted</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\game\orders\targeted\Order_Move.h">
+      <Filter>헤더 파일\game\orders\targeted</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\game\orders\secondary\Order_Produce.h">
+      <Filter>헤더 파일\game\orders\secondary</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\ui\GameUI.h">
+      <Filter>헤더 파일\ui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\ui\sdl\GameUI_SDL.h">
+      <Filter>헤더 파일\ui\sdl</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\ui\dummy\GameUI_dummy.h">
+      <Filter>헤더 파일\ui\dummy</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\libs\etc\md5.h">
+      <Filter>헤더 파일\libs\etc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\libs\lua\src\lapi.h">
+      <Filter>헤더 파일\libs\lua\src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\libs\lua\src\lauxlib.h">
+      <Filter>헤더 파일\libs\lua\src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\libs\lua\src\lcode.h">
+      <Filter>헤더 파일\libs\lua\src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\libs\lua\src\ldebug.h">
+      <Filter>헤더 파일\libs\lua\src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\libs\lua\src\ldo.h">
+      <Filter>헤더 파일\libs\lua\src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\libs\lua\src\lfunc.h">
+      <Filter>헤더 파일\libs\lua\src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\libs\lua\src\lgc.h">
+      <Filter>헤더 파일\libs\lua\src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\libs\lua\src\llex.h">
+      <Filter>헤더 파일\libs\lua\src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\libs\lua\src\llimits.h">
+      <Filter>헤더 파일\libs\lua\src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\libs\lua\src\lmem.h">
+      <Filter>헤더 파일\libs\lua\src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\libs\lua\src\lobject.h">
+      <Filter>헤더 파일\libs\lua\src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\libs\lua\src\lopcodes.h">
+      <Filter>헤더 파일\libs\lua\src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\libs\lua\src\lparser.h">
+      <Filter>헤더 파일\libs\lua\src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\libs\lua\src\lstate.h">
+      <Filter>헤더 파일\libs\lua\src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\libs\lua\src\lstring.h">
+      <Filter>헤더 파일\libs\lua\src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\libs\lua\src\ltable.h">
+      <Filter>헤더 파일\libs\lua\src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\libs\lua\src\ltm.h">
+      <Filter>헤더 파일\libs\lua\src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\libs\lua\src\lua.h">
+      <Filter>헤더 파일\libs\lua\src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\libs\lua\src\luaconf.h">
+      <Filter>헤더 파일\libs\lua\src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\libs\lua\src\lualib.h">
+      <Filter>헤더 파일\libs\lua\src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\libs\lua\src\lundump.h">
+      <Filter>헤더 파일\libs\lua\src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\libs\lua\src\lvm.h">
+      <Filter>헤더 파일\libs\lua\src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\libs\lua\src\lzio.h">
+      <Filter>헤더 파일\libs\lua\src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\libs\jcimg\jcimg.h">
+      <Filter>헤더 파일\libs\jcimg</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\libs\luacpp\luacpp.h">
+      <Filter>헤더 파일\libs\luacpp</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\libs\luacpp\luacpp_lua.h">
+      <Filter>헤더 파일\libs\luacpp</Filter>
+    </ClInclude>
+  </ItemGroup>
+</Project>
