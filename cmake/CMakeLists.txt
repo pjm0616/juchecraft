@@ -25,11 +25,11 @@ SET(CMAKE_BUILD_TYPE DEBUG)
 #SET(CMAKE_BUILD_TYPE RELEASE)
 
 IF(CMAKE_COMPILER_IS_GNUCXX)
-	SET(DEFS "-D_REENTRANT -D_FILE_OFFSET_BITS=64 -D_LARGEFILE64_SOURCE=1")
-
+	ADD_DEFINITIONS("-D_REENTRANT -D_FILE_OFFSET_BITS=64 -D_LARGEFILE64_SOURCE=1")
+	
 	SET(CMAKE_CXX_FLAGS_DEBUG "-DDEBUG -g -O0 -fstack-protector-all -fstrict-aliasing -fno-omit-frame-pointer")
 	SET(CMAKE_CXX_FLAGS_RELEASE "-DNDEBUG -O3")
-	SET(CMAKE_CXX_FLAGS "-std=gnu++98 -finline-functions -Wall -Wextra -Wno-unused-parameter -Wshadow -fopenmp ${DEFS}")
+	SET(CMAKE_CXX_FLAGS "-std=gnu++98 -finline-functions -Wall -Wextra -Wno-unused-parameter -Wshadow -fopenmp")
 ENDIF(CMAKE_COMPILER_IS_GNUCXX)
 
 

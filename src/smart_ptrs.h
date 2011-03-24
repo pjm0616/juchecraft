@@ -59,7 +59,6 @@ using std::tr1::weak_ptr;
 
 
 /** class T must be a WeakPtrOwner object.
- *  The hierarchy becomes somewhat awakard, but well.. damn
  */
 template<class T> class WeakPtrOwner
 {

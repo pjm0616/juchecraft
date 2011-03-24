@@ -466,16 +466,31 @@ void GameUI_SDL::processFrame()
 			break; }
 		case SDL_KEYUP:
 			// ev.key.
+			if(ev.key.keysym.sym == SDLK_ESCAPE)
+			{
+				SDL_WM_GrabInput(SDL_GRAB_OFF);
+			}
+			
 			break;
 		case SDL_MOUSEMOTION: {
 			// ev.motion.
-			int x = this->m_gamescr_left_pos + ev.button.x;
-			int y = this->m_gamescr_top_pos + ev.button.y;
+			
+			int scrn_x = ev.button.x;
+			int scrn_y = ev.button.y;
+			
+			int x = this->m_gamescr_left_pos + scrn_x;
+			int y = this->m_gamescr_top_pos + scrn_y;
+			this->m_mouse_pos.set(scrn_x, scrn_y);
 			this->m_mouse_pos_in_gamescr.set(x, y);
 			break;
 		}
 		case SDL_MOUSEBUTTONDOWN: {
 			// ev.button.
+			if(SDL_WM_GrabInput(SDL_GRAB_QUERY) == SDL_GRAB_OFF)
+			{
+				SDL_WM_GrabInput(SDL_GRAB_ON);
+			}
+			
 			int x = this->m_gamescr_left_pos + ev.button.x;
 			int y = this->m_gamescr_top_pos + ev.button.y;
 			this->m_mouse_pos_in_gamescr.set(x, y);
@@ -522,6 +537,40 @@ void GameUI_SDL::processFrame()
 		default:
 			break;
 		}
+	}
+	
+	
+	{
+		int scrn_x = this->m_mouse_pos.getX();
+		int scrn_y = this->m_mouse_pos.getY();
+		float scroll_x = 0, scroll_y = 0;
+		if(scrn_x < 5)
+			scroll_x = -1;
+		else if(scrn_x > 640-5)
+			scroll_x = 1;
+		if(scrn_y < 5)
+			scroll_y = -1;
+		else if(scrn_y > 480-5)
+			scroll_y = 1;
+		
+		float dt = this->m_game->getDelta();
+		float speed = dt * 200;
+		scroll_x *= speed;
+		scroll_y *= speed;
+		
+		float new_x = this->m_gamescr_left_pos + scroll_x;
+		float new_y = this->m_gamescr_top_pos + scroll_y;
+		if(new_x < 0)
+			new_x = 0;
+		else if(new_x > 640)
+			new_x = 640;
+		if(new_y < 0)
+			new_y = 0;
+		if(new_y > 480)
+			new_y = 480;
+		
+		this->m_gamescr_left_pos = new_x;
+		this->m_gamescr_top_pos = new_y;
 	}
 }
 
