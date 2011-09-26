@@ -1,0 +1,35 @@
+This is JucheCraft, a simple parody game-like program.
+You can move, attack, and duplicate units!
+It was my term project for OOP class.
+* Note: I don't like Kim Il-sung's `Juche', It's just a parody!
+
+This program uses StarCraft resources. You'll need a copy of Starcraft to run this program.
+It runs on linux and windows. However, you cannot compile resources on Windows, so you need a linux system anyway.
+
+License: GNU GPL v3 or later. see LICENSE for details.
+
+Dependencies:
+	SDL, SDL_ttf, SDL_image, SDL_gfx, zlib, bz2, libncursesw(if you want ncurses interface) 
+
+Building:
+	* You need a 32bit system(or cross compile it) to compile the resources. (ShadowFlare's mpq library does not support 64bit)
+	* Current build system is just terrible. It may not work on the future.
+	$ mkdir ../mini_sc_data
+	Copy StarDat.mpq, BrooDat.mpq, patch_rt.mpq (from StarCraft) into ../mini_sc_data/
+	$ make
+
+Building (using cmake):
+	$ cd cmake
+	$ make
+
+Running:
+	$ ./mini_sc
+	or with ncurses UI:
+	$ ./mini_sc ncurses
+
+On windows:
+	1. make resources on a *32bit* linux machine.
+	2. copy the compiled resources(`res' directory) to windows.
+	3. open msvc\mini_sc.sln (with MSVC 2008/2010)
+
+
