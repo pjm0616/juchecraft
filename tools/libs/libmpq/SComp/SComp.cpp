@@ -416,13 +416,13 @@ void __fastcall InitWaveCompress(DWORD dwCompressLevel, LPDWORD *lplpdwCompressi
 void __fastcall CompressWaveMono(LPVOID lpvDestinationMem, LPDWORD lpdwCompressedSize, LPVOID lpvSourceMem, DWORD dwDecompressedSize, LPDWORD lpdwCompressionSubType, DWORD dwCompressLevel)
 {
 	InitWaveCompress(dwCompressLevel,&lpdwCompressionSubType,lpdwCompressionSubType);
-	*lpdwCompressedSize = CompressWave((LPBYTE)lpvDestinationMem,*lpdwCompressedSize,(short *)lpvSourceMem,dwDecompressedSize,1,(unsigned int)lpdwCompressionSubType & 0xFF);
+	*lpdwCompressedSize = CompressWave((LPBYTE)lpvDestinationMem,*lpdwCompressedSize,(short *)lpvSourceMem,dwDecompressedSize,1,(unsigned int)((DWORD)lpdwCompressionSubType & 0xffffffff) & 0xFF);
 }
 
 void __fastcall CompressWaveStereo(LPVOID lpvDestinationMem, LPDWORD lpdwCompressedSize, LPVOID lpvSourceMem, DWORD dwDecompressedSize, LPDWORD lpdwCompressionSubType, DWORD dwCompressLevel)
 {
 	InitWaveCompress(dwCompressLevel,&lpdwCompressionSubType,lpdwCompressionSubType);
-	*lpdwCompressedSize = CompressWave((LPBYTE)lpvDestinationMem,*lpdwCompressedSize,(short *)lpvSourceMem,dwDecompressedSize,2,(unsigned int)lpdwCompressionSubType & 0xFF);
+	*lpdwCompressedSize = CompressWave((LPBYTE)lpvDestinationMem,*lpdwCompressedSize,(short *)lpvSourceMem,dwDecompressedSize,2,(unsigned int)((DWORD)lpdwCompressionSubType & 0xffffffff) & 0xFF);
 }
 
 void __fastcall HuffmanCompress(LPVOID lpvDestinationMem, LPDWORD lpdwCompressedSize, LPVOID lpvSourceMem, DWORD dwDecompressedSize, LPDWORD lpdwCompressionSubType, DWORD dwCompressLevel)

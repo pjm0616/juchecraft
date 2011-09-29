@@ -28,9 +28,9 @@ endif
 
 
 
-CC					=$(CROSSC)gcc
-CXX					=$(CROSSC)g++
-LD					=$(CROSSC)g++
+CC					=$(CROSSC)gcc -m32
+CXX					=$(CROSSC)g++ -m32
+LD					=$(CROSSC)g++ -m32
 AR					=$(CROSSC)ar
 AS					=$(CROSSC)as
 STRIP				=$(CROSSC)strip
@@ -45,9 +45,9 @@ ZIP					=zip
 UNZIP				=unzip
 
 CFLAGS				= $(DEFS) $(CFLAGS_DBG) $(INCLUDEDIR) \
-						-std=gnu99 -finline-functions -Wall -Wextra -Wno-unused -Wno-unused-function #-Wextra -Wshadow
+						-std=gnu99 -finline-functions -Wall -Wextra -Wno-unused -Wno-unused-function -Werror
 CXXFLAGS			= $(DEFS) $(CXXFLAGS_DBG) $(INCLUDEDIR) \
-						-std=gnu++98 -finline-functions -Wall -Wextra -Wno-unused -Wno-unused-function #-Wextra -Wshadow
+						-std=gnu++98 -finline-functions -Wall -Wextra -Wno-unused -Wno-unused-function -Werror
 LDFLAGS				= $(LDFLAGS_DBG) $(LIBDIR)
 #OBJS				=$(SRCS:.cpp=.o) 
 OBJS_TMP				=$(SRCS:.c=.o) 

@@ -69,13 +69,13 @@ HANDLE WINAPI CreateFile(LPCSTR lpFileName, DWORD dwDesiredAccess, DWORD dwShare
 	}
 	hFile = open(lpFileName,nFlags);
 	if (hFile!=-1) chmod(lpFileName,0644);
-	return (HANDLE)hFile;
+	return (HANDLE)(ptruint_t)hFile;
 }
 
 BOOL WINAPI CloseHandle(HANDLE hObject)
 {
 	if (hObject==INVALID_HANDLE_VALUE) return 0;
-	return (BOOL)(close((int)hObject) == 0);
+	return (BOOL)(close(HANDLE2INT(hObject)) == 0);
 }
 
 DWORD WINAPI GetFileSize(HANDLE hFile, LPDWORD lpFileSizeHigh)
@@ -83,7 +83,7 @@ DWORD WINAPI GetFileSize(HANDLE hFile, LPDWORD lpFileSizeHigh)
 	if (hFile==INVALID_HANDLE_VALUE) return (DWORD)-1;
 
 	struct stat fileinfo;
-	fstat((int)hFile, &fileinfo);
+	fstat(HANDLE2INT(hFile), &fileinfo);
 
 	if (lpFileSizeHigh) *lpFileSizeHigh = 0;
 	return (DWORD)fileinfo.st_size;
@@ -95,11 +95,11 @@ DWORD WINAPI SetFilePointer(HANDLE hFile, LONG lDistanceToMove, PLONG lpDistance
 
 	switch (dwMoveMethod) {
 		case FILE_BEGIN:
-			return (DWORD)lseek((int)hFile, lDistanceToMove, SEEK_SET);
+			return (DWORD)lseek(HANDLE2INT(hFile), lDistanceToMove, SEEK_SET);
 		case FILE_CURRENT:
-			return (DWORD)lseek((int)hFile, lDistanceToMove, SEEK_CUR);
+			return (DWORD)lseek(HANDLE2INT(hFile), lDistanceToMove, SEEK_CUR);
 		case FILE_END:
-			return (DWORD)lseek((int)hFile, lDistanceToMove, SEEK_END);
+			return (DWORD)lseek(HANDLE2INT(hFile), lDistanceToMove, SEEK_END);
 	}
 	return (DWORD)-1;
 }
@@ -108,7 +108,7 @@ BOOL WINAPI SetEndOfFile(HANDLE hFile)
 {
 	if (hFile==INVALID_HANDLE_VALUE) return 0;
 
-	return (BOOL)(ftruncate((int)hFile, lseek((int)hFile, 0, SEEK_CUR)) == 0);
+	return (BOOL)(ftruncate(HANDLE2INT(hFile), lseek(HANDLE2INT(hFile), 0, SEEK_CUR)) == 0);
 }
 
 BOOL WINAPI ReadFile(HANDLE hFile, LPVOID lpBuffer, DWORD nNumberOfBytesToRead, LPDWORD lpNumberOfBytesRead, LPOVERLAPPED lpOverlapped)
@@ -116,7 +116,7 @@ BOOL WINAPI ReadFile(HANDLE hFile, LPVOID lpBuffer, DWORD nNumberOfBytesToRead, 
 	if (hFile==INVALID_HANDLE_VALUE || lpBuffer==0) return 0;
 
 	ssize_t count;
-	if ((count = read((int)hFile, lpBuffer, nNumberOfBytesToRead)) == -1) {
+	if ((count = read(HANDLE2INT(hFile), lpBuffer, nNumberOfBytesToRead)) == -1) {
 		if (lpNumberOfBytesRead) *lpNumberOfBytesRead = 0;
 		return FALSE;
 	}
@@ -129,7 +129,7 @@ BOOL WINAPI WriteFile(HANDLE hFile, LPCVOID lpBuffer, DWORD nNumberOfBytesToWrit
 	if (hFile==INVALID_HANDLE_VALUE || lpBuffer==0) return 0;
 
 	ssize_t count;
-	if ((count = write((int)hFile, lpBuffer, nNumberOfBytesToWrite)) == -1) {
+	if ((count = write(HANDLE2INT(hFile), lpBuffer, nNumberOfBytesToWrite)) == -1) {
 		if (lpNumberOfBytesWritten) *lpNumberOfBytesWritten = 0;
 		return FALSE;
 	}

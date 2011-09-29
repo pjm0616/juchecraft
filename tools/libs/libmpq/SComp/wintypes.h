@@ -5,6 +5,8 @@
 #ifndef WIN_TYPES_INCLUDED
 #define WIN_TYPES_INCLUDED
 
+#include <inttypes.h>
+
 #ifndef WINAPI
 # define WINAPI
 #endif

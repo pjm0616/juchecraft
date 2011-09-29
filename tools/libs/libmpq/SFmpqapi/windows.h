@@ -12,6 +12,7 @@
 #include <fcntl.h>
 #include <unistd.h>
 #include <sys/stat.h>
+#include <inttypes.h>
 
 #define LINUX_PORT
 
@@ -53,6 +54,14 @@ typedef DWORD * LPDWORD;
 typedef BYTE * LPBYTE;
 typedef LPVOID HANDLE;
 typedef HANDLE HINSTANCE;
+
+#ifdef __LP64__
+typedef uint64_t ptruint_t;
+#else
+typedef uint32_t ptruint_t;
+#endif
+#define HANDLE2INT(x) ((int)(ptruint_t)(x))
+
 
 // Structs
 typedef struct _OVERLAPPED {
@@ -128,8 +137,8 @@ typedef struct _SECURITY_ATTRIBUTES {
 #define ERROR_UNKNOWN_PROPERTY           1608L
 
 
-#define INVALID_FILE_SIZE (DWORD)-1
-#define INVALID_SET_FILE_POINTER (DWORD)-1
+#define INVALID_FILE_SIZE (uint32_t)-1
+#define INVALID_SET_FILE_POINTER (int32_t)-1
 #define NO_ERROR 0
 
 
