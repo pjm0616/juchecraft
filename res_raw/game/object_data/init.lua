@@ -72,7 +72,9 @@ loaddata('', object_list)
 loaddata('data_dumper')
 local s = DataDumper(object_prototypes)
 --io.write(string.dump(s))
-io.write(s)
+
+-- 20110930: don't compile resources
+--io.write(s)
 
 
 return object_prototypes
