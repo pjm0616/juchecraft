@@ -23,12 +23,8 @@
 #define LUA_AUTHORS 	"R. Ierusalimschy, L. H. de Figueiredo & W. Celes"
 
 
-#if 0
 /* mark for precompiled code (`<esc>Lua') */
 #define	LUA_SIGNATURE	"\033Lua"
-#else
-#define	LUA_SIGNATURE	"\x033Yhn" /* rot13("Lua") */
-#endif
 
 /* option for multiple returns in `lua_pcall' and `lua_call' */
 #define LUA_MULTRET	(-1)
